@@ -2,7 +2,7 @@ name: Code Compiler
 on:
   push:
     branches:
-      - master
+      - main
 jobs:
   build:
     runs-on: ubuntu-latest
