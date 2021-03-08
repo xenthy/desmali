@@ -39,25 +39,27 @@ class PurgeLogs():
             modified_file: List[str] = []
 
             for line in original_file:
-                # skip next line if previous line has a match
-                if skip:
-                    skip = False
-                    continue
+                # # skip next line if previous line has a match
+                # if skip:
+                #     skip = False
+                #     continue
 
                 # check for lines with logs
                 if re.search(pattern, line):
                     is_modified = True
                     skip = True
 
-                    # check if previous line has junk (eg. ".line 32")
-                    if modified_file[-1] is not None:
-                        del modified_file[-1]
+                    # # check if previous line has junk (eg. ".line 32")
+                    # if modified_file[-1] is not None:
+                    #     del modified_file[-1]
                 else:
                     modified_file.append(line)
 
             # if file is not modified, skip writing to save resources
             if not is_modified:
                 continue
+
+            logger.debug(f"modifying \"{file}\"")
 
             with open(file, "w") as file_context:
                 file_context.writelines(modified_file)
