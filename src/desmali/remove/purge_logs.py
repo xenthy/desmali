@@ -2,6 +2,7 @@ import re
 from typing import List
 
 from logger import logger
+from util import Util
 from dissect import Dissect
 
 
@@ -10,13 +11,14 @@ class PurgeLogs():
         self._dissect = dissect
 
     def run(self,
-            a: bool = False,
-            d: bool = False,
-            e: bool = False,
-            i: bool = False,
-            v: bool = False,
-            w: bool = False,
-            wtf: bool = False):
+            a: bool = False,  # assert
+            d: bool = False,  # debug
+            e: bool = False,  # error
+            i: bool = False,  # info
+            v: bool = False,  # verbose
+            w: bool = False,  # warn
+            wtf: bool = False  # what a terrible failure
+            ):
 
         logger.info(f"*** INIT {self.__class__.__name__} ***")
         flags_set: List[str] = [k for k, v in locals().items() if v is True]
@@ -25,7 +27,8 @@ class PurgeLogs():
         # build regex
         pattern: str = "Landroid\/util\/Log;->(" + "|".join(flags_set) + ")"
 
-        for file in self._dissect.smali_files():
+        for file in Util.progress_bar(self._dissect.smali_files(),
+                                      description=f"Removing logs: {flags_set}"):
             # store file into a list
             with open(file, "r") as file_context:
                 original_file: List[str] = file_context.readlines()
@@ -34,7 +37,7 @@ class PurgeLogs():
             skip: bool = False
             is_modified: bool = False
             modified_file: List[str] = []
-            
+
             for line in original_file:
                 # skip next line if previous line has a match
                 if skip:

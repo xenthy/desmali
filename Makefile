@@ -31,7 +31,8 @@ ifeq ($(OS),Windows_NT)
 	@powershell "(Get-ChildItem * -Include *.pyc -Recurse | Remove-Item)"
 	@echo Cleaned up .pyc, .cap files and .cache files
 else
-	@echo "Cleaning up [.pyc, apktool/, junk apk] files..."
+	@echo "Cleaning up [.pyc, __pycache__, apktool/, junk apk] files..."
+	@find . -type d -name "__pycache__" -exec rm -rf {} +
 	@find . -type f -name "*.pyc" -delete
 	@$(RM) modified-aligned.apk
 	@$(RM) modified.apk

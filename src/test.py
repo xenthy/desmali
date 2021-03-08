@@ -1,11 +1,11 @@
 from apktool import Apktool
-from plugins.purge_logs.purge_logs import PurgeLogs
 from zipalign import Zipalign
 from apksigner import Apksigner
+
+from desmali.all import *
+
 from dissect import Dissect
 from config import DECODED_PATH
-
-from plugins.purge_logs import PurgeLogs
 
 from logger import logger
 logger.info("__INIT__")
@@ -18,9 +18,10 @@ def main():
                    force=True)
 
     ###### obfuscate stuff ######
+    """ PURGE LOGS """
     dissect: Dissect = Dissect(DECODED_PATH)
     purge_logs: PurgeLogs = PurgeLogs(dissect)
-    purge_logs.run(v=True, wtf=True)
+    purge_logs.run(a=False, d=True, e=False, i=False, v=True, w=False, wtf=True)
     ###### obfuscate stuff ######
 
     apktool.build(source_dir_path=DECODED_PATH,
