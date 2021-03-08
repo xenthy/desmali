@@ -11,20 +11,19 @@ RUN apt update -y && apt install -y --no-install-recommends \
 # Directory for the program
 WORKDIR /ict2207
 
-# Install dependencies
-COPY requirements.txt .
-RUN pip3 install --quiet --no-cache-dir -r requirements.txt
-
 # Cleanup
 RUN \
     apt remove -y &&\
     apt clean && \
     apt autoclean && \
-    apt autoremove -y
-# rm -rf /var/lib/apt/lists/* /tmp/* > /dev/null 2>&1
+    apt autoremove -y && \
+    rm -rf /var/lib/apt/lists/* /tmp/* > /dev/null 2>&1
 
 # Copy source code
 COPY / /ict2207
+
+# Install python dependacies
+RUN pip3 install --quiet --no-cache-dir -r requirements.txt
 
 # For flask
 EXPOSE 8000
