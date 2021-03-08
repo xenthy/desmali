@@ -7,17 +7,17 @@ END='\033[0m'
 echo "\n${PURPLE}[+] Installing Python 3.8 + pip3\n${END}" 
 sudo apt update
 sudo apt install software-properties-common -y
-sudo apt-get install python3-pip
+sudo apt install python3-pip
 
 # install GNU Make
-echo "\n${PURPLE}[+] Installing build essentials\n${END}"
+echo "\n${PURPLE}[+] Installing build essential\n${END}"
 sudo apt install build-essential -y
 
 # install dependencies
-echo "\n${PURPLE}[+] Installing dependencies\n${END}"
-sudo pip3 install -r requirements.txt
+echo "\n${PURPLE}[+] Installing python dependencies\n${END}"
+pip3 install -r requirements.txt
 
-install addtional dependencies
+# install addtional dependencies
 echo "\n${PURPLE}[+] Installing addational dependencies\n${END}"
 sudo apt install apktool \
                  zipalign \
