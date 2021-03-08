@@ -7,6 +7,7 @@ endif
 PFLAGS=-3.8-64
 
 TARGET?=src/main
+CHECK?=src/test
 SOURCES:=$(wildcard src/*.py)
 
 .PHONY: all check docker dockerclean clean
@@ -16,6 +17,7 @@ all:
 
 check:
 	python -m py_compile $(SOURCES)
+	python $(CHECK).py
 
 docker:
 	docker build -t obfuscator:latest .
@@ -29,7 +31,10 @@ ifeq ($(OS),Windows_NT)
 	@powershell "(Get-ChildItem * -Include *.pyc -Recurse | Remove-Item)"
 	@echo Cleaned up .pyc, .cap files and .cache files
 else
-	@echo "Cleaning up [.pyc, .cap, .cache, carved] files..."
+	@echo "Cleaning up [.pyc, apktool/, junk apk] files..."
 	@find . -type f -name "*.pyc" -delete
-	@echo "Cleaning complete!"
+	@$(RM) modified-aligned.apk
+	@$(RM) modified.apk
+	@$(RM) signed.apk
+	@$(RM) -rf ./apktool
 endif

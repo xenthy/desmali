@@ -1,0 +1,60 @@
+import re
+from typing import List
+
+from logger import logger
+from dissect import Dissect
+
+
+class PurgeLogs():
+    def __init__(self, dissect: Dissect):
+        self._dissect = dissect
+
+    def run(self,
+            a: bool = False,
+            d: bool = False,
+            e: bool = False,
+            i: bool = False,
+            v: bool = False,
+            w: bool = False,
+            wtf: bool = False):
+
+        logger.info(f"*** INIT {self.__class__.__name__} ***")
+        flags_set: List[str] = [k for k, v in locals().items() if v is True]
+        logger.info(f"logs set for purging -> {flags_set}")
+
+        # build regex
+        pattern: str = "Landroid\/util\/Log;->(" + "|".join(flags_set) + ")"
+
+        for file in self._dissect.smali_files():
+            # store file into a list
+            with open(file, "r") as file_context:
+                original_file: List[str] = file_context.readlines()
+
+            # remove logs and nonsense from original file
+            skip: bool = False
+            is_modified: bool = False
+            modified_file: List[str] = []
+            
+            for line in original_file:
+                # skip next line if previous line has a match
+                if skip:
+                    skip = False
+                    continue
+
+                # check for lines with logs
+                if re.search(pattern, line):
+                    is_modified = True
+                    skip = True
+
+                    # check if previous line has junk (eg. ".line 32")
+                    if modified_file[-1] is not None:
+                        del modified_file[-1]
+                else:
+                    modified_file.append(line)
+
+            # if file is not modified, skip writing to save resources
+            if not is_modified:
+                continue
+
+            with open(file, "w") as file_context:
+                file_context.writelines(modified_file)

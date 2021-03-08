@@ -20,9 +20,7 @@ def main():
     ###### obfuscate stuff ######
     dissect: Dissect = Dissect(DECODED_PATH)
     purge_logs: PurgeLogs = PurgeLogs(dissect)
-    # purge_logs.run(d=True, wtf=True)
     purge_logs.run(v=True, wtf=True)
-    # purge_logs.run(d=True, v=True, wtf=True)
     ###### obfuscate stuff ######
 
     apktool.build(source_dir_path=DECODED_PATH,
@@ -38,9 +36,6 @@ def main():
                    keystore_path="./ict2207-test-key.jks",
                    ks_pass="nim4m4h4om4?",
                    key_pass="nim4m4h4om4?")
-
-    import pty
-    pty.spawn("/bin/bash")
 
 
 if __name__ == "__main__":
