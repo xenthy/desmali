@@ -14,7 +14,7 @@ dist/
 downloads/
 eggs/
 .eggs/
-lib/
+# lib/ # for dex2jar to work
 lib64/
 parts/
 sdist/
