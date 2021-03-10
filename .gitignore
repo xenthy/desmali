@@ -128,10 +128,6 @@ dmypy.json
 # Pyre type checker
 .pyre/
 
-# apktool directory
-apktool/*
-apktool/.*
-
 # tmp directory
 .tmp/*.*
 .tmp/*/
