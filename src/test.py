@@ -16,7 +16,7 @@ def main():
 
     ###### obfuscate stuff ######
     """ PURGE LOGS """
-    dissect: Dissect = Dissect("./tmp/apktool")
+    dissect: Dissect = Dissect("./.tmp/apktool")
     purge_logs: PurgeLogs = PurgeLogs(dissect)
     purge_logs.run(a=False, d=True, e=False, i=False, v=True, w=False, wtf=True)
     ###### obfuscate stuff ######
