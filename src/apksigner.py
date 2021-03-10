@@ -38,6 +38,7 @@ class Apksigner:
             raise FileNotFoundError(f"Unable to find file {keystore_path}")
 
         sign: List[str] = [
+            "jarwrapper",
             self.apksigner_path,
             "sign",
             "--ks",
@@ -67,19 +68,19 @@ class Apksigner:
             error_output = e.output.decode(errors="replace") if e.output else e
 
             # workaround for some binfmt-support issues
-            if "unable to find an interpreter" in error_output:
-                logger.info("java interpreter not configured correctly")
-                sign.insert(0, "jarwrapper")
-                sign_command = " ".join(sign)
+            # if "unable to find an interpreter" in error_output:
+            #     logger.info("java interpreter not configured correctly")
+            #     sign.insert(0, "jarwrapper")
+            #     sign_command = " ".join(sign)
 
-                logger.info(f"signing apk using fallback method: \"{input_apk_path}\" -> \"{output_apk_path}\"")
-                logger.debug(f"{sign_command}")
-                output = subprocess.check_output(sign, stderr=subprocess.STDOUT, input=b"\n").strip()
-            else:
-                logger.error(f"Error during build command: {error_output}")
-                raise
+            #     logger.info(f"signing apk using fallback method: \"{input_apk_path}\" -> \"{output_apk_path}\"")
+            #     logger.debug(f"{sign_command}")
+            #     output = subprocess.check_output(sign, stderr=subprocess.STDOUT, input=b"\n").strip()
+            # else:
+            logger.error(f"Error during build command: {error_output}")
+            raise
         except Exception as e:
-            logger.error("Error during zipaligning: {0}".format(e))
+            logger.error("Error during apk signing: {0}".format(e))
             raise
 
     def verify(self):
