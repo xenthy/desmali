@@ -131,3 +131,7 @@ dmypy.json
 # apktool directory
 apktool/*
 apktool/.*
+
+# tmp directory
+.tmp/*.*
+.tmp/*/

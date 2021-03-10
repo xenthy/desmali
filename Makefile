@@ -34,8 +34,5 @@ else
 	@echo "Cleaning up [.pyc, __pycache__, apktool/, junk apk] files..."
 	@find . -type d -name "__pycache__" -exec rm -rf {} +
 	@find . -type f -name "*.pyc" -delete
-	@$(RM) modified-aligned.apk
-	@$(RM) modified.apk
-	@$(RM) signed.apk
-	@$(RM) -rf ./apktool
+	@find ./.tmp/* -type f,d -not -name 'placeholder' -delete
 endif
