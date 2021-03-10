@@ -1,11 +1,6 @@
-from desmali.tools import Apktool, Zipalign, Apksigner, Dissect
-
+from desmali.tools import Apktool, Zipalign, Apksigner, Dex2jar, Dissect
 from desmali.obfuscate import *
-
-from config import DECODED_PATH
-
 from desmali.extras import logger
-logger.info("__INIT__")
 
 
 def main():
@@ -36,11 +31,16 @@ def main():
                    ks_pass="nim4m4h4om4?",
                    key_pass="nim4m4h4om4?")
 
+    # for debugging
+    dex2jar = Dex2jar()
+    dex2jar.to_jar(input_apk_path="./.tmp/signed.apk",
+                   output_jar_path="./.tmp/signed.jar")
     # import pty
     # pty.spawn("/bin/bash")
 
 
 if __name__ == "__main__":
+    logger.info("__INIT__")
     main()
 
 logger.info("__EOF__")
