@@ -21,7 +21,7 @@ def main():
     """ PURGE LOGS """
     dissect: Dissect = Dissect(DECODED_PATH)
     purge_logs: PurgeLogs = PurgeLogs(dissect)
-    purge_logs.run(a=False, d=False, e=False, i=False, v=False, w=False, wtf=True)
+    purge_logs.run(a=True, d=True, e=True, i=True, v=True, w=True, wtf=True)
 
     ###### obfuscate stuff ######
 

@@ -1,6 +1,9 @@
 FROM ubuntu:20.10
 
-# set up apktool
+# Change sources list to use a server in Singapore
+RUN sed -i 's/archive.ubuntu.com/mirror.0x.sg/' /etc/apt/sources.list
+
+# Install dependacies
 RUN apt update -y && apt install -y --no-install-recommends \
     python3.8 \
     python3-pip \

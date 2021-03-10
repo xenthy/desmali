@@ -59,7 +59,7 @@ class PurgeLogs():
             if not is_modified:
                 continue
 
-            logger.debug(f"modifying \"{file}\"")
+            # logger.debug(f"modifying \"{file}\"")
 
             with open(file, "w") as file_context:
                 file_context.writelines(modified_file)
