@@ -1,7 +1,7 @@
 import os
 from typing import List
 
-from logger import logger
+from desmali.extras import logger
 
 
 class Dissect:

@@ -1,9 +1,8 @@
 import re
 from typing import List
 
-from logger import logger
-from util import Util
-from dissect import Dissect
+from desmali.extras import logger, Util
+from desmali.tools import Dissect
 
 
 class PurgeLogs():

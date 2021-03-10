@@ -1,13 +1,10 @@
-from apktool import Apktool
-from zipalign import Zipalign
-from apksigner import Apksigner
+from desmali.tools import Apktool, Zipalign, Apksigner, Dissect
 
-from desmali.all import *
+from desmali.obfuscate import *
 
-from dissect import Dissect
 from config import DECODED_PATH
 
-from logger import logger
+from desmali.extras import logger
 logger.info("__INIT__")
 
 

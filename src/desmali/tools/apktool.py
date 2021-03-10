@@ -4,7 +4,7 @@ import subprocess
 import tempfile
 from typing import List
 
-from logger import logger
+from desmali.extras import logger
 
 
 class Apktool():

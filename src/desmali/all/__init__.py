@@ -1,3 +1,2 @@
-from desmali.remove import *
-from desmali.rename import *
-from desmali.restructure import *
+from desmali.obfuscate import *
+from desmali.tools import *

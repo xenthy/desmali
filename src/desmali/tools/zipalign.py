@@ -3,7 +3,7 @@ import shutil
 import subprocess
 from typing import List
 
-from logger import logger
+from desmali.extras import logger
 
 
 class Zipalign:

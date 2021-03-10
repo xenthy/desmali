@@ -6,8 +6,7 @@ Logs on stdout will be coloured.
 import logging
 import coloredlogs
 
-from config import LOGGER_FILE
-
+LOG_FILE = "./logs/program.log"
 FORMATTER = "%(asctime)s:%(msecs)03d:[%(levelname)s]: %(message)s"
 TIMESTAMP = "%b %d  %Y %H:%M:%S"
 LOG_LEVEL = logging.DEBUG
@@ -17,7 +16,7 @@ logging.basicConfig(level=LOG_LEVEL,
                     format=FORMATTER,
                     datefmt=TIMESTAMP,
                     handlers=[
-                        logging.FileHandler(LOGGER_FILE)
+                        logging.FileHandler(LOG_FILE)
                     ])
 
 
@@ -31,7 +30,7 @@ console.setFormatter(formatter)
 logging.getLogger().addHandler(console)
 
 # clear logs each run
-with open(LOGGER_FILE, "w+") as f:
+with open(LOG_FILE, "w+") as f:
     pass
 
 logger = logging.getLogger(__name__)
