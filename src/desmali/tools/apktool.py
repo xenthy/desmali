@@ -43,6 +43,7 @@ class Apktool():
             "--frame-path",
             tempfile.gettempdir(),
             apk_path,
+            "--no-debug-info",
             "-o",
             output_dir_path,
         ]
@@ -78,6 +79,7 @@ class Apktool():
             tempfile.gettempdir(),
             "--force-all",
             source_dir_path,
+            "--match-original",
             "-o",
             output_apk_path,
         ]
