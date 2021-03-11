@@ -12,7 +12,7 @@ def main():
     """ PURGE LOGS """
     dissect: Dissect = Dissect("./.tmp/apktool")
     purge_logs: PurgeLogs = PurgeLogs(dissect)
-    # purge_logs.run(a=True, d=True, e=True, i=True, v=True, w=True, wtf=True)
+    purge_logs.run(a=True, d=True, e=True, i=True, v=True, w=True, wtf=True)
     
     """ INJECT GOTOS IN METHODS """
     goto_inject: GotoInjector = GotoInjector(dissect)
