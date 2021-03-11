@@ -14,6 +14,11 @@ def main():
     dissect: Dissect = Dissect("./.tmp/apktool")
     purge_logs: PurgeLogs = PurgeLogs(dissect)
     purge_logs.run(a=False, d=True, e=False, i=False, v=True, w=False, wtf=True)
+    
+    """ INJECT GOTOS IN METHODS """
+    goto_inject: GotoInjector = GotoInjector(dissect)
+    goto_inject.run()
+
     ###### obfuscate stuff ######
 
     apktool.build(source_dir_path="./.tmp/apktool",
