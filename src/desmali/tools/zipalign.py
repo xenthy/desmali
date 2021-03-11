@@ -29,6 +29,7 @@ class Zipalign:
 
         zipalign: List[str] = [
             self.zipalign_path,
+            "-f",  # overwrite existing file
             "-v",
             "4",
             input_apk_path,
@@ -38,7 +39,7 @@ class Zipalign:
         try:
             align_command = " ".join(zipalign)
             logger.info(f"zipaligning apk: \"{input_apk_path}\" -> \"{output_apk_path}\"")
-            logger.debug(f"{align_command}")
+            logger.verbose(f"{align_command}")
 
             output = subprocess.check_output(zipalign, stderr=subprocess.STDOUT, input=b"\n").strip()
             if (b"brut.directory.PathNotExist: " in output or b"Exception in thread " in output):

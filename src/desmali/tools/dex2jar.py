@@ -1,5 +1,5 @@
 """
-This dex2jar function is only meant for debugging and not to be
+This dex2jar function is only meant for verboseging and not to be
 used in the final product
 """
 
@@ -11,7 +11,7 @@ from desmali.extras import logger
 
 INVOKE_PATH = "./bin/dex2jar-2.0/d2j_invoke.sh"
 DEX2JAR_PATH = "./bin/dex2jar-2.0/d2j-dex2jar.sh"
-DEX2JAR_ERROR_FILE_PATH = "./.tmp/dex2jar-error.zip"
+DEX2JAR_ERROR_FILE_PATH = "/dev/null"
 
 
 class Dex2jar():
@@ -45,7 +45,7 @@ class Dex2jar():
         try:
             decode_command = " ".join(dex2jar)
             logger.info(f"decompiling apk: \"{input_apk_path}\" -> \"{output_jar_path}\"")
-            logger.debug(f"{decode_command}")
+            logger.verbose(f"{decode_command}")
 
             output = subprocess.check_output(dex2jar, stderr=subprocess.STDOUT, input=b"\n").strip()
 

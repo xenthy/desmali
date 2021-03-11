@@ -11,8 +11,20 @@ FORMATTER = "%(asctime)s:%(msecs)03d:[%(levelname)s]: %(message)s"
 TIMESTAMP = "%b %d  %Y %H:%M:%S"
 LOG_LEVEL = logging.DEBUG
 
+# add verbose level to the python logging module
+VERBOSE_LEVEL = 15
+logging.addLevelName(VERBOSE_LEVEL, "VERBOSE")
+
+
+def verbose(self, message, *args, **kwargs):
+    if self.isEnabledFor(VERBOSE_LEVEL):
+        self._log(VERBOSE_LEVEL, message, args, **kwargs)
+
+
+logging.Logger.verbose = verbose
+
 # print to log file
-logging.basicConfig(level=LOG_LEVEL,
+logging.basicConfig(level=logging.DEBUG,
                     format=FORMATTER,
                     datefmt=TIMESTAMP,
                     handlers=[
@@ -22,7 +34,7 @@ logging.basicConfig(level=LOG_LEVEL,
 
 # print to stdout
 console = logging.StreamHandler()
-console.setLevel(LOG_LEVEL)
+console.setLevel(VERBOSE_LEVEL)
 
 formatter = coloredlogs.ColoredFormatter(FORMATTER, TIMESTAMP)
 console.setFormatter(formatter)

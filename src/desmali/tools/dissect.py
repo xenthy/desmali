@@ -20,7 +20,7 @@ class Dissect:
         if hasattr(self, "_smali_files"):
             return self.__smali_files
 
-        logger.info("getting all .smali files from decoded directory")
+        logger.verbose("getting all .smali files from decoded directory")
 
         self.__smali_files: List[str] = [
             os.path.join(root, file_name)

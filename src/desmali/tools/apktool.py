@@ -49,13 +49,13 @@ class Apktool():
 
         # force delete destination directory
         if force:
-            logger.debug(f"force flag set, [{output_dir_path}] directory will be overwritten")
+            logger.verbose(f"force flag set, [{output_dir_path}] directory will be overwritten")
             decode.insert(2, "--force")
 
         try:
             decode_command = " ".join(decode)
             logger.info(f"decoding apk: \"{apk_path}\" -> \"{output_dir_path}\"")
-            logger.debug(f"{decode_command}")
+            logger.verbose(f"{decode_command}")
 
             output = subprocess.check_output(decode, stderr=subprocess.STDOUT, input=b"\n").strip()
 
@@ -85,7 +85,7 @@ class Apktool():
         try:
             build_command = " ".join(build)
             logger.info(f"building apk: \"{source_dir_path}\" -> \"{output_apk_path}\"")
-            logger.debug(f"{build_command}")
+            logger.verbose(f"{build_command}")
 
             output = subprocess.check_output(build, stderr=subprocess.STDOUT, input=b"\n").strip()
             if (b"brut.directory.PathNotExist: " in output or b"Exception in thread " in output):

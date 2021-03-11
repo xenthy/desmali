@@ -4,23 +4,23 @@ FROM ubuntu:20.10
 RUN sed -i 's/archive.ubuntu.com/mirror.0x.sg/' /etc/apt/sources.list
 
 # Install dependacies
-RUN apt update -y && apt install -y --no-install-recommends \
+RUN apt-get update -y && apt install -y --no-install-recommends \
     python3.8 \
     python3-pip \
     apktool \
     zipalign \
     apksigner
 
-# Directory for the program
-WORKDIR /ict2207
-
 # Cleanup
 RUN \
-    apt remove -y &&\
-    apt clean && \
-    apt autoclean && \
-    apt autoremove -y && \
+    apt-get remove -y &&\
+    apt-get clean && \
+    apt-get autoclean && \
+    apt-get autoremove -y && \
     rm -rf /var/lib/apt/lists/* /tmp/* > /dev/null 2>&1
+
+# Directory for the program
+WORKDIR /ict2207
 
 # Copy source code
 COPY / /ict2207

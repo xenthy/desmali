@@ -55,7 +55,7 @@ class Apksigner:
         try:
             sign_command = " ".join(sign)
             logger.info(f"signing apk: \"{input_apk_path}\" -> \"{output_apk_path}\"")
-            logger.debug(f"{sign_command}")
+            logger.verbose(f"{sign_command}")
 
             output = subprocess.check_output(sign, stderr=subprocess.STDOUT, input=b"\n").strip()
 
@@ -74,7 +74,7 @@ class Apksigner:
             #     sign_command = " ".join(sign)
 
             #     logger.info(f"signing apk using fallback method: \"{input_apk_path}\" -> \"{output_apk_path}\"")
-            #     logger.debug(f"{sign_command}")
+            #     logger.verbose(f"{sign_command}")
             #     output = subprocess.check_output(sign, stderr=subprocess.STDOUT, input=b"\n").strip()
             # else:
             logger.error(f"Error during build command: {error_output}")

@@ -11,7 +11,7 @@ class PurgeLogs():
 
     def run(self,
             a: bool = False,  # assert
-            d: bool = False,  # debug
+            d: bool = False,  # verbose
             e: bool = False,  # error
             i: bool = False,  # info
             v: bool = False,  # verbose
@@ -21,7 +21,7 @@ class PurgeLogs():
 
         logger.info(f"*** INIT {self.__class__.__name__} ***")
         flags_set: List[str] = [k for k, v in locals().items() if v is True]
-        logger.info(f"logs set for purging -> {flags_set}")
+        logger.verbose(f"logs set for purging -> {flags_set}")
 
         # build regex
         pattern: str = "Landroid\/util\/Log;->(" + "|".join(flags_set) + ")"
@@ -58,7 +58,7 @@ class PurgeLogs():
             if not is_modified:
                 continue
 
-            # logger.debug(f"modifying \"{file}\"")
+            logger.debug(f"modifying \"{file}\"")
 
             with open(file, "w") as file_context:
                 file_context.writelines(modified_file)
