@@ -1,4 +1,7 @@
+from contextlib import contextmanager
+
 from tqdm import tqdm
+import in_place
 
 
 class Util:
@@ -16,3 +19,18 @@ class Util:
             dynamic_ncols=True,
             bar_format="{l_bar}{bar}|[{elapsed}<{remaining}, {rate_fmt}]"
         )
+
+    @contextmanager
+    def inplace_file(filename: str):
+        """
+        Write to a file in place
+        """
+        with in_place.InPlace(filename) as file:
+            yield file
+
+
+if __name__ == "__main__":
+    with Util.inplace_file("data.txt") as file:
+        for index, line in enumerate(file):
+            file.write(line)
+            print(f"Line num: {index} - {line.strip()}")
