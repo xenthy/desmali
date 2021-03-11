@@ -8,7 +8,8 @@ PFLAGS=-3.8-64
 
 TARGET?=src/main
 CHECK?=src/test
-SOURCES:=$(wildcard src/*.py)
+# SOURCES:=$(wildcard src/*.py)
+SOURCES = $(shell find src/ -type f -name '*.py')
 
 .PHONY: all check docker dockerclean clean
 
