@@ -1,7 +1,8 @@
 import os
-from typing import List
+import re
+from typing import List, Set, Tuple, Pattern, AnyStr
 
-from desmali.extras import logger
+from desmali.extras import logger, Util
 
 
 class Dissect:
@@ -15,18 +16,64 @@ class Dissect:
 
         # run default methods
 
-    def smali_files(self) -> List[str]:
+    def smali_files(self) -> Tuple[str]:
         # check if function has already been executed
         if hasattr(self, "_smali_files"):
-            return self.__smali_files
+            return self._smali_files
 
         logger.verbose("getting all .smali files from decoded directory")
 
-        self.__smali_files: List[str] = [
-            os.path.join(root, file_name)
-            for root, dir_names, file_names in os.walk(self.decoded_dir_path)
-            for file_name in file_names
-            if file_name.endswith(".smali")
+        # identify all smali files recursuvely in the decoded_dir_path
+        self._smali_files: List[str] = [
+            os.path.join(path, filename)
+            for path, _, files in os.walk(self.decoded_dir_path)
+            for filename in files
+            if filename.endswith(".smali")
         ]
 
-        return self.__smali_files
+        # convert list to tuple to prevent modification
+        self._smali_files = tuple(self._smali_files)
+
+        return self._smali_files
+
+    def method_names(self, skip_virtual_methods: bool = True) -> Tuple[str]:
+        # check if function has already been executed
+        if hasattr(self, "_method_names"):
+            return self._method_names
+
+        # check if smali_files() has already been executed
+        if not hasattr(self, "__smali_files"):
+            self.__smali_files: List[str] = self.smali_files()
+
+        logger.verbose("getting all method names from the list of smali files")
+
+        # regex pattern to identify lines that contains a method
+        # read more about Named Capturing Groups: https://www.regular-expressions.info/refext.html
+        pattern: Pattern[AnyStr@compile] = re.compile(r"\.method.+?(?P<name>\S+?)" +
+                                                      r"\((?P<args>\S*?)\)" +
+                                                      r"(?P<return>\S+)",
+                                                      re.UNICODE)
+
+        # store all method names into a list
+        self._method_names: Set[str] = set()
+
+        # iterate through all the smali files
+        for filename in Util.progress_bar(self.__smali_files,
+                                          description="Retrieving methods from all smali files"):
+            with open(filename, "r") as file:
+                # identify lines which contains methods
+                for line in file:
+                    # skip virtual methods if @param:skip_virtual_methods is set to true.
+                    # virtual methods are always at the bottom of the smali file, hence,
+                    # 'break' is used
+                    if skip_virtual_methods and line.startswith("# virtual methods"):
+                        break
+
+                    if (match := pattern.match(line)):
+                        method_name = match.group("name")
+                        self._method_names.add(method_name)
+
+        # convert set to tuple to prevent modification
+        self._method_names = tuple(self._method_names)
+
+        return self._method_names

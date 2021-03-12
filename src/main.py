@@ -2,6 +2,7 @@ from desmali.tools import Apktool, Zipalign, Apksigner, Dex2jar, Dissect
 from desmali.obfuscate import *
 from desmali.extras import logger
 
+
 def main():
     apktool: Apktool = Apktool()
     apktool.decode(apk_path="original.apk",
@@ -13,7 +14,7 @@ def main():
     dissect: Dissect = Dissect("./.tmp/apktool")
     purge_logs: PurgeLogs = PurgeLogs(dissect)
     purge_logs.run(a=True, d=True, e=True, i=True, v=True, w=True, wtf=True)
-    
+
     """ INJECT GOTOS IN METHODS """
     goto_inject: GotoInjector = GotoInjector(dissect)
     goto_inject.run()
@@ -45,5 +46,8 @@ def main():
 if __name__ == "__main__":
     logger.info("__INIT__")
     main()
+    # dissect: Dissect = Dissect("./.tmp/apktool")
+    # dissect.method_names()
+    # dissect.method_names()
 
 logger.info("__EOF__")
