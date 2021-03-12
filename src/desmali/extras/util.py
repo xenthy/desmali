@@ -1,7 +1,7 @@
 from contextlib import contextmanager
 
 from tqdm import tqdm
-import in_place
+from in_place import InPlace
 
 
 class Util:
@@ -25,7 +25,7 @@ class Util:
         """
         Write to a file in place
         """
-        with in_place.InPlace(filename) as file:
+        with InPlace(filename) as file:
             yield file
 
 
