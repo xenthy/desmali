@@ -1,9 +1,8 @@
-import re
 from random import shuffle, randrange
 from typing import List, Dict
 
 from desmali.tools import Dissect
-from desmali.extras import logger, Util
+from desmali.extras import logger, Util, regex
 
 
 class ReorderLabels:
@@ -12,22 +11,6 @@ class ReorderLabels:
 
     def run(self):
         logger.info(f"*** INIT {self.__class__.__name__} ***")
-
-        ### regex dump ###
-        # match methods
-        pattern_method = re.compile(r"\.method.+?(?P<name>\S+?)" +
-                                    r"\((?P<args>\S*?)\)" +
-                                    r"(?P<return>\S+)",
-                                    re.UNICODE)
-
-        # :goto_0
-        pattern_label = re.compile(r"^[ ]{4}(?P<name>:.+)")
-
-        # goto :goto_0
-        pattern_goto = re.compile(r"^[\t ]+(?P<name>goto :.+)")
-
-        # if-ltz p1, :cond_2
-        pattern_if = re.compile(r"^[\t ]+if-.+(?P<name>:.+)")
 
         # variable declarations
         in_method: bool = False
@@ -44,13 +27,13 @@ class ReorderLabels:
                 for line in file:
                     # check if line is within a method
                     if not in_method:
-                        if pattern_method.match(line):
+                        if regex.METHOD.match(line):
                             in_method = True
                         file.write(line)
                         continue
 
                     # append declarations of each method to method_start
-                    if pattern_label.match(line):
+                    if regex.LABEL.match(line):
                         reached_first_label = True
                         labels.append(list())
                         labels[-1].append(line)
@@ -65,7 +48,7 @@ class ReorderLabels:
                             continue
 
                         # check if the last line in a label is a goto instruction
-                        last_is_goto = True if pattern_goto.match(line) else False
+                        last_is_goto = True if regex.GOTO.match(line) else False
                         continue
 
                     # reorder and write the label blocks to the file if the end
@@ -84,13 +67,6 @@ class ReorderLabels:
                     labels[-1].append(line)
 
     def _write_labels(self, file, labels: List[List[str]], last_is_goto: bool):
-        # goto :goto_0
-        pattern_goto = re.compile(r"^[\t ]+(?P<name>goto :.+)")
-        # :goto_0
-        pattern_label = re.compile(r"^[ ]{4}(?P<name>:.+)")
-        # return-void. return v0
-        pattern_return = re.compile(r"^[ ]{4}return.*")
-
         # remove empty lines from labels
         labels = [list(filter(self._is_new_line, label)) for label in labels]
 
@@ -100,8 +76,8 @@ class ReorderLabels:
 
         # insert goto of the next label
         for index in range(0, len(labels) - 1):
-            if not pattern_goto.match(labels[index][-1]) and \
-                    not pattern_return.match(labels[index][-1]):
+            if not regex.GOTO.match(labels[index][-1]) and \
+                    not regex.RETURN.match(labels[index][-1]):
                 labels[index].append(f"    goto {labels[index + 1][0].strip()}\n")
 
         # shuffle labels
@@ -117,7 +93,7 @@ class ReorderLabels:
                     file.write(line)
                     is_space = True
 
-                if pattern_label.match(line):
+                if regex.LABEL.match(line):
                     is_space = False
 
     def _is_new_line(self, x):
@@ -132,11 +108,6 @@ class ReorderLabels:
         *Note that smali code allows nested try-catch blocks
         """
 
-        pattern_try_catch = re.compile(r"^[ ]{4}.catch.+?"
-                                       r"{(?P<try_start>:\S*)"
-                                       r".+?(?P<try_end>:\S*)}"
-                                       r"[ ](?P<handler>:\S*)")
-
         # declare variables
         try_catch_ranges: Dict[str: str] = dict()
         label_names: List[str] = list()
@@ -145,7 +116,7 @@ class ReorderLabels:
         for label in labels:
             label_names.append(label[0].strip())
             for line in label:
-                if match := pattern_try_catch.match(line):
+                if match := regex.TRY_CATCH.match(line):
                     try_catch_ranges[match.group("try_start")] = match.group("try_end")
 
         try_catch_blocks: List[List[str]] = list()
@@ -174,6 +145,6 @@ class ReorderLabels:
             elif isinstance(block[0], list):
                 labels += block
             else:
-                logger.error("Testing: Type not known")
+                logger.error("ReorderLabels: Type not known")
 
         return labels

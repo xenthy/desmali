@@ -1,8 +1,7 @@
 import os
-import re
 from typing import List, Set, Tuple
 
-from desmali.extras import logger, Util
+from desmali.extras import logger, Util, regex
 
 
 class Dissect:
@@ -47,13 +46,6 @@ class Dissect:
 
         logger.verbose("getting all method names from the list of smali files")
 
-        # regex pattern to identify lines that contains a method
-        # read more about Named Capturing Groups: https://www.regular-expressions.info/refext.html
-        pattern = re.compile(r"\.method.+?(?P<name>\S+?)" +
-                             r"\((?P<args>\S*?)\)" +
-                             r"(?P<return>\S+)",
-                             re.UNICODE)
-
         # store all method names into a list
         self._method_names: Set[str] = set()
 
@@ -69,7 +61,7 @@ class Dissect:
                     if skip_virtual_methods and line.startswith("# virtual methods"):
                         break
 
-                    if (match := pattern.match(line)):
+                    if (match := regex.METHOD.match(line)):
                         method_name = match.group("name")
                         self._method_names.add(method_name)
 
