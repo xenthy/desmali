@@ -1,6 +1,6 @@
 import os
 import re
-from typing import List, Set, Tuple, Pattern, AnyStr
+from typing import List, Set, Tuple
 
 from desmali.extras import logger, Util
 
@@ -36,7 +36,7 @@ class Dissect:
 
         return self._smali_files
 
-    def method_names(self, skip_virtual_methods: bool = True) -> Tuple[str]:
+    def method_names(self, skip_virtual_methods: bool = False) -> Tuple[str]:
         # check if function has already been executed
         if hasattr(self, "_method_names"):
             return self._method_names
@@ -49,10 +49,10 @@ class Dissect:
 
         # regex pattern to identify lines that contains a method
         # read more about Named Capturing Groups: https://www.regular-expressions.info/refext.html
-        pattern: Pattern[AnyStr@compile] = re.compile(r"\.method.+?(?P<name>\S+?)" +
-                                                      r"\((?P<args>\S*?)\)" +
-                                                      r"(?P<return>\S+)",
-                                                      re.UNICODE)
+        pattern = re.compile(r"\.method.+?(?P<name>\S+?)" +
+                             r"\((?P<args>\S*?)\)" +
+                             r"(?P<return>\S+)",
+                             re.UNICODE)
 
         # store all method names into a list
         self._method_names: Set[str] = set()

@@ -10,14 +10,19 @@ def main():
                    force=True)
 
     ###### obfuscate stuff ######
-    """ PURGE LOGS """
     dissect: Dissect = Dissect("./.tmp/apktool")
+
+    """ PURGE LOGS """
     purge_logs: PurgeLogs = PurgeLogs(dissect)
     purge_logs.run(a=True, d=True, e=True, i=True, v=True, w=True, wtf=True)
 
     """ INJECT GOTOS IN METHODS """
     goto_inject: GotoInjector = GotoInjector(dissect)
     goto_inject.run()
+
+    """ TESTING """
+    testing: ReorderLabels = ReorderLabels(dissect)
+    testing.run()
 
     ###### obfuscate stuff ######
 
@@ -46,8 +51,11 @@ def main():
 if __name__ == "__main__":
     logger.info("__INIT__")
     main()
+
+    # testing getting of method names
     # dissect: Dissect = Dissect("./.tmp/apktool")
     # dissect.method_names()
     # dissect.method_names()
+
 
 logger.info("__EOF__")
