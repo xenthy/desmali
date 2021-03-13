@@ -20,9 +20,9 @@ def main():
     goto_inject: GotoInjector = GotoInjector(dissect)
     goto_inject.run()
 
-    """ TESTING """
-    testing: ReorderLabels = ReorderLabels(dissect)
-    testing.run()
+    """ REORDER LABELS """
+    reorder_labels: ReorderLabels = ReorderLabels(dissect)
+    reorder_labels.run()
 
     ###### obfuscate stuff ######
 

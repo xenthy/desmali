@@ -14,10 +14,14 @@ def main():
     dissect: Dissect = Dissect("./.tmp/apktool")
     purge_logs: PurgeLogs = PurgeLogs(dissect)
     purge_logs.run(a=False, d=True, e=False, i=False, v=True, w=False, wtf=True)
-    
+
     """ INJECT GOTOS IN METHODS """
     goto_inject: GotoInjector = GotoInjector(dissect)
     goto_inject.run()
+
+    """ REORDER LABELS """
+    reorder_labels: ReorderLabels = ReorderLabels(dissect)
+    reorder_labels.run()
 
     ###### obfuscate stuff ######
 

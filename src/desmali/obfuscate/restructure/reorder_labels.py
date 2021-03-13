@@ -19,7 +19,7 @@ class ReorderLabels:
         last_is_goto: bool = False
 
         for filename in Util.progress_bar(self._dissect.smali_files(),
-                                          description="Testing some shit"):
+                                          description="Randomly reordering labels"):
 
             logger.debug(f"reordering file: {filename}")
 
