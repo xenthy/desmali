@@ -49,7 +49,7 @@ def main():
     initial_num, current_num = dissect.line_count_info()
     logger.info(f"Line count: Initial: {initial_num} - " +
                 f"Current: {current_num} - " +
-                f"Added: {current_num - initial_num}")
+                "Added: {:.2f}".format(current_num / initial_num))
     # import pty
     # pty.spawn("/bin/bash")
 
