@@ -1,5 +1,6 @@
 from contextlib import contextmanager
 
+import fileinput
 from tqdm import tqdm
 from in_place import InPlace
 
@@ -23,11 +24,18 @@ class Util:
     @contextmanager
     def inplace_file(filename: str):
         """
-        Write to a file in place
+        Write to a file in place (in_place)
         """
         with InPlace(filename) as file:
             yield file
 
+    @contextmanager
+    def file_input(filename: str):
+        """
+        Write to a file in place (fileinput)
+        """
+        with fileinput.input(filename, inplace=True) as file:
+            yield file
 
 if __name__ == "__main__":
     with Util.inplace_file("data.txt") as file:

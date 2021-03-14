@@ -1,5 +1,6 @@
 import sys
 import re
+from desmali.extras import Util, logger
 import fileinput
 
 class StringConstants:
@@ -14,8 +15,9 @@ class StringConstants:
 
     # TODO: Change filename to dynamic/full path in registries
     def obfuscate(self, filename):
-        with fileinput.input(filename, inplace=True) as f:
-            for line in f:
+        # with fileinput.input(filename, inplace=True) as f:
+        with Util.file_input(filename) as f:
+            for line_num, line in enumerate(f):
                 if self.STRING_FIELD in line:
                     # TODO: Process the line and extract the value
                     value = self.extractValue(line)
@@ -25,8 +27,10 @@ class StringConstants:
                         # print(replacement, end = '\n')
 
                         # NOTE: if changed to deobfus function call, modify to end = '\n'
-                        print(line.replace(value,"changed"), end = '') 
-                        self.SFIELD_REGISTRY.append({filename, fileinput.lineno})
+                        # print(line.replace(value,"changed"), end = '') 
+                        print("invoke-static {}, LClass3;->getObfuString()Ljava/lang/String;", end = '\n')
+                        print("move-result-object v0", end = '\n')
+                        self.SFIELD_REGISTRY.append({filename, line_num})
 
                 elif self.STRING_LITERAL in line:
                     # TODO: Process the line and extract the value
@@ -37,8 +41,11 @@ class StringConstants:
                         # print(replacement, end = '\n')
 
                         # NOTE: if changed to deobfus function call, modify to end = '\n'
-                        print(line.replace(value,"changed"), end = '')
-                        self.SLITERAL_REGISTRY.append({filename, fileinput.lineno})
+                        # print(line.replace(value,"changed"), end = '')
+                        print("invoke-static {}, LClass3;->getObfuString()Ljava/lang/String;", end = '\n')
+                        print("move-result-object v0", end = '\n')
+                        self.SLITERAL_REGISTRY.append({filename, line_num})
+                        
 
                 else:
                     print(line, end = '')
