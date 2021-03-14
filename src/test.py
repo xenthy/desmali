@@ -43,6 +43,12 @@ def main():
     dex2jar.to_jar(input_apk_path="./.tmp/signed.apk",
                    output_jar_path="./.tmp/signed.jar")
 
+    # get number of smali lines before and after obfuscation
+    initial_num, current_num = dissect.line_count_info()
+    logger.info(f"Line count: Initial: {initial_num} - " +
+                f"Current: {current_num} - " +
+                f"Added: {current_num - initial_num}")
+
 
 if __name__ == "__main__":
     logger.info("__INIT__")

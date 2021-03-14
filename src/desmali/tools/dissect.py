@@ -13,9 +13,30 @@ class Dissect:
         else:
             self.decoded_dir_path = decoded_dir_path
 
-        # run default methods
+        ### INITIAL OPERATIONS ###
+        # locate all smali files
+        self.smali_files()
+
+        # set initial number of lines in all the smali files
+        self._initial_num_lines = len(self)
+
+    def __len__(self) -> int:
+        # define variable
+        num_of_lines: int = 0
+
+        # count the number of non-empty lines
+        for filename in Util.progress_bar(self._smali_files,
+                                          description="Calculating number of smali lines"):
+            with open(filename, "r", newline="") as file:
+                for line in file:
+                    if line.strip():
+                        num_of_lines += 1
+        return num_of_lines
 
     def smali_files(self) -> Tuple[str]:
+        """
+        Get all smali file paths recursively from the specified directory
+        """
         # check if function has already been executed
         if hasattr(self, "_smali_files"):
             return self._smali_files
@@ -34,6 +55,13 @@ class Dissect:
         self._smali_files = tuple(self._smali_files)
 
         return self._smali_files
+
+    def line_count_info(self) -> Tuple[int, int]:
+        """
+        Returns the initial number of lines when this object was created and
+        the current number of lines.
+        """
+        return self._initial_num_lines, len(self)
 
     def method_names(self, skip_virtual_methods: bool = False) -> Tuple[str]:
         # check if function has already been executed
