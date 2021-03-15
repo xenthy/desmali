@@ -1,0 +1,151 @@
+<!doctype html>
+{% extends "base.html"%}
+<html>
+<head>
+    <title>{% block title %}{% endblock %}</title>
+    {% block script %}
+    {% endblock%}
+</head>
+
+<body>
+
+    
+    {%block content%}
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+      <h1 class="h3 mb-0 text-gray-800">Results</h1>
+  </div>
+
+    <div class="row">
+      <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card bg-gradient-info h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-light text-uppercase mb-1">File Content
+                            </div>
+                        <div class="h5 mb-0 font-weight-bold text-light" >{{apk_name}}</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xl-3 col-md-6 mb-4">
+      <div class="card bg-gradient-info h-100 py-2">
+          <div class="card-body">
+              <div class="row no-gutters align-items-center">
+                  <div class="col mr-2">
+                      <div class="text-xs font-weight-bold text-light text-uppercase mb-1">Size Overhead 
+                          </div>
+                      <div class="h5 mb-0 font-weight-bold text-light" >{{size_overhead}}</div>
+                  </div>
+              </div>
+          </div>
+      </div>
+  </div>
+
+  <div class="col-xl-3 col-md-6 mb-4">
+    <div class="card bg-gradient-info h-100 py-2">
+        <div class="card-body">
+            <div class="row no-gutters align-items-center">
+                <div class="col mr-2">
+                    <div class="text-xs font-weight-bold text-light text-uppercase mb-1">Time Overhead
+                        </div>
+                    <div class="h5 mb-0 font-weight-bold text-light" >{{time_overhead}}</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="col-xl-3 col-md-6 mb-4">
+  <div class="card bg-gradient-info h-100 py-2">
+      <div class="card-body">
+          <div class="row no-gutters align-items-center">
+              <div class="col mr-2">
+                  <div class="text-xs font-weight-bold text-light text-uppercase mb-1">
+                    No. of wrong instructions from reverse engineer:
+                      </div>
+                  <div class="h5 mb-0 font-weight-bold text-light" >{{instructions}}</div>
+              </div>
+          </div>
+      </div>
+  </div>
+</div>
+
+  </div>
+
+  <div class="row">
+<div class="col-xl-3 col-lg-4 scroll">
+  <div class="card shadow mb-4 ">
+  <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+    <h6 class="m-0 font-weight-bold text-primary">File Tree</h6>
+</div>
+  <div class ="card-body" style="height:500px; overflow:scroll;">
+    <div id="filetree" class="transparent-effect" ></div>
+  </div>
+</div>
+</div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.12.1/jquery.min.js"></script>
+    <script src="/static/jsTree/jstree.min.js"></script>
+    <script> 
+    $(function() {
+
+    // 6 create an instance when the DOM is ready
+    var d = JSON.parse('{{ data | tojson | safe}}');
+
+    $('#filetree').jstree({ 'core' : {
+      'data' : d
+    } });
+
+    // 7 bind to events triggered on the tree
+    $('#filetree').on("changed.jstree", function (e, data) {
+      //if file , then get text
+      if(data.node.icon == "/static/jsTree/themes/default/file.png"){
+        var d = {'data': data.selected[0]};
+        console.log(d);
+        $.ajax({
+            type: 'post',
+            url: '/viewlines',
+            contentType: "application/json",
+            data: JSON.stringify(d),
+            success: function (data) {
+              document.getElementById("file_output").innerHTML = data;
+            },
+            error: function (XMLHttpRequest, textStatus, errorThrown) {
+                alert("Status: " + textStatus); alert("Error: " + errorThrown);
+            }
+
+        });
+
+      }
+
+    });
+    // 8 interact with the tree - either way is OK
+    $('button').on('click', function () {
+    $('#filetree').jstree(true).select_node('child_node_1');
+    $('#filetree').jstree('select_node', 'child_node_1');
+    $.jstree.reference('#filetree').select_node('child_node_1');
+    });
+});
+    
+    </script>
+
+    <div class ="col-lg-8">
+      <div class="card shadow mb-4">
+        <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+          <h6 class="m-0 font-weight-bold text-primary">FileName</h6>
+      </div>
+      <div class="card-body " style="height:500px; overflow:scroll;">
+        <pre id="file_output"></pre>
+      </div>
+    </div>
+    </div>
+  </div>
+
+    {% endblock %}
+
+
+</body>
+
+</html>
