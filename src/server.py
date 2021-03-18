@@ -2,9 +2,10 @@
 
 import os
 import json
-
-
 from flask import Flask, request, render_template, jsonify
+from waitress import serve
+
+from desmali.extras import logger
 
 app = Flask(__name__)
 
@@ -51,56 +52,57 @@ def get_nodes_from_path(path):
 def index():
     return render_template("index.html")
 
-@app.route('/result', methods=['GET','POST'])
+
+@app.route('/result', methods=['GET', 'POST'])
 def result():
-    #save apk to .tmp folder
+    # save apk to .tmp folder
     upload_file = request.files['file']
     upload_file.save("../.tmp/"+upload_file.filename)
 
-    # get obfuscation options 
+    # get obfuscation options
     options = request.form.getlist('options')
     string_obf = True if '1' in options else False
     cfg_obf = True if '2' in options else False
     remove_log = True if '3' in options else False
-    
-    #do all the stuff
-    print(string_obf,cfg_obf,remove_log)
+
+    # do all the stuff
+    print(string_obf, cfg_obf, remove_log)
     size_overhead = "10mb"
     time_overhead = "10sec"
     instructions = "20"
-
 
     # Find and display all file and folder for jstree
     path = ""
     unique_nodes = []
     for root, dirs, files in os.walk("../.tmp"):
         for name in files:
-            path = os.path.join(root,name)
+            path = os.path.join(root, name)
             nodes = get_nodes_from_path(path)
             for node in nodes:
                 if not any(node.is_equal(unode) for unode in unique_nodes):
                     unique_nodes.append(node)
-    
+
     data = [node.as_json() for node in unique_nodes]
-    return render_template("result.html", \
-        apk_name = upload_file.filename, \
-        size_overhead = size_overhead, \
-        time_overhead = time_overhead, \
-        instructions = instructions, \
-        data = data)
+    return render_template("result.html",
+                           apk_name=upload_file.filename,
+                           size_overhead=size_overhead,
+                           time_overhead=time_overhead,
+                           instructions=instructions,
+                           data=data)
+
 
 @app.route('/viewlines', methods=['POST'])
 def viewlines():
     try:
         file_name = request.json["data"].strip()
-        with open (file_name, "r") as f:
+        with open(file_name, "r") as f:
             content = f.read()
         return jsonify(content)
     except:
         return "Non readable ascii"
 
 
-
-
 if __name__ == "__main__":
+    logger.info("server running at http://localhost:6969")
     app.run(host="0.0.0.0", port=6969)
+    # serve(app, host="0.0.0.0", port=6969)

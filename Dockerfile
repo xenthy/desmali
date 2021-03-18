@@ -32,5 +32,6 @@ RUN pip3 install --quiet --no-cache-dir -r requirements.txt
 EXPOSE 6969
 
 # Run the program
-CMD ["python3", "src/server.py"]
+CMD ["python3", "src/main.py"]
+# CMD ["python3", "src/server.py"]
 # CMD ["/bin/bash"]
