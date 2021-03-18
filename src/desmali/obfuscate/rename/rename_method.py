@@ -33,10 +33,6 @@ class RenameMethod:
                 new_name = letters[index - 1] + new_name
             self._method_name_mapping[name] = new_name
 
-        with open("mapping.txt", "w+") as file:
-            for k, v in self._method_name_mapping.items():
-                file.write(f"{v} - {k}\n")
-
         for filename in Util.progress_bar(self._dissect.smali_files(),
                                           description="Renaming method names"):
 
