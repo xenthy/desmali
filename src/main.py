@@ -1,3 +1,4 @@
+from os import rename
 from desmali.tools import Apktool, Zipalign, Apksigner, Dex2jar, Dissect
 from desmali.obfuscate import *
 from desmali.extras import logger
@@ -19,6 +20,10 @@ def main():
     """ INJECT GOTOS IN METHODS """
     goto_inject: GotoInjector = GotoInjector(dissect)
     goto_inject.run()
+
+    """ RENAME METHODS"""
+    rename_method: RenameMethod = RenameMethod(dissect)
+    rename_method.run()
 
     """ REORDER LABELS """
     reorder_labels: ReorderLabels = ReorderLabels(dissect)
@@ -50,6 +55,7 @@ def main():
     logger.info(f"Line count: Initial: {initial_num} - " +
                 f"Current: {current_num} - " +
                 "Added: {:.2f}".format(current_num / initial_num))
+
     # import pty
     # pty.spawn("/bin/bash")
 
