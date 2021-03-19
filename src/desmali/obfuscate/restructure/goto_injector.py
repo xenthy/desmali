@@ -30,33 +30,54 @@ class GotoInjector:
 
             with Util.inplace_file(filename) as file:
                 for line in file:
-                    if regex.LABEL.match(line):
-                        first_label = True
-                    if regex.GOTO.match(line):
-                        first_goto = True
+                    # check if first label has been reached
+                    if not first_label:
+                        if regex.LABEL.match(line):
+                            first_label = True
 
+                    # check if first goto has been reached
+                    if not first_goto:
+                        if regex.GOTO.match(line):
+                            first_goto = True
+
+                    # if not in a method, check if the current line is a method
+                    # declaration and check if a method is not abstract or a
+                    # constructor
                     if not in_method:
                         if regex.METHOD.match(line):
                             if ("abstract" not in line
                                     and "constructor" not in line):
                                 in_method = True
+                        # write every line to file for this condition
                         file.write(line)
 
-                    else:  # is in_method
+                    # if in a method
+                    else:
+                        # if the end of a method has been reached, check if first label
+                        # or first goto has been reached, if true, then wrap the label blocks
+                        # with our goto injectors
                         if line.startswith(".end method"):
                             if first_label or first_goto:
-                                method_lines = [START_GOTO] + \
-                                    method_lines + [END_GOTO]
+                                method_lines = [START_GOTO] + method_lines + [END_GOTO]
+
                             file.writelines(method_lines)
+                            method_lines = list()  # reset the list
+
+                            # write the ".end method" line after writing the modified blocks
                             file.write(line)
 
-                            method_lines = list()
+                            # reset variables
                             in_method = False
                             first_label = False
                             first_goto = False
                             continue
 
+                        # if first label or first goto has been reached, append line to
+                        # the method_lines list until ".end method" has been reached
                         if first_label or first_goto:
                             method_lines.append(line)
+
+                        # if the first label or goto has not been reached, write line to
+                        # file
                         else:
                             file.write(line)
