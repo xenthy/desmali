@@ -1,8 +1,10 @@
+from typing import List
+
 from desmali.extras import logger, Util, regex
 from desmali.tools import Dissect
 
-START_GOTO = "\n    goto :desmaili_back \n\n    :desmaili_front\n\n"
-END_GOTO = "\n    :desmaili_back\n\n    goto :desmaili_front\n\n"
+START_GOTO = "    goto :desmaili_back \n    :desmaili_front\n\n"
+END_GOTO = "\n    :desmaili_back\n    goto :desmaili_front\n\n"
 
 
 class GotoInjector:
@@ -20,61 +22,41 @@ class GotoInjector:
         for filename in Util.progress_bar(self._dissect.smali_files(),
                                           description=f"Injecting goto(s): "):
             logger.debug(f"modifying \"{filename}\"")
-            is_started: bool = False
-            white_list = []
-            
+
+            method_lines: List[str] = list()
+            in_method: bool = False
+            first_label: bool = False
+            first_goto: bool = False
 
             with Util.inplace_file(filename) as file:
-
-                white_list = self.methodLabels(file)
-
                 for line in file:
-                    # check for start of method in whitelist
-                    #if ".method" in line and "abstract" not in line:
-                    if any(mtd in line for mtd in white_list):
-                        file.write(line)
-                        file.write(START_GOTO)
-                        is_started = True
+                    if regex.LABEL.match(line):
+                        first_label = True
+                    if regex.GOTO.match(line):
+                        first_goto = True
 
-                    # check for the end of method
-                    elif ".end method" in line and is_started:
-                        is_started = False
-                        file.write(END_GOTO)
-                        file.write(line)
-
-                    else:
+                    if not in_method:
+                        if regex.METHOD.match(line):
+                            if ("abstract" not in line
+                                    and "constructor" not in line):
+                                in_method = True
                         file.write(line)
 
-    def methodLabels(self, file):
+                    else:  # is in_method
+                        if line.startswith(".end method"):
+                            if first_label or first_goto:
+                                method_lines = [START_GOTO] + \
+                                    method_lines + [END_GOTO]
+                            file.writelines(method_lines)
+                            file.write(line)
 
-        in_method: bool = False
-        curr_method: str = ""
-        white_list = []
+                            method_lines = list()
+                            in_method = False
+                            first_label = False
+                            first_goto = False
+                            continue
 
-        for line in file:
-
-            # check for the start of a method that is not abstract or a constructor
-            if regex.METHOD.match(line) and "abstract" not in line and "constructor" not in line:
-                in_method = True
-                cm = line.split("(")
-                curr_method = cm[0]
-            
-            # check for if there is a label in the constructor
-            # if yes, the method will be added to the whitelist
-            elif in_method == True and regex.LABEL.match(line):
-                white_list.append(curr_method)
-                curr_method = ""
-
-            # check for the end of the method
-            elif ".end method" in line and in_method:
-                in_method = False
-        
-            file.write(line)
-        
-        # remove any null elements and duplicates in whitelist
-        white_list = filter(None, white_list)
-        white_list = list(set(white_list))
-
-        return white_list
-
-
+                        if first_label or first_goto:
+                            method_lines.append(line)
+                        else:
+                            file.write(line)
