@@ -63,11 +63,7 @@ class Dissect:
         """
         return self._initial_num_lines, len(self)
 
-    def method_names(self, skip_virtual_methods: bool = False) -> Tuple[str]:
-        # check if function has already been executed
-        if hasattr(self, "_method_names"):
-            return self._method_names
-
+    def method_names(self, renamable: bool = False) -> Tuple[str]:
         # check if smali_files() has already been executed
         if not hasattr(self, "__smali_files"):
             self.__smali_files: List[str] = self.smali_files()
@@ -80,20 +76,34 @@ class Dissect:
         # iterate through all the smali files
         for filename in Util.progress_bar(self.__smali_files,
                                           description="Retrieving methods from all smali files"):
+
             with open(filename, "r") as file:
                 # identify lines which contains methods
                 for line in file:
-                    # skip virtual methods if @param:skip_virtual_methods is set to true.
-                    # virtual methods are always at the bottom of the smali file, hence,
-                    # 'break' is used
-                    if skip_virtual_methods and line.startswith("# virtual methods"):
-                        break
 
-                    if (match := regex.METHOD.match(line)):
-                        method_name = match.group("name")
-                        self._method_names.add(method_name)
+                    if renamable:
+                        class_match = regex.CLASS.match(line)
+                        if class_match is not None:
+                            class_name = class_match.group("name")
+
+                            if (class_name.startswith("Landroid")
+                                    or class_name.startswith("Ljava")
+                                    or class_name.startswith("Lkotlin")):
+                                break
+                        # skip virtual methods if @param:skip_virtual_methods is set to true.
+                        # virtual methods are always at the bottom of the smali file, hence,
+                        # 'break' is used
+                        if "# virtual methods" in line:
+                            break
+
+                    if ((match := regex.METHOD.match(line))
+                        and "<init>" not in line
+                        and "abstract" not in line
+                        and "native" not in line
+                            and "<clinit>" not in line):
+                        method_name = match.group("method")
+                        self._method_names.add(f"{class_name}|{method_name}")
 
         # convert set to tuple to prevent modification
         self._method_names = tuple(self._method_names)
-
         return self._method_names

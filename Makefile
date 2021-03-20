@@ -7,14 +7,18 @@ endif
 PFLAGS=-3.8-64
 
 TARGET?=src/main
+SERVER?=src/server
 CHECK?=src/test
 # SOURCES:=$(wildcard src/*.py)
 SOURCES = $(shell find src/ -type f -name '*.py')
 
-.PHONY: all check docker dockerclean clean
+.PHONY: all check docker dockerclean clean server
 
 all:
 	$(CC) $(TARGET).py
+
+server:
+	$(CC) $(SERVER).py
 
 check:
 	python -m py_compile $(SOURCES)
@@ -22,7 +26,7 @@ check:
 
 docker:
 	docker build -t obfuscator:latest .
-	docker run -ti obfuscator
+	docker run -ti -p 6969:6969/tcp obfuscator
 
 dockerclean:
 	docker system prune -a

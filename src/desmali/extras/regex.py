@@ -1,8 +1,11 @@
 import re
 
+# .class public Lcom/google/android/material/button/MaterialButton;
+CLASS = re.compile(r"\.class.+?(?P<name>\S+?;)")
+
 # regex pattern to identify lines that contains a method
 # read more about Named Capturing Groups: https://www.regular-expressions.info/refext.html
-METHOD = re.compile(r"\.method.+?(?P<name>\S+?)" +
+METHOD = re.compile(r"\.method.+?(?P<method>\S+?)" +
                     r"\((?P<args>\S*?)\)" +
                     r"(?P<return>\S+)",
                     re.UNICODE)
@@ -42,3 +45,11 @@ LOCALS = re.compile(r"\s+\.locals\s(?P<local_count>\d+)")
 SKIP_FILE = re.compile(r"/androidx?/")
 
 COM_PATH = re.compile(r"/(com/.+)")
+
+# invoke-static {v4, v4}, Landroid/util/Log;->v(Ljava/lang/String;Ljava/lang/String;)I
+INVOKE = re.compile(r"^[ ]{4}(?P<invocation>invoke-\S+)\s"
+                    r"{(?P<variables>[0-9pv.,\s]*)},\s"
+                    r"(?P<class>\S+?)"
+                    r"->(?P<method>\S+?)"
+                    r"\((?P<args>\S*?)\)"
+                    r"(?P<return_type>\S+)")

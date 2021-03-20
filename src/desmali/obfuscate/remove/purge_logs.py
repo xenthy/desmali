@@ -1,7 +1,7 @@
 import re
 from typing import List
 
-from desmali.extras import logger, Util
+from desmali.extras import logger, Util, regex
 from desmali.tools import Dissect
 
 
@@ -24,7 +24,10 @@ class PurgeLogs():
         logger.verbose(f"logs set for purging -> {flags_set}")
 
         # build regex
-        pattern: str = "Landroid\/util\/Log;->(" + "|".join(flags_set) + ")"
+        # Landroid/util/Log;->v(Ljava/lang/String;Ljava/lang/String;)I
+        pattern_log = re.compile(r".*Landroid\/util\/Log;->(" +
+                                 r"|".join(flags_set) +
+                                 r").*")
 
         for file in Util.progress_bar(self._dissect.smali_files(),
                                       description=f"Removing logs: {flags_set}"):
@@ -33,24 +36,14 @@ class PurgeLogs():
                 original_file: List[str] = file_context.readlines()
 
             # remove logs and nonsense from original file
-            skip: bool = False
             is_modified: bool = False
             modified_file: List[str] = []
 
+            # TODO: remove variables associated with the log
             for line in original_file:
-                # # skip next line if previous line has a match
-                # if skip:
-                #     skip = False
-                #     continue
-
                 # check for lines with logs
-                if re.search(pattern, line):
+                if pattern_log.match(line):
                     is_modified = True
-                    skip = True
-
-                    # # check if previous line has junk (eg. ".line 32")
-                    # if modified_file[-1] is not None:
-                    #     del modified_file[-1]
                 else:
                     modified_file.append(line)
 
@@ -58,7 +51,7 @@ class PurgeLogs():
             if not is_modified:
                 continue
 
-            logger.debug(f"modifying \"{file}\"")
+            logger.debug(f"purging logs \"{file}\"")
 
             with open(file, "w") as file_context:
                 file_context.writelines(modified_file)

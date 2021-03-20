@@ -29,8 +29,9 @@ COPY / /ict2207
 RUN pip3 install --quiet --no-cache-dir -r requirements.txt
 
 # For flask
-EXPOSE 8000
+EXPOSE 6969
 
 # Run the program
 CMD ["python3", "src/main.py"]
+# CMD ["python3", "src/server.py"]
 # CMD ["/bin/bash"]
