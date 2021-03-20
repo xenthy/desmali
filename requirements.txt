@@ -3,3 +3,4 @@ Flask==1.1.2
 in-place==0.5.0
 tqdm==4.59.0
 waitress==2.0.0
+crypto=1.4.1
