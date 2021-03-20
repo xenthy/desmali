@@ -21,3 +21,24 @@ TRY_CATCH = re.compile(r"^[ ]{4}.catch.+?"
                        r"{(?P<try_start>:\S*)"
                        r".+?(?P<try_end>:\S*)}"
                        r"[ ](?P<handler>:\S*)")
+
+# string constants
+STATIC_STRING = re.compile(
+        r"\.field.+?static.+?(?P<string_name>\S+?):"
+        r'Ljava/lang/String;\s=\s"(?P<string_value>.+)"',
+        re.UNICODE,
+        )
+
+CONST_STRING = re.compile(
+        r"\s+const-string(/jumbo)?\s(?P<register>[vp0-9]+),\s" 
+        r'"(?P<string>.+)"',
+        re.UNICODE,
+        )
+
+CLASS_NAME = re.compile(r"\.class.+?(?P<class_name>\S+?;)", re.UNICODE)
+
+LOCALS = re.compile(r"\s+\.locals\s(?P<local_count>\d+)")
+
+SKIP_FILE = re.compile(r"/androidx?/")
+
+COM_PATH = re.compile(r"/(com/.+)")
