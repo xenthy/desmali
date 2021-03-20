@@ -12,6 +12,10 @@ def main():
     ###### obfuscate stuff ######
     dissect: Dissect = Dissect("./.tmp/apktool")
 
+    # """ ENCRYPT STRING """
+    # string_constants: StringConstants = StringConstants(dissect)
+    # string_constants.obfuscate()
+
     """ PURGE LOGS """
     purge_logs: PurgeLogs = PurgeLogs(dissect)
     purge_logs.run(a=True, d=True, e=True, i=True, v=True, w=True, wtf=True)
