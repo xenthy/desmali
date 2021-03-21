@@ -3,6 +3,7 @@ from typing import List, Set, Tuple
 
 from desmali.extras import logger, Util, regex
 
+from pyaxmlparser import APK
 
 class Dissect:
     def __init__(self, decoded_dir_path: str):
@@ -33,12 +34,12 @@ class Dissect:
                         num_of_lines += 1
         return num_of_lines
 
-    def smali_files(self) -> Tuple[str]:
+    def smali_files(self, update=False) -> Tuple[str]:
         """
         Get all smali file paths recursively from the specified directory
         """
         # check if function has already been executed
-        if hasattr(self, "_smali_files"):
+        if hasattr(self, "_smali_files") and not update:
             return self._smali_files
 
         logger.verbose("getting all .smali files from decoded directory")
@@ -107,3 +108,58 @@ class Dissect:
         # convert set to tuple to prevent modification
         self._method_names = tuple(self._method_names)
         return self._method_names
+
+    def class_names(self, renamable: bool = False) -> Tuple[str]:
+        # check if smali_files() has already been executed
+        if not hasattr(self, "__smali_files"):
+            self.__smali_files: List[str] = self.smali_files()
+
+        logger.verbose("getting all class names from the list of smali files")
+
+        # store all class names into a list
+        self._class_names: Set[str] = set()
+
+        # get all activities in xml file (cannot be renamed)
+        apk = APK("./original.apk")
+        activities = apk.get_activities()
+        activities = [a.split(".")[-1] for a in activities]
+        
+        # iterate through all the smali files
+        for filename in Util.progress_bar(self.__smali_files,
+                                          description="Retrieving classes from all smali files"):
+
+            with open(filename, "r") as file:
+                # identify lines which contains classes
+                for line in file:
+
+                    if renamable:
+                        class_match = regex.CLASSES.search(line)
+                        if class_match is not None:
+                            class_name = class_match.group()
+
+                            if (class_name.startswith("Landroid")
+                                    or class_name.startswith("Ljava")
+                                    or class_name.startswith("Lkotlin")
+                                    or class_name.startswith("Lcom/google")
+                                    or class_name.startswith("Lorg")):
+                                    
+                                break
+                            self._class_names.add(class_name[:-1])
+                            # for index, a in enumerate(activities):
+                            #     if a in class_name[1:-1]:
+                            #         break
+                            #     if index == len(activities)-1:
+                            #         self._class_names.add(class_name[:-1])
+                            
+                        if "# virtual methods" in line:
+                            break 
+
+                    else:
+                        if match := regex.CLASSES.search(line):
+                            class_name = match.group()[:-1]
+                            self._class_names.add(class_name)
+                            
+
+        # convert set to tuple to prevent modification
+        self._class_names = tuple(self._class_names)
+        return self._class_names

@@ -3,8 +3,10 @@ from desmali.tools import Apktool, Zipalign, Apksigner, Dex2jar, Dissect
 from desmali.obfuscate import *
 from desmali.extras import logger
 
+from desmali.obfuscate.rename.rename_class import RenameClass
 
 def main():
+
     apktool: Apktool = Apktool()
     apktool.decode(apk_path="original.apk",
                    output_dir_path="./.tmp/apktool",
@@ -28,6 +30,11 @@ def main():
     """ RENAME METHODS"""
     rename_method: RenameMethod = RenameMethod(dissect)
     rename_method.run()
+
+    """ RENAME CLASS """
+    rename_class: RenameClass = RenameClass(dissect)
+    rename_class.run()
+    dissect.smali_files(True) # need to update smali files after renaming
 
     """ REORDER LABELS """
     reorder_labels: ReorderLabels = ReorderLabels(dissect)
