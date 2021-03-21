@@ -10,18 +10,28 @@ def main():
                    force=True)
 
     ###### obfuscate stuff ######
-    """ PURGE LOGS """
     dissect: Dissect = Dissect("./.tmp/apktool")
-    purge_logs: PurgeLogs = PurgeLogs(dissect)
-    purge_logs.run(a=False, d=True, e=False, i=False, v=True, w=False, wtf=True)
 
-    """ INJECT GOTOS IN METHODS """
-    goto_inject: GotoInjector = GotoInjector(dissect)
-    goto_inject.run()
+    """ PURGE LOGS """
+    purge_logs: PurgeLogs = PurgeLogs(dissect)
+    purge_logs.run(a=True, d=True, e=True, i=True, v=True, w=True, wtf=True)
 
     """ RENAME METHODS"""
     rename_method: RenameMethod = RenameMethod(dissect)
     rename_method.run()
+
+    """ RENAME CLASS """
+    rename_class: RenameClass = RenameClass(dissect)
+    rename_class.run()
+    dissect.smali_files(True)  # need to update smali files after renaming
+
+    """ ENCRYPT STRING """
+    string_constants: StringConstants = StringConstants(dissect)
+    string_constants.obfuscate()
+
+    """ INJECT GOTOS IN METHODS """
+    goto_inject: GotoInjector = GotoInjector(dissect)
+    goto_inject.run()
 
     """ REORDER LABELS """
     reorder_labels: ReorderLabels = ReorderLabels(dissect)

@@ -3,7 +3,6 @@ from desmali.tools import Apktool, Zipalign, Apksigner, Dex2jar, Dissect
 from desmali.obfuscate import *
 from desmali.extras import logger
 
-from desmali.obfuscate.rename.rename_class import RenameClass
 
 def main():
 
@@ -15,17 +14,9 @@ def main():
     ###### obfuscate stuff ######
     dissect: Dissect = Dissect("./.tmp/apktool")
 
-    # """ ENCRYPT STRING """
-    # string_constants: StringConstants = StringConstants(dissect)
-    # string_constants.obfuscate()
-
     """ PURGE LOGS """
     purge_logs: PurgeLogs = PurgeLogs(dissect)
     purge_logs.run(a=True, d=True, e=True, i=True, v=True, w=True, wtf=True)
-
-    """ INJECT GOTOS IN METHODS """
-    goto_inject: GotoInjector = GotoInjector(dissect)
-    goto_inject.run()
 
     """ RENAME METHODS"""
     rename_method: RenameMethod = RenameMethod(dissect)
@@ -34,7 +25,15 @@ def main():
     """ RENAME CLASS """
     rename_class: RenameClass = RenameClass(dissect)
     rename_class.run()
-    dissect.smali_files(True) # need to update smali files after renaming
+    dissect.smali_files(True)  # need to update smali files after renaming
+
+    """ ENCRYPT STRING """
+    string_constants: StringConstants = StringConstants(dissect)
+    string_constants.obfuscate()
+    
+    """ INJECT GOTOS IN METHODS """
+    goto_inject: GotoInjector = GotoInjector(dissect)
+    goto_inject.run()
 
     """ REORDER LABELS """
     reorder_labels: ReorderLabels = ReorderLabels(dissect)
