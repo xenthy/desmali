@@ -14,6 +14,10 @@ class StringConstants:
         self.decryptor_added = False
 
     def encryptString(self, plaintext):
+        '''
+        Encrypt a plaintext string using AES-ECB
+        Returns ciphertext
+        '''
         plaintext = plaintext.encode(errors="replace").decode("unicode_escape")
         key = PBKDF2(
                 password=self.key,
@@ -24,19 +28,30 @@ class StringConstants:
         return ciphertext
     
     def obfuscate(self):
+        '''
+        Main string obfuscation module
+
+        Loops through and encrypts all string entries in smali files
+        - skips files in the "android" and "androidx" directories
+        '''
         skipped_files = 0
         files_processed = 0
         dest_dir = None
         strings_encrypted = set()
+
         for filename in Util.progress_bar(self._dissect.smali_files(), description="Encrypting strings"):
 
             skip_file_search = regex.SKIP_FILE.search(os.path.dirname(filename))
+
+            # Debugging/Info purposes, tracks number of files skipped/obfuscated (processed)
             if skip_file_search: 
                 skipped_files += 1
                 continue
             else:
                 files_processed += 1
 
+            # Identifies the full "com" path which conatins "MainActivity.smali"
+            # Used in the storing of smali string decryptor file
             com_path_search = regex.COM_PATH.search(os.path.dirname(filename))
             if com_path_search:
                 com_path = com_path_search[1] 
@@ -50,21 +65,22 @@ class StringConstants:
                 with open(filename, 'r', encoding='utf-8') as f:
                     lines = f.readlines()
 
-                static_index = []
-                static_name = []
-                static_val = []
+                static_index = [] # Line number of Static String found
+                static_name = [] # Variable Name of Static String found
+                static_val = [] # Value of Static String found
 
-                const_index = []
-                const_register = []
-                const_val = []
+                const_index = [] # Line number of Constant String found
+                const_register = [] # Register of Constant String found
+                const_val = [] # Value of Constant String found in register
 
-                # class_name = []
                 class_name = None
                 direct_methods_line = -1
                 static_constructor_line = -1
                 locals_count = 0
 
                 # logger.info(f"Encrypting strings in {filename}:{len(lines)}")
+
+                # Identification and storing of important lines in smali file
                 for line_num, line in enumerate(lines):
                     if not class_name:
                         class_match = regex.CLASS_NAME.match(line)
@@ -80,6 +96,7 @@ class StringConstants:
                         static_constructor_line = line_num
                         continue
 
+                    # Identification and indexing of Static String found
                     static_str = regex.STATIC_STRING.match(line)
                     if static_str and static_str.group("string_value"):
                         static_index.append(line_num)
@@ -91,6 +108,7 @@ class StringConstants:
                         locals_count = int(locals_match.group("local_count"))
                         continue
 
+                    # Identification and indexing of Constant String found
                     const_str = regex.CONST_STRING.match(line)
                     if const_str and const_str.group("string"):
                         reg_type = const_str.group("register")[:1]
@@ -102,7 +120,7 @@ class StringConstants:
                             const_val.append(const_str.group("string"))
 
 
-                # Encrypt const string
+                # Encrypt Constant Strings
                 for list_num, const_line in enumerate(const_index):
                     lines[const_line] = (
                             '\tconst-string/jumbo {register}, "{ciphertext}"\n'
@@ -119,11 +137,10 @@ class StringConstants:
                     strings_encrypted.add(const_val[list_num])
 
 
-                # Encrypt static string
+                # Encrypt Static Strings
                 static_enc_code = ""
                 for list_num, static_line in enumerate(static_index):
                     lines[static_line] = f"{lines[static_line].split(' = ')[0]}\n"
-
 
                     static_enc_code += (
                             '\tconst-string/jumbo v0, "{ciphertext}"\n'
@@ -176,8 +193,7 @@ class StringConstants:
             except Exception as e:
                 logger.error(f"[{filename}] String Encryption Error {e}")
 
-        # Write decryptor file
-        
+        # Write decryptor file (resources/DecryptString.smali) into "com" path directory identified earlier
         if strings_encrypted and not self.decryptor_added and self.com_path:
             if not dest_dir:
                 # ALTERNATIVE: dest_dir = os.path.dirname(self._dissect.smali_files()[0])
@@ -197,8 +213,11 @@ class StringConstants:
         
 
 # TODO: find new place to store smali decryptor resource?
+# Retrieve the smali decryptor file
 def getSmaliDecryptor(key, com_path):
     with open(os.path.join(os.path.dirname(__file__),"resources","DecryptString.smali"), 'r') as f:
         cont = f.read()
+
+        # Replace the placeholder AES-ECB key with the key that was used to encrypt strings
         return (cont.replace("This-key-need-to-be-32-character",key)).replace("decryptstringmanager",com_path)
 
