@@ -26,8 +26,8 @@ def main():
     dissect.smali_files(True)  # need to update smali files after renaming
 
     """ ENCRYPT STRING """
-    string_constants: StringConstants = StringConstants(dissect)
-    string_constants.obfuscate()
+    string_encryption: StringEncryption = StringEncryption(dissect)
+    string_encryption.obfuscate()
 
     """ INJECT GOTOS IN METHODS """
     goto_inject: GotoInjector = GotoInjector(dissect)

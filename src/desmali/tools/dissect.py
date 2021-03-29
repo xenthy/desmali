@@ -5,6 +5,7 @@ from desmali.extras import logger, Util, regex
 
 from pyaxmlparser import APK
 
+
 class Dissect:
     def __init__(self, decoded_dir_path: str):
         # check if input directory exists
@@ -29,9 +30,8 @@ class Dissect:
         for filename in Util.progress_bar(self._smali_files,
                                           description="Calculating number of smali lines"):
             with open(filename, "r", newline="") as file:
-                for line in file:
-                    if line.strip():
-                        num_of_lines += 1
+                num_of_lines += sum(1 for line in file if line.strip())
+
         return num_of_lines
 
     def smali_files(self, update=False) -> Tuple[str]:
@@ -123,7 +123,7 @@ class Dissect:
         apk = APK("./original.apk")
         activities = apk.get_activities()
         activities = [a.split(".")[-1] for a in activities]
-        
+
         # iterate through all the smali files
         for filename in Util.progress_bar(self.__smali_files,
                                           description="Retrieving classes from all smali files"):
@@ -142,7 +142,7 @@ class Dissect:
                                     or class_name.startswith("Lkotlin")
                                     or class_name.startswith("Lcom/google")
                                     or class_name.startswith("Lorg")):
-                                    
+
                                 break
                             self._class_names.add(class_name[:-1])
                             # for index, a in enumerate(activities):
@@ -150,15 +150,14 @@ class Dissect:
                             #         break
                             #     if index == len(activities)-1:
                             #         self._class_names.add(class_name[:-1])
-                            
+
                         if "# virtual methods" in line:
-                            break 
+                            break
 
                     else:
                         if match := regex.CLASSES.search(line):
                             class_name = match.group()[:-1]
                             self._class_names.add(class_name)
-                            
 
         # convert set to tuple to prevent modification
         self._class_names = tuple(self._class_names)
