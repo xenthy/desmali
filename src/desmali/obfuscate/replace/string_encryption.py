@@ -1,4 +1,6 @@
 import os
+import string
+import random
 from binascii import hexlify
 from Crypto.Cipher import AES
 from desmali.tools import Dissect
@@ -10,7 +12,7 @@ from desmali.extras import Util, logger, regex
 class StringEncryption:
     def __init__(self, dissect: Dissect):
         self._dissect = dissect
-        self.key = "m';|!)Kc)~9aCw*U;w40syK%9)P<q>83"  # TODO: Randomly generate key
+        self.key = ''.join(random.choice(string.ascii_letters + string.digits + string.punctuation) for _ in range(32))
         self.com_path = None
         self.decryptor_added = False
 
@@ -210,7 +212,6 @@ class StringEncryption:
         logger.verbose(f"Encryption Strings files processed: {files_processed}")
 
 
-# TODO: find new place to store smali decryptor resource?
 # Retrieve the smali decryptor file
 def getSmaliDecryptor(key, com_path):
     with open(os.path.join(os.path.dirname(__file__), "resources", "DecryptString.smali"), 'r') as f:
