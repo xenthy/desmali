@@ -12,7 +12,7 @@ from desmali.extras import Util, logger, regex
 class StringEncryption:
     def __init__(self, dissect: Dissect):
         self._dissect = dissect
-        self.key = ''.join(random.choice(string.ascii_letters + string.digits + string.punctuation) for _ in range(32))
+        self.key = ''.join(random.choice(string.ascii_letters + string.digits + "';|!()~*%<>") for _ in range(32))
         self.com_path = None
         self.decryptor_added = False
 
