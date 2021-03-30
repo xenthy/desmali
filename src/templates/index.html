@@ -15,35 +15,21 @@
           <h6 class="m-0 font-weight-bold text-primary">Select APK File</h6>
       </div>
         <div class ="card-body"> 
-            <form method="post" action="/result" enctype="multipart/form-data" onsubmit="return validate()">
+            <form method="post" action="/config" enctype="multipart/form-data" onsubmit="return validate()">
 
                 <div class="form-group files justify-content-center">
                     <div class="file-upload-wrapper">
-                        <input type="file" id="file" name="file" multiple="" accept=".apk">
+                        <input type="file" id="file" name="file" multiple="" accept=".apk" onchange="form.submit()">
                     </div>
-                    </div>
-                   
-                <div class="form-check form-switch">
-                    <input class="form-check-input" type="checkbox" value="1" name="options" checked>
-                    <label class="form-check-label" for="options" >String Obfuscation</label>
                 </div>
-                <div class="form-check form-switch">
-                    <input class="form-check-input" type="checkbox" value="2" name="options" checked>
-                    <label class="form-check-label" for="options" >CFG Obfuscation  </label>
-                </div>
-                <div class="form-check form-switch">
-                    <input class="form-check-input" type="checkbox"  value="3" name="options" checked>
-                    <label class="form-check-label" for="options">Log Obfuscation  </label>
-                </div>
-                <input type="submit" class="btn-primary" value="Obfuscate">
-
+        
             </form>
         </div>
       </div>
       </div>
       <script>
           function validate(){
-              console.log("test");
+
             if( document.getElementById("file").files.length == 0 ){
                 alert("Please put in a file");
                 return false;

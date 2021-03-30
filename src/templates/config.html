@@ -1,0 +1,80 @@
+<!doctype html>
+<html>
+
+<head>
+    <title>{% block title %}{% endblock %}</title>
+</head>
+
+<body>
+    {% extends "base.html"%}
+    {%block content%}
+    <h1>APK Name: {{apk_name}}</h1>
+
+    <div class="col-xl-8 col-lg-5 scroll">
+        <div class="card shadow mb-4">
+        <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+          <h6 class="m-0 font-weight-bold text-primary">Configurations</h6>
+      </div>
+        <div class ="card-body">
+            <p class="font-weight-bold"> Select .jks file </p>
+            <form method="post" action="/result" enctype="multipart/form-data" onsubmit="return validate()" id="form1">
+                <div class="form-group files justify-content-center">
+                    <div class="file-upload-wrapper">
+                        <input type="file" id="file" name="file" multiple="" accept=".jks">
+                    </div>
+                    </div>
+                </br>
+                <hr/>
+            </br>
+
+                <p class="font-weight-bold">Select obfuscation options</p>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="checkbox" value="1" name="options" checked>
+                        <label class="form-check-label" for="options" >Purge Logs </label>
+        
+                        <input class="form-check-input" type="checkbox" value="2" name="options" checked>
+                        <label class="form-check-label" for="options" >Rename Methods </label>
+                
+                        <input class="form-check-input" type="checkbox"  value="3" name="options" checked>
+                        <label class="form-check-label" for="options">Rename Classes </label>
+                   
+                        <input class="form-check-input" type="checkbox"  value="4" name="options" checked>
+                        <label class="form-check-label" for="options">String Obfuscate </label>
+                
+                        <input class="form-check-input" type="checkbox"  value="5" name="options" checked>
+                        <label class="form-check-label" for="options">CFG Obfuscate </label>
+                  
+                        <input class="form-check-input" type="checkbox"  value="6" name="options" checked>
+                        <label class="form-check-label" for="options">Reorder Labels </label>
+                    </div>
+                <input type="hidden" value="{{apk_name}}" name="apk_name"></br></br>
+                <hr/>
+            </br>
+                <div class="form-group">
+                    <p class="font-weight-bold">Enter KS-Pass</p>
+                    <input type="text" class="form-control" placeholder="ks-pass" name="ks-pass">
+                </div>
+                <div class="form-group">
+                    <p class="font-weight-bold">Enter Key-Pass</p>
+                    <input type="text" class="form-control" placeholder="key-pass" name="key-pass">
+                </div>
+     
+                <button type="submit" class="btn btn-primary" value="Submit" form="form1">Submit</button>
+
+            </form>
+        </div>
+      </div>
+      </div>
+      <script>
+          function validate(){
+            if( document.getElementById("file").files.length == 0 ){
+                alert("Please put in a file");
+                return false;
+            }
+            return true;
+            }
+      </script>
+    {% endblock content%}
+</body>
+
+</html>

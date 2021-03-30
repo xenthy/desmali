@@ -8,72 +8,27 @@
 </head>
 
 <body>
-
-    
     {%block content%}
     <div class="d-sm-flex align-items-center justify-content-between mb-4">
       <h1 class="h3 mb-0 text-gray-800">Results</h1>
-  </div>
-
-    <div class="row">
-      <div class="col-xl-3 col-md-6 mb-4">
-        <div class="card bg-gradient-info h-100 py-2">
-            <div class="card-body">
-                <div class="row no-gutters align-items-center">
-                    <div class="col mr-2">
-                        <div class="text-xs font-weight-bold text-light text-uppercase mb-1">File Content
-                            </div>
-                        <div class="h5 mb-0 font-weight-bold text-light" >{{apk_name}}</div>
-                    </div>
-                </div>
-            </div>
-        </div>
     </div>
-
-    <div class="col-xl-3 col-md-6 mb-4">
-      <div class="card bg-gradient-info h-100 py-2">
-          <div class="card-body">
-              <div class="row no-gutters align-items-center">
-                  <div class="col mr-2">
-                      <div class="text-xs font-weight-bold text-light text-uppercase mb-1">Size Overhead 
-                          </div>
-                      <div class="h5 mb-0 font-weight-bold text-light" >{{size_overhead}}</div>
-                  </div>
-              </div>
-          </div>
+  <div class="row">
+    <div class="card shadow mb-4">
+      <div class="card-header py-3">
+          <h6 class="m-0 font-weight-bold text-primary">Apk Information</h6>
       </div>
-  </div>
-
-  <div class="col-xl-3 col-md-6 mb-4">
-    <div class="card bg-gradient-info h-100 py-2">
-        <div class="card-body">
-            <div class="row no-gutters align-items-center">
-                <div class="col mr-2">
-                    <div class="text-xs font-weight-bold text-light text-uppercase mb-1">Time Overhead
-                        </div>
-                    <div class="h5 mb-0 font-weight-bold text-light" >{{time_overhead}}</div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-<div class="col-xl-3 col-md-6 mb-4">
-  <div class="card bg-gradient-info h-100 py-2">
       <div class="card-body">
-          <div class="row no-gutters align-items-center">
-              <div class="col mr-2">
-                  <div class="text-xs font-weight-bold text-light text-uppercase mb-1">
-                    No. of wrong instructions from reverse engineer:
-                      </div>
-                  <div class="h5 mb-0 font-weight-bold text-light" >{{instructions}}</div>
-              </div>
-          </div>
-      </div>
+        {%for k in stats %}
+        {{k}}: {{stats[k]}}</br>
+      {% endfor %}
+      <!-- <button type="submit" class="btn btn-primary" value="Submit">Download APK</button> -->
+      <a href="/download" class="btn btn-primary ">
+        <span class="text">Download APK</span>
+      </a>
+    </div>
+    </div>
   </div>
-</div>
 
-  </div>
 
   <div class="row">
 <div class="col-xl-3 col-lg-4 scroll">
@@ -145,7 +100,9 @@
 
     {% endblock %}
 
+<script>
 
+</script>
 </body>
 
 </html>
