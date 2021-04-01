@@ -1,12 +1,10 @@
-import logging
-from types import prepare_class
+from typing import List
 
 from desmali.tools import Dissect
 from desmali.extras import logger, Util, regex
 
 
 class FakeBranch:
-
     def __init__(self, dissect: Dissect):
         self._dissect = dissect
 
@@ -51,7 +49,7 @@ class FakeBranch:
                     # at the end of the method:
                     elif line.startswith(".end method") and in_method:
 
-                        # first check if the labels are not blank, 
+                        # first check if the labels are not blank,
                         # and the number of local variables >= 2
                         if start_str and end_str and contains_label and pass_local:
 
@@ -67,7 +65,7 @@ class FakeBranch:
                             # write a list containing original lines of code
                             file.writelines(method_wolabels)
 
-                        # reset variables 
+                        # reset variables
                         file.write(line)
                         in_method = False
                         contains_label = False
@@ -79,7 +77,7 @@ class FakeBranch:
                         # Inside method.
 
                         # if not at the ".locals x" line,
-                        # no additonal lines will be added
+                        # no additional lines will be added
                         method_wlabels.append(line)
                         method_wolabels.append(line)
 
