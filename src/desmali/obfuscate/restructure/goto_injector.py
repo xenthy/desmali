@@ -46,6 +46,7 @@ class GotoInjector:
                     if not in_method:
                         if regex.METHOD.match(line):
                             if ("abstract" not in line
+                                    and "native" not in line
                                     and "constructor" not in line):
                                 in_method = True
                         # write every line to file for this condition
@@ -58,7 +59,8 @@ class GotoInjector:
                         # with our goto injectors
                         if line.startswith(".end method"):
                             if first_label or first_goto:
-                                method_lines = [START_GOTO] + method_lines + [END_GOTO]
+                                method_lines = [START_GOTO] + \
+                                    method_lines + [END_GOTO]
 
                             file.writelines(method_lines)
                             method_lines = list()  # reset the list

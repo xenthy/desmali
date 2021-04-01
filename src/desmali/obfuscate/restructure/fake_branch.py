@@ -41,8 +41,9 @@ class FakeBranch:
 
                     if (
                         line.startswith(".method ")
-                        and " abstract " not in line
-                        and " native " not in line
+                        and "abstract" not in line
+                        and "native" not in line
+                        and "constructor" not in line
                         and not in_method
                     ):
                         file.write(line)
