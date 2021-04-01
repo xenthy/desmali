@@ -8,9 +8,6 @@ END_GOTO = "\n    :desmaili_back\n    goto :desmaili_front\n\n"
 
 
 class GotoInjector:
-    """
-    class description
-    """
 
     def __init__(self, dissect: Dissect):
         self._dissect = dissect

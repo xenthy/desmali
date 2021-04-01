@@ -6,9 +6,6 @@ from desmali.extras import logger, Util, regex
 
 
 class FakeBranch:
-    """
-    class description
-    """
 
     def __init__(self, dissect: Dissect):
         self._dissect = dissect
@@ -34,11 +31,13 @@ class FakeBranch:
 
                 for line in file:
 
-                    # check if the method contains a method
+                    # check if the method contains a label
                     if not contains_label:
                         if regex.LABEL.match(line):
                             contains_label = True
 
+                    # checks if the method allows for/ require instructions
+                    # i.e. abstract, constructor or native methods
                     if (
                         line.startswith(".method ")
                         and "abstract" not in line
@@ -49,10 +48,13 @@ class FakeBranch:
                         file.write(line)
                         in_method = True
 
+                    # at the end of the method:
                     elif line.startswith(".end method") and in_method:
+
+                        # first check if the labels are not blank, 
+                        # and the number of local variables >= 2
                         if start_str and end_str and contains_label and pass_local:
-                            # file.write("    :{0}\n".format(end_str))
-                            # file.write("    goto/32 :{0}\n".format(start_str))
+
                             method_wlabels.append("    :{0}\n".format(end_str))
                             method_wlabels.append(
                                 "    goto/32 :{0}\n".format(start_str))
@@ -61,8 +63,11 @@ class FakeBranch:
 
                             file.writelines(method_wlabels)
                         else:
+                            # if this a method without injection
+                            # write a list containing original lines of code
                             file.writelines(method_wolabels)
 
+                        # reset variables 
                         file.write(line)
                         in_method = False
                         contains_label = False
@@ -72,10 +77,13 @@ class FakeBranch:
 
                     elif in_method:
                         # Inside method.
-                        # file.write(line)
+
+                        # if not at the ".locals x" line,
+                        # no additonal lines will be added
                         method_wlabels.append(line)
                         method_wolabels.append(line)
 
+                        # to inject the fake branch and its variables right after ".locals x"
                         match = regex.LOCALS_PATTERN.match(line)
                         if match and int(match.group("local_count")) >= 2:
 
@@ -88,29 +96,14 @@ class FakeBranch:
                             end_str = Util.random_string(16)
                             temp_str = Util.random_string(16)
 
-                            # file.write("\n    const v0, {0}\n\n".format(v0))
-                            # file.write("    const v1, {0}\n\n".format(v1))
-                            # file.write("    add-int v0, v0, v1\n\n")
-                            # file.write("    rem-int v0, v0, v1\n\n")
-                            # file.write("    if-gtz v0, :{0}\n\n".format(temp_str))
-                            # file.write("    goto/32 :{0}\n\n".format(end_str))
-                            # file.write("    :{0}\n\n".format(temp_str))
-                            # file.write("    :{0}\n".format(start_str))
-
-                            method_wlabels.append(
-                                "\n    const v0, {0}\n\n".format(v0))
-                            method_wlabels.append(
-                                "    const v1, {0}\n\n".format(v1))
+                            method_wlabels.append("\n    const v0, {0}\n\n".format(v0))
+                            method_wlabels.append("    const v1, {0}\n\n".format(v1))
                             method_wlabels.append("    add-int v0, v0, v1\n\n")
                             method_wlabels.append("    rem-int v0, v0, v1\n\n")
-                            method_wlabels.append(
-                                "    if-gtz v0, :{0}\n\n".format(temp_str))
-                            method_wlabels.append(
-                                "    goto/32 :{0}\n\n".format(end_str))
-                            method_wlabels.append(
-                                "    :{0}\n\n".format(temp_str))
-                            method_wlabels.append(
-                                "    :{0}\n".format(start_str))
+                            method_wlabels.append("    if-gtz v0, :{0}\n\n".format(temp_str))
+                            method_wlabels.append("    goto/32 :{0}\n\n".format(end_str))
+                            method_wlabels.append("    :{0}\n\n".format(temp_str))
+                            method_wlabels.append("    :{0}\n".format(start_str))
 
                             temp_str = ""
 
