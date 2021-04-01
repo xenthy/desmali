@@ -35,6 +35,10 @@ def main():
     goto_inject: GotoInjector = GotoInjector(dissect)
     goto_inject.run()
 
+    """ FAKE BRANCH """
+    fake_branch: FakeBranch = FakeBranch(dissect)
+    fake_branch.run()
+
     """ REORDER LABELS """
     reorder_labels: ReorderLabels = ReorderLabels(dissect)
     reorder_labels.run()

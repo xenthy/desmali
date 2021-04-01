@@ -59,3 +59,5 @@ INVOKE = re.compile(r"^[ ]{4}(?P<invocation>invoke-\S+)\s"
                     r"->(?P<method>\S+?)"
                     r"\((?P<args>\S*?)\)"
                     r"(?P<return_type>\S+)")
+# .locals <number>
+LOCALS_PATTERN = re.compile(r"\s+\.locals\s(?P<local_count>\d+)")
