@@ -6,6 +6,9 @@ CLASS = re.compile(r"\.class.+?(?P<name>\S+?;)")
 # Lcom/google/android/material/button/MaterialButton;
 CLASSES = re.compile(r"L[^():\s]+?;", re.UNICODE)
 
+# .source "MainActivity.kt"
+SOURCES = re.compile(r"\.source.+?(?P<name>\w+)")
+
 # regex pattern to identify lines that contains a method
 # read more about Named Capturing Groups: https://www.regular-expressions.info/refext.html
 METHOD = re.compile(r"\.method.+?(?P<method>\S+?)" +

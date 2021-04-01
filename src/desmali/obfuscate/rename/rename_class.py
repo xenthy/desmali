@@ -46,21 +46,29 @@ class RenameClass:
 
             with Util.inplace_file(filename) as file:
                 for line in file:
-                    match = regex.CLASSES.search(line)
-                            
+
+                    match = regex.CLASSES.findall(line)
                     if match is not None:
-                        class_name = match.group()[:-1] +";"
-                        if class_name in self._class_name_mapping:
-                            tmp = class_name[1:].split("/")
-                            tmp.pop()
-                            tmp.append(self._class_name_mapping[class_name])
-                            line = line.replace(class_name, "L" + "/".join(tmp))
+                        for class_name in match:
+                            if class_name in self._class_name_mapping:
+                                tmp = class_name[1:].split("/")
+                                tmp.pop()
+                                tmp.append(self._class_name_mapping[class_name])
+                                line = line.replace(class_name, "L" + "/".join(tmp) + ";")
+                    
+                    source_match = regex.SOURCES.match(line)
+                    if source_match is not None:
+                        source_name = source_match.group("name")
+                        for k, v in self._class_name_mapping.items():
+                            if k.split("/")[-1][:-1] == source_name:
+                                line = line.replace(source_name, v)
+                        
                     file.write(line)
 
         #rename smali files
         smali_path = os.getcwd() + "/.tmp/apktool/smali/"
         for old_name, new_name in self._class_name_mapping.items():
-            new_file = old_name[1:].split("/")
+            new_file = old_name[1:-1].split("/")
             new_file.pop()
             new_file.append(new_name)
-            os.rename(smali_path + old_name[1:] + ".smali", smali_path + "/".join(new_file) + ".smali")
+            os.rename(smali_path + old_name[1:-1] + ".smali", smali_path + "/".join(new_file) + ".smali")

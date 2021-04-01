@@ -24,8 +24,8 @@ def main():
 
     """ RENAME CLASS """
     rename_class: RenameClass = RenameClass(dissect)
-    # rename_class.run()
-    # dissect.smali_files(True)  # need to update smali files after renaming
+    rename_class.run()
+    dissect.smali_files(True)  # need to update smali files after renaming
 
     """ ENCRYPT STRING """
     string_encryption: StringEncryption = StringEncryption(dissect)

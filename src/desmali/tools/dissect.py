@@ -144,12 +144,12 @@ class Dissect:
                                     or class_name.startswith("Lorg")):
 
                                 break
-                            self._class_names.add(class_name[:-1])
-                            # for index, a in enumerate(activities):
-                            #     if a in class_name[1:-1]:
-                            #         break
-                            #     if index == len(activities)-1:
-                            #         self._class_names.add(class_name[:-1])
+                                  
+                            for index, a in enumerate(activities):
+                                if a in class_name[1:-1]:
+                                    break
+                                if index == len(activities)-1:
+                                    self._class_names.add(class_name)
 
                         if "# virtual methods" in line:
                             break
