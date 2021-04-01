@@ -39,10 +39,10 @@ class Util:
         with fileinput.input(filename, inplace=True) as file:
             yield file
 
-    def get_random_int(min_int: int, max_int: int) -> int:
+    def random_int(min_int: int, max_int: int) -> int:
         return random.randint(min_int, max_int)
 
-    def get_random_string(length: int) -> str:
+    def random_string(length: int) -> str:
         return "".join(random.choices(string.ascii_letters, k=length))
 
 
