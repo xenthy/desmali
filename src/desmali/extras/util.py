@@ -3,6 +3,8 @@ from contextlib import contextmanager
 import fileinput
 from tqdm import tqdm
 from in_place import InPlace
+import random
+import string
 
 
 class Util:
@@ -36,6 +38,13 @@ class Util:
         """
         with fileinput.input(filename, inplace=True) as file:
             yield file
+
+    def get_random_int(min_int: int, max_int: int) -> int:
+        return random.randint(min_int, max_int)
+
+    def get_random_string(length: int) -> str:
+        return "".join(random.choices(string.ascii_letters, k=length))
+
 
 if __name__ == "__main__":
     with Util.inplace_file("data.txt") as file:
