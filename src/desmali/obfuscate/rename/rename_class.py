@@ -1,16 +1,15 @@
+import os
 from typing import List, Dict
 from string import ascii_letters
 
 from desmali.extras import logger, Util, regex
 from desmali.tools.dissect import Dissect
 
-import os
 
 class RenameClass:
 
     def __init__(self, dissect: Dissect):
         self._dissect = dissect
-
 
     def run(self):
         logger.info(f"*** INIT {self.__class__.__name__} ***")
@@ -36,7 +35,7 @@ class RenameClass:
                 new_name = letters[index - 1] + new_name
             self._class_name_mapping[name] = new_name
 
-        #rename classes in smali files
+        # rename classes in smali files
         for filename in Util.progress_bar(self._dissect.smali_files(),
                                           description="Renaming class names"):
 
@@ -55,20 +54,22 @@ class RenameClass:
                                 tmp.pop()
                                 tmp.append(self._class_name_mapping[class_name])
                                 line = line.replace(class_name, "L" + "/".join(tmp) + ";")
-                    
+
                     source_match = regex.SOURCES.match(line)
                     if source_match is not None:
                         source_name = source_match.group("name")
                         for k, v in self._class_name_mapping.items():
                             if k.split("/")[-1][:-1] == source_name:
                                 line = line.replace(source_name, v)
-                        
+
                     file.write(line)
 
-        #rename smali files
-        smali_path = os.getcwd() + "/.tmp/apktool/smali/"
+        # rename smali files
+        smali_path = os.getcwd() + "/.tmp/obfuscated/smali/"
         for old_name, new_name in self._class_name_mapping.items():
             new_file = old_name[1:-1].split("/")
             new_file.pop()
             new_file.append(new_name)
             os.rename(smali_path + old_name[1:-1] + ".smali", smali_path + "/".join(new_file) + ".smali")
+
+        self._dissect.smali_files(force=True)

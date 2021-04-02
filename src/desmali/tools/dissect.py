@@ -34,12 +34,12 @@ class Dissect:
 
         return num_of_lines
 
-    def smali_files(self, update=False) -> Tuple[str]:
+    def smali_files(self, force=False) -> Tuple[str]:
         """
         Get all smali file paths recursively from the specified directory
         """
         # check if function has already been executed
-        if hasattr(self, "_smali_files") and not update:
+        if hasattr(self, "_smali_files") and not force:
             return self._smali_files
 
         logger.verbose("getting all .smali files from decoded directory")
@@ -144,7 +144,7 @@ class Dissect:
                                     or class_name.startswith("Lorg")):
 
                                 break
-                                  
+
                             for index, a in enumerate(activities):
                                 if a in class_name[1:-1]:
                                     break

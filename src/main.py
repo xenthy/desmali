@@ -1,4 +1,5 @@
-from os import rename
+from distutils.dir_util import copy_tree
+
 from desmali.tools import Apktool, Zipalign, Apksigner, Dex2jar, Dissect
 from desmali.obfuscate import *
 from desmali.extras import logger
@@ -8,11 +9,14 @@ def main():
 
     apktool: Apktool = Apktool()
     apktool.decode(apk_path="original.apk",
-                   output_dir_path="./.tmp/apktool",
+                   output_dir_path="./.tmp/original",
                    force=True)
 
-    ###### obfuscate stuff ######
-    dissect: Dissect = Dissect("./.tmp/apktool")
+    # clone decoded directory
+    copy_tree("./.tmp/original", "./.tmp/obfuscated")
+
+    ###### start obfuscate stuff ######
+    dissect: Dissect = Dissect("./.tmp/obfuscated")
 
     """ PURGE LOGS """
     purge_logs: PurgeLogs = PurgeLogs(dissect)
@@ -24,8 +28,7 @@ def main():
 
     """ RENAME CLASS """
     rename_class: RenameClass = RenameClass(dissect)
-    rename_class.run()
-    dissect.smali_files(True)  # need to update smali files after renaming
+    # rename_class.run()
 
     """ ENCRYPT STRING """
     string_encryption: StringEncryption = StringEncryption(dissect)
@@ -43,9 +46,9 @@ def main():
     reorder_labels: ReorderLabels = ReorderLabels(dissect)
     reorder_labels.run()
 
-    ###### obfuscate stuff ######
+    ###### end obfuscate stuff ######
 
-    apktool.build(source_dir_path="./.tmp/apktool",
+    apktool.build(source_dir_path="./.tmp/obfuscated",
                   output_apk_path="./.tmp/modified.apk")
 
     zipalign: Zipalign = Zipalign()
@@ -69,9 +72,6 @@ def main():
     logger.info(f"Line count: Initial: {initial_num} - " +
                 f"Current: {current_num} - " +
                 "Added: {:.2f}".format(current_num / initial_num))
-
-    # import pty
-    # pty.spawn("/bin/bash")
 
 
 if __name__ == "__main__":
