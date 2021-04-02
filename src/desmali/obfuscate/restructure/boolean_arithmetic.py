@@ -4,7 +4,7 @@ from desmali.tools import Dissect
 from desmali.extras import logger, Util, regex
 
 
-class FakeBranch:
+class BooleanArithmetic:
     def __init__(self, dissect: Dissect):
         self._dissect = dissect
 

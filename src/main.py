@@ -85,9 +85,9 @@ def main():
     goto_inject: GotoInjector = GotoInjector(dissect)
     goto_inject.run()
 
-    """ FAKE BRANCH """
-    fake_branch: FakeBranch = FakeBranch(dissect)
-    fake_branch.run()
+    """ BOOLEAN ARITHMETIC """
+    boolean_arithmetic: BooleanArithmetic = BooleanArithmetic(dissect)
+    boolean_arithmetic.run()
 
     """ REORDER LABELS """
     reorder_labels: ReorderLabels = ReorderLabels(dissect)
