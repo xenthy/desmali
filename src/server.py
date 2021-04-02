@@ -6,8 +6,19 @@ from flask import Flask, request, render_template, jsonify, send_from_directory
 from waitress import serve
 
 from desmali.extras import logger
+from desmali.all import *
+from main import pre_obfuscate, post_obfuscate
+
 
 app = Flask(__name__)
+OBFUSCATION_METHODS = [PurgeLogs,
+                       RenameMethod,
+                       RenameClass,
+                       StringEncryption,
+                       GotoInjector,
+                       ReorderLabels,
+                       FakeBranch
+                       ]
 
 
 class Node:
@@ -47,6 +58,7 @@ def get_nodes_from_path(path):
         nodes.append(Node(node_id, node_name, parent, icon))
     return nodes
 
+
 def get_filetree():
     # Find and display all file and folder for jstree
     path = ""
@@ -62,39 +74,60 @@ def get_filetree():
     data = [node.as_json() for node in unique_nodes]
     return data
 
+
 @app.route('/', methods=['GET'])
 def index():
     return render_template("index.html")
+
 
 @app.route('/config', methods=['POST'])
 def config():
     # save apk to folder
     upload_file = request.files['file']
-    upload_file.save("./"+upload_file.filename)
-    return render_template("config.html", apk_name = upload_file.filename)
+    upload_file.save("./.tmp/" + upload_file.filename)
+
+    return render_template("config.html", apk_name=upload_file.filename)
+
 
 @app.route('/download', methods=['GET'])
 def download():
-    d = os.path.join(os.getcwd(),".tmp")
+    d = os.path.join(os.getcwd(), ".tmp")
     return send_from_directory(directory=d, filename="signed.apk", as_attachment=True)
-    
+
 
 @app.route('/result', methods=['POST'])
 def result():
 
-    #get file name , keypass
+    # get file name , keypass
     apk_name = request.form.get("apk_name")
     ks_pass = request.form.get("ks-pass")
     key_pass = request.form.get("key-pass")
-  
-    # get obfuscation options
+
+    dissect, apktool = pre_obfuscate("./.tmp/" + apk_name)
+
+    # get options
     options = request.form.getlist('options')
-    purge_log = True if '1' in options else False
-    rename_method = True if '2' in options else False
-    rename_classes = True if '3' in options else False
-    string_obf = True if '4' in options else False
-    cfg_obf = True if '5' in options else False
-    reorder_label = True if '6' in options else False
+    purge_options = request.form.getlist('purge_options')
+
+    purge_options_dict = dict()
+    for option in purge_options:
+        purge_options_dict[option] = True
+
+    for method in OBFUSCATION_METHODS:
+        if method.__name__ in options:
+            obf_method = method(dissect)
+            if method.__name__ == "PurgeLogs":
+                obf_method.run(**purge_options_dict)
+            else:
+                obf_method.run()
+
+    post_obfuscate(apktool, "./ict2207-test-key.jks", "nim4m4h4om4?", "nim4m4h4om4?")
+
+    # get number of smali lines before and after obfuscation
+    initial_num, current_num = dissect.line_count_info()
+    logger.info(f"Line count: Initial: {initial_num} - " +
+                f"Current: {current_num} - " +
+                "Added: {:.2f}".format(current_num / initial_num))
 
     # do all the stuff
     stats = {}
@@ -103,7 +136,7 @@ def result():
     stats["time_overhead"] = "10sec"
     stats["instructions"] = "20"
 
-    #get files
+    # get files
     data = get_filetree()
     return render_template("result.html",
                            stats=stats,

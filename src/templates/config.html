@@ -10,7 +10,7 @@
     {%block content%}
     <h1>APK Name: {{apk_name}}</h1>
 
-    <div class="col-xl-8 col-lg-5 scroll">
+    <div class="col-xl-12 col-lg-12 scroll">
         <div class="card shadow mb-4">
         <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
           <h6 class="m-0 font-weight-bold text-primary">Configurations</h6>
@@ -28,25 +28,65 @@
             </br>
 
                 <p class="font-weight-bold">Select obfuscation options</p>
-                    <div class="form-check form-check-inline">
-                        <input class="form-check-input" type="checkbox" value="1" name="options" checked>
-                        <label class="form-check-label" for="options" >Purge Logs </label>
-        
-                        <input class="form-check-input" type="checkbox" value="2" name="options" checked>
-                        <label class="form-check-label" for="options" >Rename Methods </label>
-                
-                        <input class="form-check-input" type="checkbox"  value="3" name="options" checked>
-                        <label class="form-check-label" for="options">Rename Classes </label>
-                   
-                        <input class="form-check-input" type="checkbox"  value="4" name="options" checked>
-                        <label class="form-check-label" for="options">String Obfuscate </label>
-                
-                        <input class="form-check-input" type="checkbox"  value="5" name="options" checked>
-                        <label class="form-check-label" for="options">CFG Obfuscate </label>
-                  
-                        <input class="form-check-input" type="checkbox"  value="6" name="options" checked>
-                        <label class="form-check-label" for="options">Reorder Labels </label>
+
+                    <div>
+                        <div class="custom-control custom-switch">
+                            
+                            <input class="custom-control-input" type="checkbox" value="PurgeLogs" name="options" id="customSwitches0" checked >
+                            <label class="custom-control-label" for="customSwitches0" > Purge Logs </label>
+                        </div>
+
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="checkbox" id="inlineCheckbox1" value="a" name="purge_options" checked>
+                            <label class="form-check-label" for="inlineCheckbox1"> Assert</label>
+                         
+                            <input class="form-check-input" type="checkbox" id="inlineCheckbox2" value="d" name="purge_options" checked>
+                            <label class="form-check-label" for="inlineCheckbox2"> Debug </label>
+                    
+                            <input class="form-check-input" type="checkbox" id="inlineCheckbox3" value="e" name="purge_options" checked>
+                            <label class="form-check-label" for="inlineCheckbox3"> Error </label>
+                            
+                            <input class="form-check-input" type="checkbox" id="inlineCheckbox4" value="i" name="purge_options" checked>
+                            <label class="form-check-label" for="inlineCheckbox4"> Info </label>
+                            
+                            <input class="form-check-input" type="checkbox" id="inlineCheckbox5" value="v" name="purge_options" checked>
+                            <label class="form-check-label" for="inlineCheckbox5"> Verbose </label>
+                            
+                            <input class="form-check-input" type="checkbox" id="inlineCheckbox6" value="w" name="purge_options" checked>
+                            <label class="form-check-label" for="inlineCheckbox6"> Warning</label>
+
+                            <input class="form-check-input" type="checkbox" id="inlineCheckbox7" value="wtf" name="purge_options" checked>
+                            <label class="form-check-label" for="inlineCheckbox7"> What a Terrible Failure</label>
+                        </div>
+                        
                     </div>
+                </br>
+
+                    <div class="custom-control custom-switch">
+                        <input class="custom-control-input" type="checkbox" value="RenameMethod" name="options" id="customSwitches1" checked>
+                        <label class="custom-control-label" for="customSwitches1" > Rename Methods </label>
+                    </div>    
+                    <div class="custom-control custom-switch">
+                        <input class="custom-control-input" type="checkbox"  value="RenameClass" name="options" id="customSwitches2" checked>
+                        <label class="custom-control-label" for="customSwitches2"> Rename Classes </label>
+                    </div>    
+                    <div class="custom-control custom-switch">
+                        <input class="custom-control-input" type="checkbox"  value="StringEncryption" name="options" id="customSwitches3" checked>
+                        <label class="custom-control-label" for="customSwitches3"> String Obfuscate </label>
+                    </div>    
+                    <div class="custom-control custom-switch">
+                        <input class="custom-control-input" type="checkbox"  value="FakeBranch" name="options" id="customSwitches4" checked>
+                        <label class="custom-control-label" for="customSwitches4"> Fake Branch </label>
+                    </div>    
+                    <div class="custom-control custom-switch">
+                        <input class="custom-control-input" type="checkbox"  value="GotoInjector" name="options" id="customSwitches5" checked>
+                        <label class="custom-control-label" for="customSwitches5"> GotoInjector</label>
+                    </div>    
+                    <div class="custom-control custom-switch">
+                        <input class="custom-control-input" type="checkbox"  value="ReorderLabels" name="options" id="customSwitches6" checked>
+                        <label class="custom-control-label" for="customSwitches6"> Reorder Labels </label>
+                    </div>
+
                 <input type="hidden" value="{{apk_name}}" name="apk_name"></br></br>
                 <hr/>
             </br>
@@ -73,6 +113,8 @@
             }
             return true;
             }
+
+
       </script>
     {% endblock content%}
 </body>

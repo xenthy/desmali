@@ -6,6 +6,49 @@ from desmali.tools import Apktool, Zipalign, Apksigner, Dex2jar, Diff, Dissect
 from desmali.obfuscate import *
 from desmali.extras import logger
 
+def pre_obfuscate(apk_path : str):
+    apktool: Apktool = Apktool()
+    apktool.decode(apk_path=apk_path,
+                   output_dir_path="./.tmp/original",
+                   force=True)
+
+    # clone decoded directory
+    if os.path.isdir("./.tmp/obfuscated"):
+        shutil.rmtree("./.tmp/obfuscated")
+    copy_tree("./.tmp/original", "./.tmp/obfuscated")
+
+    ###### start obfuscate stuff ######
+    dissect: Dissect = Dissect("./.tmp/obfuscated")
+
+    return dissect , apktool
+
+def post_obfuscate(apktool: Apktool, keystore_path: str, ks_pass: str, key_pass: str):
+    apktool.build(source_dir_path="./.tmp/obfuscated",
+                  output_apk_path="./.tmp/modified.apk")
+
+    zipalign: Zipalign = Zipalign()
+    zipalign.align(input_apk_path="./.tmp/modified.apk",
+                   output_apk_path="./.tmp/modified-aligned.apk")
+
+    apksigner: Apksigner = Apksigner()
+    apksigner.sign(input_apk_path="./.tmp/modified-aligned.apk",
+                   output_apk_path="./.tmp/signed.apk",
+                   keystore_path=keystore_path,
+                   ks_pass=ks_pass,
+                   key_pass=key_pass)
+
+    # for debugging
+    dex2jar = Dex2jar()
+    dex2jar.to_jar(input_apk_path="./.tmp/signed.apk",
+                   output_jar_path="./.tmp/signed.jar")
+
+    # generate diffs
+    diff: Diff = Diff("./.tmp/diff")
+    diff.generate_diff(["./.tmp/original/smali/com/example/ict2207_x08/MainActivity.smali"],
+                       ["./.tmp/obfuscated/smali/com/example/ict2207_x08/MainActivity.smali"])
+
+
+
 
 def main():
 
