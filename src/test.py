@@ -27,7 +27,7 @@ def main():
 
     """ ENCRYPT STRING """
     string_encryption: StringEncryption = StringEncryption(dissect)
-    string_encryption.obfuscate()
+    string_encryption.run()
 
     """ INJECT GOTOS IN METHODS """
     goto_inject: GotoInjector = GotoInjector(dissect)
