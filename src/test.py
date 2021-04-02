@@ -6,11 +6,11 @@ from desmali.extras import logger
 def main():
     apktool: Apktool = Apktool()
     apktool.decode(apk_path="original.apk",
-                   output_dir_path="./.tmp/apktool",  # ./apktool/
+                   output_dir_path="./.tmp/obfuscated",  # ./apktool/
                    force=True)
 
     ###### obfuscate stuff ######
-    dissect: Dissect = Dissect("./.tmp/apktool")
+    dissect: Dissect = Dissect("./.tmp/obfuscated")
 
     """ PURGE LOGS """
     purge_logs: PurgeLogs = PurgeLogs(dissect)
@@ -39,7 +39,7 @@ def main():
 
     ###### obfuscate stuff ######
 
-    apktool.build(source_dir_path="./.tmp/apktool",
+    apktool.build(source_dir_path="./.tmp/obfuscated",
                   output_apk_path="./.tmp/modified.apk")
 
     zipalign: Zipalign = Zipalign()
