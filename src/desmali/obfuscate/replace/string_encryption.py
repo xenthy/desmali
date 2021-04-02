@@ -30,7 +30,7 @@ class StringEncryption:
         ciphertext = hexlify(AES.new(key=key, mode=AES.MODE_ECB).encrypt(pad(plaintext.encode(errors="replace"), AES.block_size))).decode()
         return ciphertext
 
-    def obfuscate(self):
+    def run(self):
         """
         Main string obfuscation module
 
