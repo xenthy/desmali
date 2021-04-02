@@ -52,7 +52,6 @@ def post_obfuscate(apktool: Apktool, keystore_path: str, ks_pass: str, key_pass:
 
 
 def main():
-
     apktool: Apktool = Apktool()
     apktool.decode(apk_path="original.apk",
                    output_dir_path="./.tmp/original",

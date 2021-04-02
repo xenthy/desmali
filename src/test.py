@@ -9,8 +9,9 @@ def main():
                    output_dir_path="./.tmp/obfuscated",  # ./apktool/
                    force=True)
 
-    ###### obfuscate stuff ######
-    dissect: Dissect = Dissect("./.tmp/obfuscated")
+    ###### start obfuscate stuff ######
+    dissect: Dissect = Dissect(original_dir_path="./.tmp/original",
+                               decoded_dir_path="./.tmp/obfuscated")
 
     """ PURGE LOGS """
     purge_logs: PurgeLogs = PurgeLogs(dissect)
@@ -33,11 +34,15 @@ def main():
     goto_inject: GotoInjector = GotoInjector(dissect)
     goto_inject.run()
 
+    """ BOOLEAN ARITHMETIC """
+    boolean_arithmetic: BooleanArithmetic = BooleanArithmetic(dissect)
+    boolean_arithmetic.run()
+
     """ REORDER LABELS """
     reorder_labels: ReorderLabels = ReorderLabels(dissect)
     reorder_labels.run()
 
-    ###### obfuscate stuff ######
+    ###### end obfuscate stuff ######
 
     apktool.build(source_dir_path="./.tmp/obfuscated",
                   output_apk_path="./.tmp/modified.apk")
