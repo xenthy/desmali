@@ -6,7 +6,8 @@ from desmali.tools import Apktool, Zipalign, Apksigner, Dex2jar, Diff, Dissect
 from desmali.obfuscate import *
 from desmali.extras import logger
 
-def pre_obfuscate(apk_path : str):
+
+def pre_obfuscate(apk_path: str):
     apktool: Apktool = Apktool()
     apktool.decode(apk_path=apk_path,
                    output_dir_path="./.tmp/original",
@@ -18,9 +19,11 @@ def pre_obfuscate(apk_path : str):
     copy_tree("./.tmp/original", "./.tmp/obfuscated")
 
     ###### start obfuscate stuff ######
-    dissect: Dissect = Dissect("./.tmp/obfuscated")
+    dissect: Dissect = Dissect(original_dir_path="./.tmp/original",
+                               decoded_dir_path="./.tmp/obfuscated")
 
-    return dissect , apktool
+    return dissect, apktool
+
 
 def post_obfuscate(apktool: Apktool, keystore_path: str, ks_pass: str, key_pass: str):
     apktool.build(source_dir_path="./.tmp/obfuscated",
@@ -48,8 +51,6 @@ def post_obfuscate(apktool: Apktool, keystore_path: str, ks_pass: str, key_pass:
                        ["./.tmp/obfuscated/smali/com/example/ict2207_x08/MainActivity.smali"])
 
 
-
-
 def main():
 
     apktool: Apktool = Apktool()
@@ -63,7 +64,8 @@ def main():
     copy_tree("./.tmp/original", "./.tmp/obfuscated")
 
     ###### start obfuscate stuff ######
-    dissect: Dissect = Dissect("./.tmp/obfuscated")
+    dissect: Dissect = Dissect(original_dir_path="./.tmp/original",
+                               decoded_dir_path="./.tmp/obfuscated")
 
     """ PURGE LOGS """
     purge_logs: PurgeLogs = PurgeLogs(dissect)
@@ -75,7 +77,7 @@ def main():
 
     """ RENAME CLASS """
     rename_class: RenameClass = RenameClass(dissect)
-    # rename_class.run()
+    rename_class.run()
 
     """ ENCRYPT STRING """
     string_encryption: StringEncryption = StringEncryption(dissect)
@@ -129,11 +131,5 @@ def main():
 if __name__ == "__main__":
     logger.info("__INIT__")
     main()
-
-    # testing getting of method names
-    # dissect: Dissect = Dissect("./.tmp/apktool")
-    # dissect.method_names()
-    # dissect.method_names()
-
 
 logger.info("__EOF__")

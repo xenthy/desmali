@@ -1,5 +1,5 @@
 import os
-from typing import List, Set, Tuple
+from typing import List, Set, Tuple, Dict
 
 from desmali.extras import logger, Util, regex
 
@@ -7,8 +7,14 @@ from pyaxmlparser import APK
 
 
 class Dissect:
-    def __init__(self, decoded_dir_path: str):
+    def __init__(self, original_dir_path: str, decoded_dir_path: str):
         # check if input directory exists
+        if not os.path.isdir(original_dir_path):
+            logger.error(f"directory does not exist \"{original_dir_path}\"")
+            raise NotADirectoryError(f"directory does not exist \"{original_dir_path}\"")
+        else:
+            self.original_dir_path = original_dir_path
+
         if not os.path.isdir(decoded_dir_path):
             logger.error(f"directory does not exist \"{decoded_dir_path}\"")
             raise NotADirectoryError(f"directory does not exist \"{decoded_dir_path}\"")
@@ -18,6 +24,9 @@ class Dissect:
         ### INITIAL OPERATIONS ###
         # locate all smali files
         self.smali_files()
+
+        # map original path and decoded path
+        self.dir_mapping = self._set_mapping()
 
         # set initial number of lines in all the smali files
         self._initial_num_lines = len(self)
@@ -33,6 +42,21 @@ class Dissect:
                 num_of_lines += sum(1 for line in file if line.strip())
 
         return num_of_lines
+
+    def _set_mapping(self):
+        # dir_mapping dictionary - {decoded_path: original_path}
+        dir_mapping: Dict[str, str] = dict()
+
+        for file in Util.progress_bar(self.smali_files(),
+                                      description="Mapping original/decoded directories"):
+            dir_mapping[file] = file.replace(self.decoded_dir_path,
+                                             self.original_dir_path)
+
+        return dir_mapping
+
+    def update_mapping(self, old_path, new_path):
+        self.dir_mapping[new_path] = self.dir_mapping[old_path]
+        del self.dir_mapping[old_path]
 
     def smali_files(self, force=False) -> Tuple[str]:
         """

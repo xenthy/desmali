@@ -46,14 +46,13 @@ class RenameClass:
             with Util.inplace_file(filename) as file:
                 for line in file:
 
-                    match = regex.CLASSES.findall(line)
+                    match = regex.CLASSES.match(line)
                     if match is not None:
-                        for class_name in match:
-                            if class_name in self._class_name_mapping:
-                                tmp = class_name[1:].split("/")
-                                tmp.pop()
-                                tmp.append(self._class_name_mapping[class_name])
-                                line = line.replace(class_name, "L" + "/".join(tmp) + ";")
+                        if class_name in self._class_name_mapping:
+                            tmp = class_name[1:].split("/")
+                            tmp.pop()
+                            tmp.append(self._class_name_mapping[class_name])
+                            line = line.replace(class_name, "L" + "/".join(tmp) + ";")
 
                     source_match = regex.SOURCES.match(line)
                     if source_match is not None:
@@ -65,11 +64,16 @@ class RenameClass:
                     file.write(line)
 
         # rename smali files
-        smali_path = os.getcwd() + "/.tmp/obfuscated/smali/"
+        smali_path = "./.tmp/obfuscated/smali/"
         for old_name, new_name in self._class_name_mapping.items():
             new_file = old_name[1:-1].split("/")
             new_file.pop()
             new_file.append(new_name)
-            os.rename(smali_path + old_name[1:-1] + ".smali", smali_path + "/".join(new_file) + ".smali")
+
+            old_path = smali_path + old_name[1:-1] + ".smali"
+            new_path = smali_path + "/".join(new_file) + ".smali"
+
+            os.rename(old_path, new_path)
+            self._dissect.update_mapping(old_path, new_path)
 
         self._dissect.smali_files(force=True)
