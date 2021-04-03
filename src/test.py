@@ -1,13 +1,22 @@
+import os
+import shutil
+from distutils.dir_util import copy_tree
+
 from desmali.tools import Apktool, Zipalign, Apksigner, Dex2jar, Dissect
 from desmali.obfuscate import *
 from desmali.extras import logger
 
 
 def main():
+
     apktool: Apktool = Apktool()
     apktool.decode(apk_path="original.apk",
-                   output_dir_path="./.tmp/obfuscated",  # ./apktool/
+                   output_dir_path="./.tmp/original",
                    force=True)
+    # clone decoded directory
+    if os.path.isdir("./.tmp/obfuscated"):
+        shutil.rmtree("./.tmp/obfuscated")
+    copy_tree("./.tmp/original", "./.tmp/obfuscated")
 
     ###### start obfuscate stuff ######
     dissect: Dissect = Dissect(original_dir_path="./.tmp/original",
