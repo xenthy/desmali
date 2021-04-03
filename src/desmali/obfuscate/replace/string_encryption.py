@@ -15,6 +15,7 @@ class StringEncryption:
         self._dissect = dissect
         self.key = ''.join(random.choice(string.ascii_letters + string.digits + "';|!()~*%<>") for _ in range(32))
         self.decryptor_added = False
+        self.package_dir_regex = None
 
     def encryptString(self, plaintext):
         """
@@ -60,6 +61,13 @@ class StringEncryption:
                 continue
             else:
                 files_processed += 1
+
+            if package_dir := self.package_dir_regex.search(os.path.dirname(filename)):
+                files_processed += 1
+            else:
+                skipped_files += 1
+                continue
+            
 
             try:
                 with open(filename, 'r', encoding='utf-8') as f:
@@ -206,29 +214,24 @@ class StringEncryption:
     # Required before encrypting strings and adding smali code
     def findComPath(self):
         apk = APK('./original.apk') # TODO: Change to dynamic apk filename
-
         package_dir = None
 
-        # TODO: If line 222 works fine, remove this chunk
-        # for element in apk.get_activities():
-            # if "MainActivity" in element:
-                # package_dir = element.replace(".MainActivity","").replace(".","/")
-                # break
-            # else:
-                # package_dir = "/".join(element.split(".")[:-1])
-                # break
+        for element in apk.get_activities():
+            if "MainActivity" in element:
+                package_dir = element.replace(".MainActivity","").replace(".","/")
+                break
 
-        package_dir = "/".join(apk.get_activities()[0].split(".")[:-1])
-        package_dir_regex = re.compile(f"{package_dir}")
+        self.package_dir_regex = re.compile(f"{package_dir}")
 
         com_path = None
         dest_dir = None
         for filename in self._dissect.smali_files():
-            path_search = package_dir_regex.search(os.path.dirname(filename))
+            path_search = self.package_dir_regex.search(os.path.dirname(filename))
             if path_search and ("MainActivity.smali" in filename) :
                 logger.info(f"{os.path.dirname(filename)}")
                 dest_dir = os.path.dirname(filename)
                 com_path = path_search[0]
+
 
                 return dest_dir, com_path
 
