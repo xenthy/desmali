@@ -58,9 +58,9 @@ class StringEncryption:
             com_path_search = regex.COM_PATH.search(os.path.dirname(filename))
             if com_path_search:
                 com_path = com_path_search[1]
-                dest_dir = os.path.dirname(filename)
                 if "MainActivity.smali" in filename:
                     self.com_path = com_path
+                    dest_dir = os.path.dirname(filename)
             else:
                 continue
 
