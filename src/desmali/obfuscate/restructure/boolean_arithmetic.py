@@ -53,9 +53,8 @@ class BooleanArithmetic:
                         # and the number of local variables >= 2
                         if start_str and end_str and contains_label and pass_local:
 
-                            method_wlabels.append("    :{0}\n".format(end_str))
-                            method_wlabels.append(
-                                "    goto/32 :{0}\n".format(start_str))
+                            method_wlabels.append("\n    :{0}\n".format(end_str))
+                            method_wlabels.append("\n    goto/32 :{0}\n\n".format(start_str))
                             start_str = ""
                             end_str = ""
 
@@ -87,15 +86,16 @@ class BooleanArithmetic:
 
                             pass_local = True
 
-                            v0 = Util.random_int(1, 32)
-                            v1 = Util.random_int(1, 32)
+                            v0 = hex(Util.random_int(1, 32))
+                            v1 = hex(Util.random_int(1, 32))
 
                             start_str = Util.random_string(16)
                             end_str = Util.random_string(16)
                             temp_str = Util.random_string(16)
 
-                            method_wlabels.append("\n    const v0, {0}\n\n".format(v0))
-                            method_wlabels.append("    const v1, {0}\n\n".format(v1))
+                            method_wlabels.append("\n")
+                            method_wlabels.append("    const/16 v0, {0}\n\n".format(v0))
+                            method_wlabels.append("    const/16 v1, {0}\n\n".format(v1))
                             method_wlabels.append("    add-int v0, v0, v1\n\n")
                             method_wlabels.append("    rem-int v0, v0, v1\n\n")
                             method_wlabels.append("    if-gtz v0, :{0}\n\n".format(temp_str))
