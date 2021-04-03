@@ -127,12 +127,12 @@ class StringEncryption:
                     lines[const_line] = (
                         '\tconst-string/jumbo {register}, "{ciphertext}"\n'
                         "\n\tinvoke-static {{{register}}}, "
-                        "Lcom/{com_path}/DecryptString"
+                        "L{com_path}/DecryptString"
                         ";->decryptString(Ljava/lang/String;)Ljava/lang/String;\n"
                         "\n\tmove-result-object {register}\n".format(
                             register=const_register[list_num],
                             ciphertext=self.encryptString(const_val[list_num]),
-                            com_path=com_path,
+                            com_path=self.com_path,
                         )
                     )
 
@@ -146,13 +146,13 @@ class StringEncryption:
                     static_enc_code += (
                         '\tconst-string/jumbo v0, "{ciphertext}"\n'
                         "\n\tinvoke-static {{v0}}, "
-                        "Lcom/{com_path}/DecryptString"
+                        "L{com_path}/DecryptString"
                         ";->decryptString(Ljava/lang/String;)Ljava/lang/String;\n"
                         "\n\tmove-result-object v0\n"
                         "\n\tsput-object v0, {class_name}->"
                         "{string_name}:Ljava/lang/String;\n\n".format(
                             ciphertext=self.encryptString(static_val[list_num]),
-                            com_path=com_path,
+                            com_path=self.com_path,
                             class_name=class_name,
                             string_name=static_name[list_num],
                         )
@@ -218,4 +218,4 @@ def getSmaliDecryptor(key, com_path):
         cont = f.read()
 
         # Replace the placeholder AES-ECB key with the key that was used to encrypt strings
-        return (cont.replace("This-key-need-to-be-32-character", key)).replace("decryptstringmanager", com_path)
+        return (cont.replace("This-key-need-to-be-32-character", key)).replace("com/decryptstringmanager", com_path)
