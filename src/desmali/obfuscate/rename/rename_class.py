@@ -15,10 +15,12 @@ class RenameClass:
         logger.info(f"*** INIT {self.__class__.__name__} ***")
 
         # get all class names
-        self._class_names: List[str] = self._dissect.class_names(renamable=True)
+        self._class_names: List[str] = self._dissect.class_names(
+            renamable=True)
 
         # generate a mapping of method names
-        self._class_name_mapping: Dict[str: str] = dict()  # [.., Y, Z, aa, ab, ac, ..]
+        # [.., Y, Z, aa, ab, ac, ..]
+        self._class_name_mapping: Dict[str: str] = dict()
         letters: List[str] = [letter for letter in ascii_letters]  # [a-zA-Z]
 
         for index, name in enumerate(self._class_names):
@@ -46,13 +48,16 @@ class RenameClass:
             with Util.inplace_file(filename) as file:
                 for line in file:
 
-                    match = regex.CLASSES.match(line)
+                    match = regex.CLASSES.findall(line)
                     if match is not None:
-                        if class_name in self._class_name_mapping:
-                            tmp = class_name[1:].split("/")
-                            tmp.pop()
-                            tmp.append(self._class_name_mapping[class_name])
-                            line = line.replace(class_name, "L" + "/".join(tmp) + ";")
+                        for class_name in match:
+                            if class_name in self._class_name_mapping:
+                                tmp = class_name[1:].split("/")
+                                tmp.pop()
+                                tmp.append(
+                                    self._class_name_mapping[class_name])
+                                line = line.replace(
+                                    class_name, "L" + "/".join(tmp) + ";")
 
                     source_match = regex.SOURCES.match(line)
                     if source_match is not None:

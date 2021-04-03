@@ -2,23 +2,31 @@
 
 import os
 import json
-from flask import Flask, request, render_template, jsonify, send_from_directory
+
+from flask import Flask, request, render_template, jsonify, send_from_directory, Response
+
 from waitress import serve
 
 from desmali.extras import logger
 from desmali.all import *
 from main import pre_obfuscate, post_obfuscate
+import time
 
 
 app = Flask(__name__)
+
 OBFUSCATION_METHODS = [PurgeLogs,
                        RenameMethod,
                        RenameClass,
                        StringEncryption,
                        GotoInjector,
                        ReorderLabels,
-                       FakeBranch
+                       BooleanArithmetic
                        ]
+
+DIR_MAPPING = {}
+
+PROGRESS = {"completion": 0, "status": ""}
 
 
 class Node:
@@ -63,7 +71,7 @@ def get_filetree():
     # Find and display all file and folder for jstree
     path = ""
     unique_nodes = []
-    for root, dirs, files in os.walk("./.tmp"):
+    for root, dirs, files in os.walk("./.tmp/obfuscated"):
         for name in files:
             path = os.path.join(root, name)
             nodes = get_nodes_from_path(path)
@@ -95,19 +103,26 @@ def download():
     return send_from_directory(directory=d, filename="signed.apk", as_attachment=True)
 
 
-@app.route('/result', methods=['POST'])
+@app.route('/result', methods=['GET', 'POST'])
 def result():
+    # PROGRESS BAR
+    global PROGRESS
+    if request.method == "GET":
+        return PROGRESS
 
     # get file name , keypass
     apk_name = request.form.get("apk_name")
     ks_pass = request.form.get("ks-pass")
     key_pass = request.form.get("key-pass")
 
-    dissect, apktool = pre_obfuscate("./.tmp/" + apk_name)
-
     # get options
     options = request.form.getlist('options')
     purge_options = request.form.getlist('purge_options')
+    increment = 100.0 / (3 + len(options))
+
+    PROGRESS["status"] = "Decoding and analysing"
+    dissect, apktool = pre_obfuscate("./.tmp/" + apk_name)
+    PROGRESS["completion"] = PROGRESS["completion"] + increment
 
     purge_options_dict = dict()
     for option in purge_options:
@@ -115,13 +130,18 @@ def result():
 
     for method in OBFUSCATION_METHODS:
         if method.__name__ in options:
+            PROGRESS["status"] = "Performing " + method.__name__
             obf_method = method(dissect)
             if method.__name__ == "PurgeLogs":
                 obf_method.run(**purge_options_dict)
             else:
                 obf_method.run()
+            PROGRESS["completion"] = PROGRESS["completion"] + increment
 
-    post_obfuscate(apktool, "./ict2207-test-key.jks", "nim4m4h4om4?", "nim4m4h4om4?")
+    PROGRESS["status"] = "Rebuilding, zipaligning & signing APK"
+    post_obfuscate(apktool, "./ict2207-test-key.jks",
+                   "nim4m4h4om4?", "nim4m4h4om4?")
+    PROGRESS["completion"] = PROGRESS["completion"] + increment
 
     # get number of smali lines before and after obfuscation
     initial_num, current_num = dissect.line_count_info()
@@ -136,8 +156,13 @@ def result():
     stats["time_overhead"] = "10sec"
     stats["instructions"] = "20"
 
+    global DIR_MAPPING
+    DIR_MAPPING = dissect.dir_mapping
+
     # get files
+    PROGRESS["status"] = "Getting Filetree data"
     data = get_filetree()
+    PROGRESS["completion"] = 100
     return render_template("result.html",
                            stats=stats,
                            data=data)
@@ -146,15 +171,32 @@ def result():
 @app.route('/viewlines', methods=['POST'])
 def viewlines():
     try:
-        file_name = request.json["data"].strip()
-        with open(file_name, "r") as f:
+        file_path = request.json["data"].strip()
+        with open(file_path, "r") as f:
             content = f.read()
         return jsonify(content)
     except:
         return "Non readable ascii"
 
 
+@app.route('/comparelines', methods=['POST'])
+def comaprelines():
+    try:
+        global DIR_MAPPING
+        file_path = request.json["data"].strip()
+        diff: Diff = Diff("./.tmp/diff")
+        if DIR_MAPPING[file_path] is not None:
+            diff.generate_diff([DIR_MAPPING[file_path]], [file_path])
+            with open("./diff.html", "r") as f:
+                content = f.read()
+            return jsonify(content)
+        return "No changes or not available"
+    except:
+        return "No changes or not available"
+
+
 if __name__ == "__main__":
     logger.info("server running at http://localhost:6969")
+    # socketio.run(app)
     app.run(host="0.0.0.0", port=6969)
     # serve(app, host="0.0.0.0", port=6969)
