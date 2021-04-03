@@ -120,7 +120,7 @@ def result():
     purge_options = request.form.getlist('purge_options')
     increment = 100.0 / (3 + len(options))
 
-    PROGRESS["status"] = "Decoding and analysing"
+    PROGRESS["status"] = "Decoding & Analysing APK"
     dissect, apktool = pre_obfuscate("./.tmp/" + apk_name)
     PROGRESS["completion"] = PROGRESS["completion"] + increment
 
@@ -138,7 +138,7 @@ def result():
                 obf_method.run()
             PROGRESS["completion"] = PROGRESS["completion"] + increment
 
-    PROGRESS["status"] = "Rebuilding, zipaligning & signing APK"
+    PROGRESS["status"] = "Rebuilding, Zipaligning & Signing APK"
     post_obfuscate(apktool, "./ict2207-test-key.jks",
                    "nim4m4h4om4?", "nim4m4h4om4?")
     PROGRESS["completion"] = PROGRESS["completion"] + increment
@@ -184,12 +184,10 @@ def comaprelines():
     try:
         global DIR_MAPPING
         file_path = request.json["data"].strip()
-        diff: Diff = Diff("./.tmp/diff")
+        diff: Diff = Diff()
         if DIR_MAPPING[file_path] is not None:
-            diff.generate_diff([DIR_MAPPING[file_path]], [file_path])
-            with open("./diff.html", "r") as f:
-                content = f.read()
-            return jsonify(content)
+            html = diff.generate_diff(DIR_MAPPING[file_path], file_path)
+            return jsonify(html)
         return "No changes or not available"
     except:
         return "No changes or not available"

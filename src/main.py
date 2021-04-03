@@ -45,11 +45,6 @@ def post_obfuscate(apktool: Apktool, keystore_path: str, ks_pass: str, key_pass:
     dex2jar.to_jar(input_apk_path="./.tmp/signed.apk",
                    output_jar_path="./.tmp/signed.jar")
 
-    # generate diffs
-    diff: Diff = Diff("./.tmp/diff")
-    diff.generate_diff(["./.tmp/original/smali/com/example/ict2207_x08/MainActivity.smali"],
-                       ["./.tmp/obfuscated/smali/com/example/ict2207_x08/MainActivity.smali"])
-
 
 def main():
     apktool: Apktool = Apktool()

@@ -30,13 +30,14 @@
                         <p class="font-weight-bold">Select obfuscation options</p>
 
                         <div>
-                            <div class="row justify-content-center">
+                            <div class="row mb-3 justify-content-center">
                                 <div class="col-lg-4 align-items-center">
-                                    <div class="card mb-10 py-0 border-left-primary">
+                                    <div class="card shadow mb-10 py-0 border-left-primary">
                                         <div class="card-body">
                                             <div class="row">
                                                 <div class="col mr-2">
-                                                    <h4 class="text-primary">PurgeLogs</h4>
+                                                    <h4 class="card-title text-primary font-weight-bold">Purge Logs
+                                                        [Remove]</h4>
                                                 </div>
                                                 <div class="col-auto">
                                                     <!-- Basic dropdown -->
@@ -108,24 +109,18 @@
                                                         <a class="dropdown-item">
                                                             <div class="custom-control custom-checkbox">
                                                                 <input type="checkbox" class="custom-control-input"
-                                                                    id="checkbox6" value="wtf" name="purge_options"
+                                                                    id="checkbox7" value="wtf" name="purge_options"
                                                                     checked>
-                                                                <label class="custom-control-label" for="checkbox6">What
-                                                                    A
-                                                                    Terrible
-                                                                    Failure</label>
+                                                                <label class="custom-control-label" for="checkbox7">What
+                                                                    A Terrible Failure</label>
                                                             </div>
                                                         </a>
-
                                                     </div>
                                                     <!-- Basic dropdown -->
-
                                                 </div>
-
-
                                             </div>
 
-                                            <h5>asdasdas</h5>
+                                            <p class="card-text">Remove logs that may contain sensitive information</p>
 
                                             <div class="custom-control custom-switch">
 
@@ -139,20 +134,18 @@
                                     </div>
                                 </div>
 
-
-
                                 <div class="col-lg-4 align-items-center">
-                                    <div class="card mb-10 py-0 border-left-primary">
+                                    <div class="card shadow mb-10 py-0 border-left-primary">
 
                                         <div class="card-body">
-                                            <h4 class="text-primary">Rename Methods</h4>
-                                            <h5>asdasdas</h5>
+                                            <h4 class="text-primary font-weight-bold">Rename Methods [Rename]</h4>
+                                            <p>Rename method declarations and invocations</p>
 
                                             <div class="custom-control custom-switch">
 
                                                 <input class="custom-control-input" type="checkbox" value="RenameMethod"
                                                     name="options" id="customSwitches1" checked>
-                                                <label class="custom-control-label" for="customSwitches1">
+                                                <label class="custom-control-label" for="customSwitches1"></label>
                                                 </label>
                                             </div>
 
@@ -160,13 +153,12 @@
                                     </div>
                                 </div>
 
-
                                 <div class="col-lg-4 align-items-center">
-                                    <div class="card mb-10 py-0 border-left-primary">
+                                    <div class="card shadow mb-10 py-0 border-left-primary">
 
                                         <div class="card-body">
-                                            <h4 class="text-primary">Rename Class</h4>
-                                            <h5>asdasdas</h5>
+                                            <h4 class="text-primary font-weight-bold">Rename Class [Rename]</h4>
+                                            <p>Rename classes and their packages</p>
 
                                             <div class="custom-control custom-switch">
 
@@ -181,12 +173,12 @@
                                 </div>
                             </div>
 
-                            <div class="row justify-content-center">
+                            <div class="row mb-3 justify-content-center">
                                 <div class="col-lg-4 align-items-center">
-                                    <div class="card mb-10 py-0 border-left-primary">
+                                    <div class="card shadow mb-10 py-0 border-left-primary">
                                         <div class="card-body">
-                                            <h4 class="text-primary">StringEncryption</h4>
-                                            <h5>asdasdas</h5>
+                                            <h4 class="text-primary font-weight-bold">String Encryption [Replace]</h4>
+                                            <p>Encrypt strings with AES</p>
 
                                             <div class="custom-control custom-switch">
 
@@ -202,14 +194,13 @@
                                     </div>
                                 </div>
 
-
-
                                 <div class="col-lg-4 align-items-center">
-                                    <div class="card mb-10 py-0 border-left-primary">
+                                    <div class="card shadow mb-10 py-0 border-left-primary">
 
                                         <div class="card-body">
-                                            <h4 class="text-primary">Boolean Arithmetic</h4>
-                                            <h5>asdasdas</h5>
+                                            <h4 class="text-primary font-weight-bold">Boolean Arithmetic [Restructure]
+                                            </h4>
+                                            <p>Inject an always true/false clause into the CFG</p>
 
                                             <div class="custom-control custom-switch">
 
@@ -224,13 +215,12 @@
                                     </div>
                                 </div>
 
-
                                 <div class="col-lg-4 align-items-center">
-                                    <div class="card mb-10 py-0 border-left-primary">
+                                    <div class="card shadow mb-10 py-0 border-left-primary">
 
                                         <div class="card-body">
-                                            <h4 class="text-primary">GotoInjector</h4>
-                                            <h5>asdasdas</h5>
+                                            <h4 class="text-primary font-weight-bold">Goto Injector [Restructure]</h4>
+                                            <p>Modify the CFG by wrapping each method with 2 nodes</p>
 
                                             <div class="custom-control custom-switch">
 
@@ -245,12 +235,12 @@
                                 </div>
                             </div>
 
-                            <div class="row justify-content-center">
+                            <div class="row mb-3 justify-content-center">
                                 <div class="col-lg-4 align-items-center">
-                                    <div class="card mb-10 py-0 border-left-primary">
+                                    <div class="card shadow mb-10 py-0 border-left-primary">
                                         <div class="card-body">
-                                            <h4 class="text-primary">String Encryption</h4>
-                                            <h5>asdasdas</h5>
+                                            <h4 class="text-primary font-weight-bold">Reorder Labels [Restructure]</h4>
+                                            <p>Alter the CFG by reordering & abusing goto instructions</p>
 
                                             <div class="custom-control custom-switch">
 
@@ -275,10 +265,9 @@
 
                         </br>
 
-
                         <div class="row justify-content-center">
                             <div class="col-lg-4 align-items-center">
-                                <div class="card mb-10 py-0 border-left-primary">
+                                <div class="card shadow mb-10 py-0 border-left-primary">
                                     <div class="card-body">
                                         <h4 class="text-primary">Enter KS-Pass</h4>
 
@@ -293,7 +282,7 @@
 
                         <div class="row justify-content-center">
                             <div class="col-lg-4 align-items-center">
-                                <div class="card mb-10 py-0 border-left-primary">
+                                <div class="card shadow mb-10 py-0 border-left-primary">
 
                                     <div class="card-body">
                                         <h4 class="text-primary">Enter Key-Pass</h4>
@@ -316,7 +305,6 @@
 
                     </form>
 
-
                     <div class="modal js-loading-bar">
                         <div class="modal-dialog">
                             <div class="modal-content">
@@ -333,9 +321,7 @@
                             </div>
                         </div>
                     </div>
-
                 </div>
-
             </div>
         </div>
     </div>

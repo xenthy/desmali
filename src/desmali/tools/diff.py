@@ -2,11 +2,16 @@ from difflib import HtmlDiff
 
 
 class Diff:
-    def __init__(self, output_path: str):
-        self._output_path = output_path
+    __instance = None
 
-    def generate_diff(self, original_list, modified_list):
-        original = open(original_list[0], "r").readlines()
-        modified = open(modified_list[0], "r").readlines()
-        with open("diff.html", "w+") as file:
-            file.write(HtmlDiff().make_file(original, modified, context=True))
+    def __init__(self):
+        if self.__instance is None:
+            self._htmldiff = HtmlDiff()
+            self.__instance = self.__dict__
+        else:
+            self.__dict__ = self.__instance
+
+    def generate_diff(self, original, modified):
+        original = open(original, "r").readlines()
+        modified = open(modified, "r").readlines()
+        return self._htmldiff.make_file(original, modified, context=True)
