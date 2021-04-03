@@ -25,9 +25,9 @@ class PurgeLogs():
 
         # build regex
         # Landroid/util/Log;->v(Ljava/lang/String;Ljava/lang/String;)I
-        pattern_log = re.compile(r".*Landroid\/util\/Log;->(" +
+        pattern_log = re.compile(r"Landroid\/util\/Log;->(" +
                                  r"|".join(flags_set) +
-                                 r").*")
+                                 r")\(")
 
         for file in Util.progress_bar(self._dissect.smali_files(),
                                       description=f"Removing logs: {flags_set}"):
