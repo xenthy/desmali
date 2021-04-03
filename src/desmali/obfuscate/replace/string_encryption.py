@@ -3,13 +3,12 @@ import re
 import string
 import random
 from binascii import hexlify
-from pyaxmlparser import APK
 from Crypto.Cipher import AES
 from desmali.tools import Dissect
 from Crypto.Util.Padding import pad
 from Crypto.Protocol.KDF import PBKDF2
 from desmali.extras import Util, logger, regex
-
+from androguard.core.bytecodes.apk import APK
 
 class StringEncryption:
     def __init__(self, dissect: Dissect):
@@ -42,10 +41,14 @@ class StringEncryption:
         files_processed = 0
         strings_encrypted = set()
 
-        dest_dir, com_path = self.findComPath()
-        if not dest_dir and not com_path:
-            logger.error("Unable to find package's main directory")
-            return
+        try:
+            dest_dir, com_path = self.findComPath()
+            # if not dest_dir and not com_path:
+                # logger.error("Unable to find package's main directory")
+                # return
+        except Exception as e:
+            logger.error(f"{e}")
+            exit()
 
         for filename in Util.progress_bar(self._dissect.smali_files(), description="Encrypting strings"):
 
@@ -203,7 +206,19 @@ class StringEncryption:
     # Required before encrypting strings and adding smali code
     def findComPath(self):
         apk = APK('./original.apk') # TODO: Change to dynamic apk filename
-        package_dir = apk.package.replace('.','/')
+
+        package_dir = None
+
+        # TODO: If line 222 works fine, remove this chunk
+        # for element in apk.get_activities():
+            # if "MainActivity" in element:
+                # package_dir = element.replace(".MainActivity","").replace(".","/")
+                # break
+            # else:
+                # package_dir = "/".join(element.split(".")[:-1])
+                # break
+
+        package_dir = "/".join(apk.get_activities()[0].split(".")[:-1])
         package_dir_regex = re.compile(f"{package_dir}")
 
         com_path = None
@@ -211,11 +226,14 @@ class StringEncryption:
         for filename in self._dissect.smali_files():
             path_search = package_dir_regex.search(os.path.dirname(filename))
             if path_search and ("MainActivity.smali" in filename) :
+                logger.info(f"{os.path.dirname(filename)}")
                 dest_dir = os.path.dirname(filename)
                 com_path = path_search[0]
 
-                if com_path and dest_dir:
-                    return dest_dir, com_path
+                logger.info(f"{dest_dir}")
+                logger.info(f"{com_path}")
+
+                return dest_dir, com_path
 
 
 
