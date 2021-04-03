@@ -1,7 +1,9 @@
 import os
+import re
 import string
 import random
 from binascii import hexlify
+from pyaxmlparser import APK
 from Crypto.Cipher import AES
 from desmali.tools import Dissect
 from Crypto.Util.Padding import pad
@@ -13,7 +15,6 @@ class StringEncryption:
     def __init__(self, dissect: Dissect):
         self._dissect = dissect
         self.key = ''.join(random.choice(string.ascii_letters + string.digits + "';|!()~*%<>") for _ in range(32))
-        self.com_path = None
         self.decryptor_added = False
 
     def encryptString(self, plaintext):
@@ -39,8 +40,12 @@ class StringEncryption:
         """
         skipped_files = 0
         files_processed = 0
-        dest_dir = None
         strings_encrypted = set()
+
+        dest_dir, com_path = self.findComPath()
+        if not dest_dir and not com_path:
+            logger.error("Unable to find package's main directory")
+            return
 
         for filename in Util.progress_bar(self._dissect.smali_files(), description="Encrypting strings"):
 
@@ -52,17 +57,6 @@ class StringEncryption:
                 continue
             else:
                 files_processed += 1
-
-            # Identifies the full "com" path which contains "MainActivity.smali"
-            # Used in the storing of smali string decryptor file
-            com_path_search = regex.COM_PATH.search(os.path.dirname(filename))
-            if com_path_search:
-                com_path = com_path_search[1]
-                if "MainActivity.smali" in filename:
-                    self.com_path = com_path
-                    dest_dir = os.path.dirname(filename)
-            else:
-                continue
 
             try:
                 with open(filename, 'r', encoding='utf-8') as f:
@@ -80,8 +74,6 @@ class StringEncryption:
                 direct_methods_line = -1
                 static_constructor_line = -1
                 locals_count = 0
-
-                # logger.info(f"Encrypting strings in {filename}:{len(lines)}")
 
                 # Identification and storing of important lines in smali file
                 for line_num, line in enumerate(lines):
@@ -132,7 +124,7 @@ class StringEncryption:
                         "\n\tmove-result-object {register}\n".format(
                             register=const_register[list_num],
                             ciphertext=self.encryptString(const_val[list_num]),
-                            com_path=self.com_path,
+                            com_path=com_path,
                         )
                     )
 
@@ -152,7 +144,7 @@ class StringEncryption:
                         "\n\tsput-object v0, {class_name}->"
                         "{string_name}:Ljava/lang/String;\n\n".format(
                             ciphertext=self.encryptString(static_val[list_num]),
-                            com_path=self.com_path,
+                            com_path=com_path,
                             class_name=class_name,
                             string_name=static_name[list_num],
                         )
@@ -194,14 +186,10 @@ class StringEncryption:
                 logger.error(f"[{filename}] String Encryption Error {e}")
 
         # Write decryptor file (resources/DecryptString.smali) into "com" path directory identified earlier
-        if strings_encrypted and not self.decryptor_added and self.com_path:
-            if not dest_dir:
-                # ALTERNATIVE: dest_dir = os.path.dirname(self._dissect.smali_files()[0])
-                dest_dir = os.path.dirname(self._dissect.smali_files()[0])
-
+        if strings_encrypted and not self.decryptor_added and com_path and dest_dir:
             dest_file = os.path.join(dest_dir, "DecryptString.smali")
             with open(dest_file, 'w', encoding='utf-8') as f:
-                f.write(getSmaliDecryptor(self.key, self.com_path))
+                f.write(getSmaliDecryptor(self.key, com_path))
 
             self.decryptor_added = True
             logger.verbose("String Decryptor added successfully")
@@ -211,6 +199,25 @@ class StringEncryption:
         logger.verbose(f"Encryption Strings files skipped: {skipped_files}")
         logger.verbose(f"Encryption Strings files processed: {files_processed}")
 
+    # To find the directory that contains main application's logic
+    # Required before encrypting strings and adding smali code
+    def findComPath(self):
+        apk = APK('./original.apk') # TODO: Change to dynamic apk filename
+        package_dir = apk.package.replace('.','/')
+        package_dir_regex = re.compile(f"{package_dir}")
+
+        com_path = None
+        dest_dir = None
+        for filename in self._dissect.smali_files():
+            path_search = package_dir_regex.search(os.path.dirname(filename))
+            if path_search and ("MainActivity.smali" in filename) :
+                dest_dir = os.path.dirname(filename)
+                com_path = path_search[0]
+
+                if com_path and dest_dir:
+                    return dest_dir, com_path
+
+
 
 # Retrieve the smali decryptor file
 def getSmaliDecryptor(key, com_path):
@@ -219,3 +226,4 @@ def getSmaliDecryptor(key, com_path):
 
         # Replace the placeholder AES-ECB key with the key that was used to encrypt strings
         return (cont.replace("This-key-need-to-be-32-character", key)).replace("com/decryptstringmanager", com_path)
+
