@@ -230,9 +230,6 @@ class StringEncryption:
                 dest_dir = os.path.dirname(filename)
                 com_path = path_search[0]
 
-                logger.info(f"{dest_dir}")
-                logger.info(f"{com_path}")
-
                 return dest_dir, com_path
 
 
