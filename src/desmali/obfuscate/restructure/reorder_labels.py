@@ -23,8 +23,7 @@ class ReorderLabels:
                                           description="Randomly reordering labels"):
 
             # skip obfuscated classes
-            if match := regex.OBFUSCATED.match(filename):
-                logger.warning(match)
+            if regex.OBFUSCATED.match(filename):
                 continue
 
             logger.debug(f"reordering file: {filename}")
