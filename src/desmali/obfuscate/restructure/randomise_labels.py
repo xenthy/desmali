@@ -1,12 +1,11 @@
-from random import shuffle, randrange
-from re import match
 from typing import List, Dict
+from random import shuffle, randrange
 
 from desmali.tools import Dissect
 from desmali.extras import logger, Util, regex
 
 
-class ReorderLabels:
+class RandomiseLabels:
     def __init__(self, dissect: Dissect):
         self._dissect = dissect
 

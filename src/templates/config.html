@@ -10,7 +10,7 @@
     {%block content%}
     <h1>APK Name: {{apk_name}}</h1>
     <div class="row justify-content-center">
-        <div class="col-xl-10 col-lg-10 scroll">
+        <div class="col-xl-10 col-lg-12 scroll">
             <div class="card shadow mb-4">
                 <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
                     <h6 class="m-0 font-weight-bold text-primary">Configurations</h6>
@@ -32,7 +32,7 @@
 
                         <div class="row container-fluid mb-3 justify-content-center">
                             <!-- boolean-->
-                            <div class="col-lg-4 col-md-5 mb-3 align-items-center">
+                            <div class="col-lg-4 col-md-6 mb-3 align-items-center">
                                 <div class="card h-100 shadow mb-10 py-0 border-left-primary">
                                     <div class="card-body">
                                         <h4 class="text-primary font-weight-bold">Boolean Arithmetic [Restructure]
@@ -45,7 +45,7 @@
                             </div>
 
                             <!-- goto-->
-                            <div class="col-lg-4 col-md-5 mb-3 align-items-center">
+                            <div class="col-lg-4 col-md-6 mb-3 align-items-center">
                                 <div class="card h-100 shadow mb-10 py-0 border-left-primary">
                                     <div class="card-body">
                                         <h4 class="text-primary font-weight-bold">Goto Injector [Restructure]</h4>
@@ -57,7 +57,7 @@
                             </div>
 
                             <!-- Purgelog-->
-                            <div class="col-lg-4 col-md-5 mb-3 align-items-center">
+                            <div class="col-lg-4 col-md-6 mb-3 align-items-center">
                                 <div class="card h-100 shadow mb-10 py-0 border-left-primary">
                                     <div class="card-body">
                                         <div class="row">
@@ -149,7 +149,7 @@
                             </div>
 
                             <!-- rename class-->
-                            <div class="col-lg-4 col-md-5 mb-3 align-items-center">
+                            <div class="col-lg-4 col-md-6 mb-3 align-items-center">
                                 <div class="card h-100 shadow mb-10 py-0 border-left-primary">
                                     <div class="card-body">
                                         <h4 class="text-primary font-weight-bold">Rename Class [Rename]</h4>
@@ -161,7 +161,7 @@
                             </div>
 
                             <!-- rename method-->
-                            <div class="col-lg-4 col-md-5 mb-3 align-items-center">
+                            <div class="col-lg-4 col-md-6 mb-3 align-items-center">
                                 <div class="card h-100 shadow mb-10 py-0 border-left-primary">
                                     <div class="card-body">
                                         <h4 class="text-primary font-weight-bold">Rename Methods [Rename]</h4>
@@ -173,20 +173,20 @@
                             </div>
 
                             <!-- reorder-->
-                            <div class="col-lg-4 col-md-5 mb-3 align-items-center">
+                            <div class="col-lg-4 col-md-6 mb-3 align-items-center">
                                 <div class="card h-100 shadow mb-10 py-0 border-left-primary">
                                     <div class="card-body">
-                                        <h4 class="text-primary font-weight-bold">Reorder Labels [Restructure]
+                                        <h4 class="text-primary font-weight-bold">Randomise Labels [Restructure]
                                         </h4>
-                                        <p>Alter the CFG by reordering & abusing goto instructions</p>
-                                        <input data-size="sm" data-toggle="toggle" type="checkbox" value="ReorderLabels"
-                                            name="options" checked>
+                                        <p>Alter the CFG by randomly reordering & abusing goto instructions</p>
+                                        <input data-size="sm" data-toggle="toggle" type="checkbox"
+                                            value="RandomiseLabels" name="options" checked>
                                     </div>
                                 </div>
                             </div>
 
                             <!-- str encrypt-->
-                            <div class="col-lg-4 col-md-5 mb-3 align-items-center">
+                            <div class="col-lg-4 col-md-6 mb-3 align-items-center">
                                 <div class="card h-100 shadow mb-10 py-0 border-left-primary">
                                     <div class="card-body">
                                         <h4 class="text-primary font-weight-bold">String Encryption [Replace]</h4>
@@ -201,8 +201,11 @@
 
                         <input type="hidden" value="{{apk_name}}" name="apk_name"></br></br>
 
+                        <h2 class="font-weight-bold text-center text-primary">Enter Java Keystore Credentials</h2>
+                        </br>
+
                         <div class="row justify-content-center">
-                            <div class="col-lg-4 align-items-center">
+                            <div class="col-lg-4 col-md-8 mb-3 align-items-center">
                                 <div class="card shadow mb-10 py-0 border-left-primary">
                                     <div class="card-body">
                                         <h4 class="text-primary font-weight-bold ">KS-Pass</h4>

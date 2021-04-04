@@ -12,7 +12,7 @@ class BooleanArithmetic:
         logger.info(f"*** INIT {self.__class__.__name__} ***")
 
         for filename in Util.progress_bar(self._dissect.smali_files(),
-                                          description=f"Creating fake branches "):
+                                          description=f"Inserting arithmetic branches"):
 
             logger.debug(f"modifying \"{filename}\"")
 

@@ -17,7 +17,7 @@ app = Flask(__name__)
 
 OBFUSCATION_METHODS = [PurgeLogs,
                        GotoInjector,
-                       ReorderLabels,
+                       RandomiseLabels,
                        StringEncryption,
                        RenameMethod,
                        RenameClass,

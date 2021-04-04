@@ -34,7 +34,7 @@ def main():
     goto_inject.run()
 
     """ REORDER LABELS """
-    reorder_labels: ReorderLabels = ReorderLabels(dissect)
+    reorder_labels: RandomiseLabels = RandomiseLabels(dissect)
     reorder_labels.run()
 
     """ ENCRYPT STRING """
