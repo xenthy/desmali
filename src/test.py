@@ -8,15 +8,17 @@ from desmali.extras import logger
 
 
 def main():
+    APK_PATH = "Memento-1.1.1.apk"
 
     apktool: Apktool = Apktool()
-    apktool.decode(apk_path="original.apk",
-                   output_dir_path="./.tmp/original",
+    apktool.decode(apk_path=APK_PATH,
+                   output_dir_path="./.tmp/obfuscated",
                    force=True)
+
     # clone decoded directory
-    if os.path.isdir("./.tmp/obfuscated"):
-        shutil.rmtree("./.tmp/obfuscated")
-    copy_tree("./.tmp/original", "./.tmp/obfuscated")
+    if os.path.isdir("./.tmp/original"):
+        shutil.rmtree("./.tmp/original")
+    copy_tree("./.tmp/obfuscated", "./.tmp/original")
 
     ###### start obfuscate stuff ######
     dissect: Dissect = Dissect(original_dir_path="./.tmp/original",
