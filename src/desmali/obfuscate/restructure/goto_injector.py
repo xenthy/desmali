@@ -1,21 +1,20 @@
 from typing import List
 
-from desmali.extras import logger, Util, regex
+from desmali.abc import Desmali
 from desmali.tools import Dissect
+from desmali.extras import logger, Util, regex
+
 
 START_GOTO = "    goto :desmaili_back \n    :desmaili_front\n\n"
 END_GOTO = "\n    :desmaili_back\n    goto :desmaili_front\n\n"
 
 
-class GotoInjector:
-
+class GotoInjector(Desmali):
     def __init__(self, dissect: Dissect):
+        super().__init__(self)
         self._dissect = dissect
 
     def run(self):
-
-        logger.info(f"*** INIT {self.__class__.__name__} ***")
-
         for filename in Util.progress_bar(self._dissect.smali_files(),
                                           description=f"Injecting goto(s): "):
             logger.debug(f"modifying \"{filename}\"")

@@ -1,41 +1,23 @@
 import os
 from typing import List, Dict
-from string import ascii_letters
 
+from desmali.abc import Desmali
 from desmali.extras import logger, Util, regex
 from desmali.tools.dissect import Dissect
 
 
-class RenameClass:
+class RenameClass(Desmali):
 
     def __init__(self, dissect: Dissect):
+        super().__init__(self)
         self._dissect = dissect
 
     def run(self):
-        logger.info(f"*** INIT {self.__class__.__name__} ***")
-
         # get all class names
-        self._class_names: List[str] = self._dissect.class_names(
-            renamable=True)
+        self._class_names: List[str] = self._dissect.class_names(renamable=True)
 
         # generate a mapping of method names
-        # [.., Y, Z, aa, ab, ac, ..]
-        self._class_name_mapping: Dict[str: str] = dict()
-        letters: List[str] = [letter for letter in ascii_letters]  # [a-zA-Z]
-
-        for index, name in enumerate(self._class_names):
-            new_name: str = ""
-
-            while index >= len(letters):
-                remainder: int = index % len(letters)
-                new_name = letters[remainder] + new_name
-                index = int((index - remainder) / len(letters))
-
-            if len(new_name) == 0:
-                new_name = letters[index] + new_name
-            else:
-                new_name = letters[index - 1] + new_name
-            self._class_name_mapping[name] = new_name
+        self._class_name_mapping: Dict[str: str] = Util.generate_mapping(self._class_names)
 
         # rename classes in smali files
         for filename in Util.progress_bar(self._dissect.smali_files(),

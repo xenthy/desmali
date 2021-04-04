@@ -3,16 +3,20 @@ import re
 import string
 import random
 from binascii import hexlify
+
 from Crypto.Cipher import AES
-from desmali.tools import Dissect
 from Crypto.Util.Padding import pad
 from Crypto.Protocol.KDF import PBKDF2
-from desmali.extras import Util, logger, regex
 from androguard.core.bytecodes.apk import APK
 
+from desmali.abc import Desmali
+from desmali.tools import Dissect
+from desmali.extras import Util, logger, regex
 
-class StringEncryption:
+
+class StringEncryption(Desmali):
     def __init__(self, dissect: Dissect):
+        super().__init__(self)
         self._dissect = dissect
         self.key = ''.join(random.choice(string.ascii_letters + string.digits + "';|!()~*%<>") for _ in range(32))
         self.decryptor_added = False

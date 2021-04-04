@@ -1,10 +1,12 @@
+import random
+import string
+from typing import List, Dict
+from string import ascii_letters
 from contextlib import contextmanager
 
 import fileinput
 from tqdm import tqdm
 from in_place import InPlace
-import random
-import string
 
 
 class Util:
@@ -44,9 +46,29 @@ class Util:
 
     def random_string(length: int) -> str:
         return "".join(random.choices(string.ascii_letters, k=length))
-        
+
     def smali_format(classname: str):
         return "L" + classname.replace(".", "/") + ";"
+
+    def generate_mapping(lst: List[str]) -> Dict[str, str]:
+        method_name_mapping: Dict[str: str] = dict()  # [.., Y, Z, aa, ab, ac, ..]
+        letters: List[str] = [letter for letter in ascii_letters]  # [a-zA-Z]
+
+        for index, name in enumerate(lst):
+            new_name: str = ""
+
+            while index >= len(letters):
+                remainder: int = index % len(letters)
+                new_name = letters[remainder] + new_name
+                index = int((index - remainder) / len(letters))
+
+            if len(new_name) == 0:
+                new_name = letters[index] + new_name
+            else:
+                new_name = letters[index - 1] + new_name
+            method_name_mapping[name] = new_name
+
+        return method_name_mapping
 
 
 if __name__ == "__main__":

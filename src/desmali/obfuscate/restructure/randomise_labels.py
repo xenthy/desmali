@@ -1,17 +1,17 @@
 from typing import List, Dict
 from random import shuffle, randrange
 
+from desmali.abc import Desmali
 from desmali.tools import Dissect
 from desmali.extras import logger, Util, regex
 
 
-class RandomiseLabels:
+class RandomiseLabels(Desmali):
     def __init__(self, dissect: Dissect):
+        super().__init__(self)
         self._dissect = dissect
 
     def run(self):
-        logger.info(f"*** INIT {self.__class__.__name__} ***")
-
         # variable declarations
         in_method: bool = False
         reached_first_label: bool = False

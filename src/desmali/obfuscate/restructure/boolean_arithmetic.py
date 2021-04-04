@@ -1,16 +1,16 @@
 from typing import List
 
+from desmali.abc import Desmali
 from desmali.tools import Dissect
 from desmali.extras import logger, Util, regex
 
 
-class BooleanArithmetic:
+class BooleanArithmetic(Desmali):
     def __init__(self, dissect: Dissect):
+        super().__init__(self)
         self._dissect = dissect
 
     def run(self):
-        logger.info(f"*** INIT {self.__class__.__name__} ***")
-
         for filename in Util.progress_bar(self._dissect.smali_files(),
                                           description=f"Inserting arithmetic branches"):
 

@@ -1,12 +1,14 @@
 import re
-from typing import List
+from typing import List, Match
 
-from desmali.extras import logger, Util, regex
+from desmali.abc import Desmali
+from desmali.extras import logger, Util
 from desmali.tools import Dissect
 
 
-class PurgeLogs():
+class PurgeLogs(Desmali):
     def __init__(self, dissect: Dissect):
+        super().__init__(self)
         self._dissect = dissect
 
     def run(self,
@@ -19,15 +21,14 @@ class PurgeLogs():
             wtf: bool = False  # what a terrible failure
             ):
 
-        logger.info(f"*** INIT {self.__class__.__name__} ***")
         flags_set: List[str] = [k for k, v in locals().items() if v is True]
         logger.verbose(f"logs set for purging -> {flags_set}")
 
         # build regex
         # Landroid/util/Log;->v(Ljava/lang/String;Ljava/lang/String;)I
-        pattern_log = re.compile(r".+Landroid\/util\/Log;->(" +
-                                 r"|".join(flags_set) +
-                                 r")\(.+")
+        pattern_log: Match = re.compile(r".+Landroid\/util\/Log;->(" +
+                                        r"|".join(flags_set) +
+                                        r")\(.+")
 
         for file in Util.progress_bar(self._dissect.smali_files(),
                                       description=f"Removing logs: {flags_set}"):
