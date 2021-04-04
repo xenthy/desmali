@@ -31,6 +31,8 @@ class PurgeLogs():
 
         for file in Util.progress_bar(self._dissect.smali_files(),
                                       description=f"Removing logs: {flags_set}"):
+            if "Log.smali" in file:
+                continue
             # store file into a list
             with open(file, "r") as file_context:
                 original_file: List[str] = file_context.readlines()
