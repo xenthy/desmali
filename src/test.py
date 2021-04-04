@@ -8,23 +8,38 @@ from desmali.extras import logger
 
 
 def main():
+    APK_PATH = "Memento-1.1.1.apk"
 
     apktool: Apktool = Apktool()
-    apktool.decode(apk_path="original.apk",
-                   output_dir_path="./.tmp/original",
+    apktool.decode(apk_path=APK_PATH,
+                   output_dir_path="./.tmp/obfuscated",
                    force=True)
+
     # clone decoded directory
-    if os.path.isdir("./.tmp/obfuscated"):
-        shutil.rmtree("./.tmp/obfuscated")
-    copy_tree("./.tmp/original", "./.tmp/obfuscated")
+    if os.path.isdir("./.tmp/original"):
+        shutil.rmtree("./.tmp/original")
+    copy_tree("./.tmp/obfuscated", "./.tmp/original")
 
     ###### start obfuscate stuff ######
-    dissect: Dissect = Dissect(original_dir_path="./.tmp/original",
+    dissect: Dissect = Dissect(apk_path=APK_PATH,
+                               original_dir_path="./.tmp/original",
                                decoded_dir_path="./.tmp/obfuscated")
 
     """ PURGE LOGS """
     purge_logs: PurgeLogs = PurgeLogs(dissect)
     purge_logs.run(a=True, d=True, e=True, i=True, v=True, w=True, wtf=True)
+
+    """ INJECT GOTOS IN METHODS """
+    goto_inject: GotoInjector = GotoInjector(dissect)
+    goto_inject.run()
+
+    """ REORDER LABELS """
+    reorder_labels: ReorderLabels = ReorderLabels(dissect)
+    reorder_labels.run()
+
+    """ ENCRYPT STRING """
+    string_encryption: StringEncryption = StringEncryption(dissect)
+    string_encryption.run()
 
     """ RENAME METHODS"""
     rename_method: RenameMethod = RenameMethod(dissect)
@@ -32,24 +47,11 @@ def main():
 
     """ RENAME CLASS """
     rename_class: RenameClass = RenameClass(dissect)
-    rename_class.run()
-    dissect.smali_files(True)  # need to update smali files after renaming
-
-    """ ENCRYPT STRING """
-    string_encryption: StringEncryption = StringEncryption(dissect)
-    string_encryption.run()
-
-    """ INJECT GOTOS IN METHODS """
-    goto_inject: GotoInjector = GotoInjector(dissect)
-    goto_inject.run()
+    # rename_class.run()
 
     """ BOOLEAN ARITHMETIC """
     boolean_arithmetic: BooleanArithmetic = BooleanArithmetic(dissect)
     boolean_arithmetic.run()
-
-    """ REORDER LABELS """
-    reorder_labels: ReorderLabels = ReorderLabels(dissect)
-    reorder_labels.run()
 
     ###### end obfuscate stuff ######
 
