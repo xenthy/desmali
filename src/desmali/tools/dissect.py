@@ -7,7 +7,7 @@ from pyaxmlparser import APK
 
 
 class Dissect:
-    def __init__(self, original_dir_path: str, decoded_dir_path: str):
+    def __init__(self, apk_path: str, original_dir_path: str, decoded_dir_path: str):
         # check if input directory exists
         if not os.path.isdir(original_dir_path):
             logger.error(f"directory does not exist \"{original_dir_path}\"")
@@ -22,6 +22,9 @@ class Dissect:
             self.decoded_dir_path = decoded_dir_path
 
         ### INITIAL OPERATIONS ###
+        # set apk path
+        self.apk_path = apk_path
+
         # locate all smali files
         self.smali_files()
 
@@ -107,14 +110,19 @@ class Dissect:
                 for line in file:
 
                     if renamable:
+                        # skip enum objects
+                        if " enum " in line:
+                            break
+
                         class_match = regex.CLASS.match(line)
                         if class_match is not None:
-                            class_name = class_match.group("name")
 
+                            class_name = class_match.group("name")
                             if (class_name.startswith("Landroid")
                                     or class_name.startswith("Ljava")
                                     or class_name.startswith("Lkotlin")):
                                 break
+
                         # skip virtual methods if @param:skip_virtual_methods is set to true.
                         # virtual methods are always at the bottom of the smali file, hence,
                         # 'break' is used

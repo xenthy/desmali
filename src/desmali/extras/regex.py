@@ -31,18 +31,22 @@ TRY_CATCH = re.compile(r"^[ ]{4}.catch.+?"
                        r".+?(?P<try_end>:\S*)}"
                        r"[ ](?P<handler>:\S*)")
 
+# obfuscated files
+OBFUSCATED = re.compile(r".+[\/]([a-z]|github|v\d)[\/].+",
+                        re.UNICODE)
+
 # string constants
 STATIC_STRING = re.compile(
-        r"\.field.+?static.+?(?P<string_name>\S+?):"
-        r'Ljava/lang/String;\s=\s"(?P<string_value>.+)"',
-        re.UNICODE,
-        )
+    r"\.field.+?static.+?(?P<string_name>\S+?):"
+    r'Ljava/lang/String;\s=\s"(?P<string_value>.+)"',
+    re.UNICODE,
+)
 
 CONST_STRING = re.compile(
-        r"\s+const-string(/jumbo)?\s(?P<register>[vp0-9]+),\s" 
-        r'"(?P<string>.+)"',
-        re.UNICODE,
-        )
+    r"\s+const-string(/jumbo)?\s(?P<register>[vp0-9]+),\s"
+    r'"(?P<string>.+)"',
+    re.UNICODE,
+)
 
 CLASS_NAME = re.compile(r"\.class.+?(?P<class_name>\S+?;)", re.UNICODE)
 

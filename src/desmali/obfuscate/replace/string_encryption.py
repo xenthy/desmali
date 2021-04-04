@@ -10,6 +10,7 @@ from Crypto.Protocol.KDF import PBKDF2
 from desmali.extras import Util, logger, regex
 from androguard.core.bytecodes.apk import APK
 
+
 class StringEncryption:
     def __init__(self, dissect: Dissect):
         self._dissect = dissect
@@ -17,7 +18,7 @@ class StringEncryption:
         self.decryptor_added = False
         self.package_dir_regex = None
 
-    def encryptString(self, plaintext):
+    def encrypt_string(self, plaintext):
         """
         Encrypt a plaintext string using AES-ECB
         Returns ciphertext
@@ -43,10 +44,10 @@ class StringEncryption:
         strings_encrypted = set()
 
         try:
-            dest_dir, com_path = self.findComPath()
+            dest_dir, com_path = self.find_com_path()
             # if not dest_dir and not com_path:
-                # logger.error("Unable to find package's main directory")
-                # return
+            # logger.error("Unable to find package's main directory")
+            # return
         except Exception as e:
             logger.error(f"{e}")
             exit()
@@ -67,7 +68,6 @@ class StringEncryption:
             else:
                 skipped_files += 1
                 continue
-            
 
             try:
                 with open(filename, 'r', encoding='utf-8') as f:
@@ -134,7 +134,7 @@ class StringEncryption:
                         ";->decryptString(Ljava/lang/String;)Ljava/lang/String;\n"
                         "\n\tmove-result-object {register}\n".format(
                             register=const_register[list_num],
-                            ciphertext=self.encryptString(const_val[list_num]),
+                            ciphertext=self.encrypt_string(const_val[list_num]),
                             com_path=com_path,
                         )
                     )
@@ -154,7 +154,7 @@ class StringEncryption:
                         "\n\tmove-result-object v0\n"
                         "\n\tsput-object v0, {class_name}->"
                         "{string_name}:Ljava/lang/String;\n\n".format(
-                            ciphertext=self.encryptString(static_val[list_num]),
+                            ciphertext=self.encrypt_string(static_val[list_num]),
                             com_path=com_path,
                             class_name=class_name,
                             string_name=static_name[list_num],
@@ -200,7 +200,7 @@ class StringEncryption:
         if strings_encrypted and not self.decryptor_added and com_path and dest_dir:
             dest_file = os.path.join(dest_dir, "DecryptString.smali")
             with open(dest_file, 'w', encoding='utf-8') as f:
-                f.write(getSmaliDecryptor(self.key, com_path))
+                f.write(get_smali_decryptor(self.key, com_path))
 
             self.decryptor_added = True
             logger.verbose("String Decryptor added successfully")
@@ -212,13 +212,13 @@ class StringEncryption:
 
     # To find the directory that contains main application's logic
     # Required before encrypting strings and adding smali code
-    def findComPath(self):
-        apk = APK('./original.apk') # TODO: Change to dynamic apk filename
+    def find_com_path(self):
+        apk = APK(self._dissect.apk_path)
         package_dir = None
 
         for element in apk.get_activities():
             if "MainActivity" in element:
-                package_dir = element.replace(".MainActivity","").replace(".","/")
+                package_dir = element.replace(".MainActivity", "").replace(".", "/")
                 break
 
         self.package_dir_regex = re.compile(f"{package_dir}")
@@ -227,21 +227,18 @@ class StringEncryption:
         dest_dir = None
         for filename in self._dissect.smali_files():
             path_search = self.package_dir_regex.search(os.path.dirname(filename))
-            if path_search and ("MainActivity.smali" in filename) :
-                logger.info(f"{os.path.dirname(filename)}")
+            if path_search and ("MainActivity.smali" in filename):
+                # logger.info(f"{os.path.dirname(filename)}")
                 dest_dir = os.path.dirname(filename)
                 com_path = path_search[0]
-
 
                 return dest_dir, com_path
 
 
-
 # Retrieve the smali decryptor file
-def getSmaliDecryptor(key, com_path):
+def get_smali_decryptor(key, com_path):
     with open(os.path.join(os.path.dirname(__file__), "resources", "DecryptString.smali"), 'r') as f:
         cont = f.read()
 
         # Replace the placeholder AES-ECB key with the key that was used to encrypt strings
         return (cont.replace("This-key-need-to-be-32-character", key)).replace("com/decryptstringmanager", com_path)
-

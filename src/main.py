@@ -47,18 +47,21 @@ def post_obfuscate(apktool: Apktool, keystore_path: str, ks_pass: str, key_pass:
 
 
 def main():
+    APK_PATH = "Memento-1.1.1.apk"
+
     apktool: Apktool = Apktool()
-    apktool.decode(apk_path="original.apk",
-                   output_dir_path="./.tmp/original",
+    apktool.decode(apk_path=APK_PATH,
+                   output_dir_path="./.tmp/obfuscated",
                    force=True)
 
     # clone decoded directory
-    if os.path.isdir("./.tmp/obfuscated"):
-        shutil.rmtree("./.tmp/obfuscated")
-    copy_tree("./.tmp/original", "./.tmp/obfuscated")
+    if os.path.isdir("./.tmp/original"):
+        shutil.rmtree("./.tmp/original")
+    copy_tree("./.tmp/obfuscated", "./.tmp/original")
 
     ###### start obfuscate stuff ######
-    dissect: Dissect = Dissect(original_dir_path="./.tmp/original",
+    dissect: Dissect = Dissect(apk_path=APK_PATH,
+                               original_dir_path="./.tmp/original",
                                decoded_dir_path="./.tmp/obfuscated")
 
     """ PURGE LOGS """
@@ -71,7 +74,7 @@ def main():
 
     """ RENAME CLASS """
     rename_class: RenameClass = RenameClass(dissect)
-    rename_class.run()
+    # rename_class.run()
 
     """ ENCRYPT STRING """
     string_encryption: StringEncryption = StringEncryption(dissect)
@@ -81,13 +84,13 @@ def main():
     goto_inject: GotoInjector = GotoInjector(dissect)
     goto_inject.run()
 
-    """ BOOLEAN ARITHMETIC """
-    boolean_arithmetic: BooleanArithmetic = BooleanArithmetic(dissect)
-    boolean_arithmetic.run()
-
     """ REORDER LABELS """
     reorder_labels: ReorderLabels = ReorderLabels(dissect)
     reorder_labels.run()
+
+    """ BOOLEAN ARITHMETIC """
+    boolean_arithmetic: BooleanArithmetic = BooleanArithmetic(dissect)
+    boolean_arithmetic.run()
 
     ###### end obfuscate stuff ######
 
@@ -109,11 +112,6 @@ def main():
     dex2jar = Dex2jar()
     dex2jar.to_jar(input_apk_path="./.tmp/signed.apk",
                    output_jar_path="./.tmp/signed.jar")
-
-    # generate diffs
-    diff: Diff = Diff("./.tmp/diff")
-    diff.generate_diff(["./.tmp/original/smali/com/example/ict2207_x08/MainActivity.smali"],
-                       ["./.tmp/obfuscated/smali/com/example/ict2207_x08/MainActivity.smali"])
 
     # get number of smali lines before and after obfuscation
     initial_num, current_num = dissect.line_count_info()

@@ -1,4 +1,5 @@
 from random import shuffle, randrange
+from re import match
 from typing import List, Dict
 
 from desmali.tools import Dissect
@@ -20,6 +21,11 @@ class ReorderLabels:
 
         for filename in Util.progress_bar(self._dissect.smali_files(),
                                           description="Randomly reordering labels"):
+
+            # skip obfuscated classes
+            if match := regex.OBFUSCATED.match(filename):
+                logger.warning(match)
+                continue
 
             logger.debug(f"reordering file: {filename}")
 
