@@ -47,7 +47,10 @@ def post_obfuscate(apktool: Apktool, keystore_path: str, ks_pass: str, key_pass:
 
 
 def main():
+    # APK_PATH = "AdAway-5.5.1-210402.apk"
+    # APK_PATH = "Boost-1.10.2.apk"
     APK_PATH = "Memento-1.1.1.apk"
+    # APK_PATH = "wsy.apk"
 
     apktool: Apktool = Apktool()
     apktool.decode(apk_path=APK_PATH,
@@ -68,18 +71,6 @@ def main():
     purge_logs: PurgeLogs = PurgeLogs(dissect)
     purge_logs.run(a=True, d=True, e=True, i=True, v=True, w=True, wtf=True)
 
-    """ RENAME METHODS"""
-    rename_method: RenameMethod = RenameMethod(dissect)
-    rename_method.run()
-
-    """ RENAME CLASS """
-    rename_class: RenameClass = RenameClass(dissect)
-    # rename_class.run()
-
-    """ ENCRYPT STRING """
-    string_encryption: StringEncryption = StringEncryption(dissect)
-    string_encryption.run()
-
     """ INJECT GOTOS IN METHODS """
     goto_inject: GotoInjector = GotoInjector(dissect)
     goto_inject.run()
@@ -87,6 +78,18 @@ def main():
     """ REORDER LABELS """
     reorder_labels: ReorderLabels = ReorderLabels(dissect)
     reorder_labels.run()
+
+    """ ENCRYPT STRING """
+    string_encryption: StringEncryption = StringEncryption(dissect)
+    string_encryption.run()
+
+    """ RENAME METHODS"""
+    rename_method: RenameMethod = RenameMethod(dissect)
+    rename_method.run()
+
+    """ RENAME CLASS """
+    rename_class: RenameClass = RenameClass(dissect)
+    # rename_class.run()
 
     """ BOOLEAN ARITHMETIC """
     boolean_arithmetic: BooleanArithmetic = BooleanArithmetic(dissect)
@@ -109,9 +112,9 @@ def main():
                    key_pass="nim4m4h4om4?")
 
     # for debugging
-    dex2jar = Dex2jar()
-    dex2jar.to_jar(input_apk_path="./.tmp/signed.apk",
-                   output_jar_path="./.tmp/signed.jar")
+    # dex2jar = Dex2jar()
+    # dex2jar.to_jar(input_apk_path="./.tmp/signed.apk",
+    #                output_jar_path="./.tmp/signed.jar")
 
     # get number of smali lines before and after obfuscation
     initial_num, current_num = dissect.line_count_info()

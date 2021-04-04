@@ -29,30 +29,29 @@ def main():
     purge_logs: PurgeLogs = PurgeLogs(dissect)
     purge_logs.run(a=True, d=True, e=True, i=True, v=True, w=True, wtf=True)
 
+    """ INJECT GOTOS IN METHODS """
+    goto_inject: GotoInjector = GotoInjector(dissect)
+    goto_inject.run()
+
+    """ REORDER LABELS """
+    reorder_labels: ReorderLabels = ReorderLabels(dissect)
+    reorder_labels.run()
+
+    """ ENCRYPT STRING """
+    string_encryption: StringEncryption = StringEncryption(dissect)
+    string_encryption.run()
+
     """ RENAME METHODS"""
     rename_method: RenameMethod = RenameMethod(dissect)
     rename_method.run()
 
     """ RENAME CLASS """
     rename_class: RenameClass = RenameClass(dissect)
-    rename_class.run()
-    dissect.smali_files(True)  # need to update smali files after renaming
-
-    """ ENCRYPT STRING """
-    string_encryption: StringEncryption = StringEncryption(dissect)
-    string_encryption.run()
-
-    """ INJECT GOTOS IN METHODS """
-    goto_inject: GotoInjector = GotoInjector(dissect)
-    goto_inject.run()
+    # rename_class.run()
 
     """ BOOLEAN ARITHMETIC """
     boolean_arithmetic: BooleanArithmetic = BooleanArithmetic(dissect)
     boolean_arithmetic.run()
-
-    """ REORDER LABELS """
-    reorder_labels: ReorderLabels = ReorderLabels(dissect)
-    reorder_labels.run()
 
     ###### end obfuscate stuff ######
 
