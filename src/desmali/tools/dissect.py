@@ -13,26 +13,29 @@ class Dissect:
             logger.error(f"directory does not exist \"{original_dir_path}\"")
             raise NotADirectoryError(f"directory does not exist \"{original_dir_path}\"")
         else:
-            self.original_dir_path = original_dir_path
+            self.original_dir_path: str = original_dir_path
 
         if not os.path.isdir(decoded_dir_path):
             logger.error(f"directory does not exist \"{decoded_dir_path}\"")
             raise NotADirectoryError(f"directory does not exist \"{decoded_dir_path}\"")
         else:
-            self.decoded_dir_path = decoded_dir_path
+            self.decoded_dir_path: str = decoded_dir_path
 
         ### INITIAL OPERATIONS ###
         # set apk path
-        self.apk_path = apk_path
+        self.apk_path: str = apk_path
 
         # locate all smali files
         self.smali_files()
 
         # map original path and decoded path
-        self.dir_mapping = self._set_mapping()
+        self.dir_mapping: Dict[str, str] = self._set_mapping()
 
         # set initial number of lines in all the smali files
-        self._initial_num_lines = len(self)
+        self._initial_num_lines: int = len(self)
+
+        # set initial file size
+        self._original_file_size: int = self._file_size(self.apk_path)
 
     def __len__(self) -> int:
         # define variable
@@ -46,7 +49,13 @@ class Dissect:
 
         return num_of_lines
 
-    def _set_mapping(self):
+    def _file_size(self, apk_path: str) -> int:
+        return os.path.getsize(apk_path)
+
+    def file_size_difference(self, apk_path: str) -> Tuple[int, int]:
+        return self._original_file_size, self._file_size(apk_path)
+
+    def _set_mapping(self) -> Dict[str, str]:
         # dir_mapping dictionary - {decoded_path: original_path}
         dir_mapping: Dict[str, str] = dict()
 
@@ -57,7 +66,7 @@ class Dissect:
 
         return dir_mapping
 
-    def update_mapping(self, old_path, new_path):
+    def update_mapping(self, old_path, new_path) -> None:
         self.dir_mapping[new_path] = self.dir_mapping[old_path]
         del self.dir_mapping[old_path]
 
@@ -80,7 +89,7 @@ class Dissect:
         ]
 
         # convert list to tuple to prevent modification
-        self._smali_files = tuple(self._smali_files)
+        self._smali_files: Tuple[str, str] = tuple(self._smali_files)
 
         return self._smali_files
 
@@ -110,7 +119,7 @@ class Dissect:
                 for line in file:
 
                     if renamable:
-                        # skip enum objects
+                        # skip enum classes
                         if " enum " in line:
                             break
 
@@ -138,7 +147,7 @@ class Dissect:
                         self._method_names.add(f"{class_name}|{method_name}")
 
         # convert set to tuple to prevent modification
-        self._method_names = tuple(self._method_names)
+        self._method_names: Tuple[str, str] = tuple(self._method_names)
         return self._method_names
 
     def class_names(self, renamable: bool = False) -> Tuple[str]:

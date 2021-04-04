@@ -48,9 +48,10 @@ def post_obfuscate(apktool: Apktool, keystore_path: str, ks_pass: str, key_pass:
 
 def main():
     # APK_PATH = "AdAway-5.5.1-210402.apk"
-    # APK_PATH = "Boost-1.10.2.apk"
-    APK_PATH = "Memento-1.1.1.apk"
+    APK_PATH = "Boost-1.10.2.apk"
+    # APK_PATH = "Memento-1.1.1.apk"
     # APK_PATH = "wsy.apk"
+    # APK_PATH = "original.apk"
 
     apktool: Apktool = Apktool()
     apktool.decode(apk_path=APK_PATH,
@@ -69,23 +70,23 @@ def main():
 
     """ PURGE LOGS """
     purge_logs: PurgeLogs = PurgeLogs(dissect)
-    purge_logs.run(a=True, d=True, e=True, i=True, v=True, w=True, wtf=True)
+    # purge_logs.run(a=True, d=True, e=True, i=True, v=True, w=True, wtf=True)
 
     """ INJECT GOTOS IN METHODS """
     goto_inject: GotoInjector = GotoInjector(dissect)
-    goto_inject.run()
+    # goto_inject.run()
 
     """ REORDER LABELS """
     reorder_labels: ReorderLabels = ReorderLabels(dissect)
-    reorder_labels.run()
+    # reorder_labels.run()
 
     """ ENCRYPT STRING """
     string_encryption: StringEncryption = StringEncryption(dissect)
-    string_encryption.run()
+    # string_encryption.run()
 
     """ RENAME METHODS"""
     rename_method: RenameMethod = RenameMethod(dissect)
-    rename_method.run()
+    # rename_method.run()
 
     """ RENAME CLASS """
     rename_class: RenameClass = RenameClass(dissect)
@@ -116,11 +117,17 @@ def main():
     # dex2jar.to_jar(input_apk_path="./.tmp/signed.apk",
     #                output_jar_path="./.tmp/signed.jar")
 
+    # get apk file size before and after obfuscation
+    initial_size, current_size = dissect.file_size_difference("./.tmp/signed.apk")
+    logger.info(f"File size -> Initial: {initial_size:,} bytes - " +
+                f"Current: {current_size:,} bytes - " +
+                "Increase: {:.2f}x".format(current_size / initial_size))
+
     # get number of smali lines before and after obfuscation
     initial_num, current_num = dissect.line_count_info()
-    logger.info(f"Line count: Initial: {initial_num} - " +
-                f"Current: {current_num} - " +
-                "Added: {:.2f}".format(current_num / initial_num))
+    logger.info(f"Line count -> Initial: {initial_num:,} - " +
+                f"Current: {current_num:,} - " +
+                "Increase: {:.2f}x".format(current_num / initial_num))
 
 
 if __name__ == "__main__":
