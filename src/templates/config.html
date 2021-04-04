@@ -16,7 +16,7 @@
                     <h6 class="m-0 font-weight-bold text-primary">Configurations</h6>
                 </div>
                 <div class="card-body justify-content-center">
-                    <p class="font-weight-bold"> Select .jks file </p>
+                    <h2 class="font-weight-bold text-center text-primary"> Select .jks file </h2>
                     <form method="post" action="/result" enctype="multipart/form-data" id="form1">
                         <div class="form-group files justify-content-center">
                             <div class="file-upload-wrapper">
@@ -27,296 +27,224 @@
 
                         </br>
 
-                        <p class="font-weight-bold">Select obfuscation options</p>
+                        <h2 class="font-weight-bold text-center text-primary">Select obfuscation methods</h2>
+                        </br>
 
-                        <div>
-                            <div class="row mb-3 justify-content-center">
-                                <div class="col-lg-4 align-items-center">
-                                    <div class="card shadow mb-10 py-0 border-left-primary">
-                                        <div class="card-body">
-                                            <div class="row">
-                                                <div class="col mr-2">
-                                                    <h4 class="card-title text-primary font-weight-bold">Purge Logs
-                                                        [Remove]</h4>
-                                                </div>
-                                                <div class="col-auto">
-                                                    <!-- Basic dropdown -->
-                                                    <button class="btn btn-primary dropdown-toggle mr-4" type="button"
-                                                        data-toggle="dropdown" aria-haspopup="true"
-                                                        aria-expanded="false">
-                                                        <i class="fa fa-cog" aria-hidden="true"></i>
-                                                    </button>
-                                                    <div class="dropdown-menu">
-                                                        <a class="dropdown-item">
-                                                            <!-- Default unchecked -->
-                                                            <div class="custom-control custom-checkbox">
-                                                                <input type="checkbox" class="custom-control-input"
-                                                                    id="checkbox1" value="a" name="purge_options"
-                                                                    checked>
-                                                                <label class="custom-control-label"
-                                                                    for="checkbox1">Assert</label>
-                                                            </div>
-                                                        </a>
-                                                        <a class="dropdown-item">
-                                                            <div class="custom-control custom-checkbox">
-                                                                <input type="checkbox" class="custom-control-input"
-                                                                    id="checkbox2" value="d" name="purge_options"
-                                                                    checked>
-                                                                <label class="custom-control-label"
-                                                                    for="checkbox2">Debug</label>
-                                                            </div>
-                                                        </a>
-                                                        <a class="dropdown-item">
-                                                            <div class="custom-control custom-checkbox">
-                                                                <input type="checkbox" class="custom-control-input"
-                                                                    id="checkbox3" value="e" name="purge_options"
-                                                                    checked>
-                                                                <label class="custom-control-label"
-                                                                    for="checkbox3">Error</label>
-                                                            </div>
-                                                        </a>
-
-                                                        <a class="dropdown-item">
-                                                            <div class="custom-control custom-checkbox">
-                                                                <input type="checkbox" class="custom-control-input"
-                                                                    id="checkbox4" value="i" name="purge_options"
-                                                                    checked>
-                                                                <label class="custom-control-label"
-                                                                    for="checkbox4">Info</label>
-                                                            </div>
-                                                        </a>
-
-                                                        <a class="dropdown-item">
-                                                            <div class="custom-control custom-checkbox">
-                                                                <input type="checkbox" class="custom-control-input"
-                                                                    id="checkbox5" value="v" name="purge_options"
-                                                                    checked>
-                                                                <label class="custom-control-label"
-                                                                    for="checkbox5">Verbose</label>
-                                                            </div>
-                                                        </a>
-
-                                                        <a class="dropdown-item">
-                                                            <div class="custom-control custom-checkbox">
-                                                                <input type="checkbox" class="custom-control-input"
-                                                                    id="checkbox6" value="w" name="purge_options"
-                                                                    checked>
-                                                                <label class="custom-control-label"
-                                                                    for="checkbox6">Warn</label>
-                                                            </div>
-                                                        </a>
-
-                                                        <a class="dropdown-item">
-                                                            <div class="custom-control custom-checkbox">
-                                                                <input type="checkbox" class="custom-control-input"
-                                                                    id="checkbox7" value="wtf" name="purge_options"
-                                                                    checked>
-                                                                <label class="custom-control-label" for="checkbox7">What
-                                                                    A Terrible Failure</label>
-                                                            </div>
-                                                        </a>
-                                                    </div>
-                                                    <!-- Basic dropdown -->
-                                                </div>
-                                            </div>
-
-                                            <p class="card-text">Remove logs that may contain sensitive information</p>
-
-                                            <div class="custom-control custom-switch">
-
-                                                <input class="custom-control-input" type="checkbox" value="PurgeLogs"
-                                                    name="options" id="customSwitches0" checked>
-                                                <label class="custom-control-label" for="customSwitches0">
-                                                </label>
-                                            </div>
-
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div class="col-lg-4 align-items-center">
-                                    <div class="card shadow mb-10 py-0 border-left-primary">
-
-                                        <div class="card-body">
-                                            <h4 class="text-primary font-weight-bold">Rename Methods [Rename]</h4>
-                                            <p>Rename method declarations and invocations</p>
-
-                                            <div class="custom-control custom-switch">
-
-                                                <input class="custom-control-input" type="checkbox" value="RenameMethod"
-                                                    name="options" id="customSwitches1" checked>
-                                                <label class="custom-control-label" for="customSwitches1"></label>
-                                                </label>
-                                            </div>
-
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div class="col-lg-4 align-items-center">
-                                    <div class="card shadow mb-10 py-0 border-left-primary">
-
-                                        <div class="card-body">
-                                            <h4 class="text-primary font-weight-bold">Rename Class [Rename]</h4>
-                                            <p>Rename classes and their packages</p>
-
-                                            <div class="custom-control custom-switch">
-
-                                                <input class="custom-control-input" type="checkbox" value="RenameClass"
-                                                    name="options" id="customSwitches2" checked>
-                                                <label class="custom-control-label" for="customSwitches2">
-                                                </label>
-                                            </div>
-
-                                        </div>
+                        <div class="row container-fluid mb-3 justify-content-center">
+                            <!-- boolean-->
+                            <div class="col-lg-4 col-md-5 mb-3 align-items-center">
+                                <div class="card h-100 shadow mb-10 py-0 border-left-primary">
+                                    <div class="card-body">
+                                        <h4 class="text-primary font-weight-bold">Boolean Arithmetic [Restructure]
+                                        </h4>
+                                        <p>Inject an always true/false clause into the CFG</p>
+                                        <input data-size="sm" data-toggle="toggle" type="checkbox"
+                                            value="BooleanArithmetic" name="options" checked>
                                     </div>
                                 </div>
                             </div>
 
-                            <div class="row mb-3 justify-content-center">
-                                <div class="col-lg-4 align-items-center">
-                                    <div class="card shadow mb-10 py-0 border-left-primary">
-                                        <div class="card-body">
-                                            <h4 class="text-primary font-weight-bold">String Encryption [Replace]</h4>
-                                            <p>Encrypt strings with AES</p>
-
-                                            <div class="custom-control custom-switch">
-
-                                                <input class="custom-control-input" type="checkbox"
-                                                    value="StringEncryption" name="options" id="customSwitches3"
-                                                    checked>
-                                                <label class="custom-control-label" for="customSwitches3">
-                                                </label>
-                                            </div>
-
-
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div class="col-lg-4 align-items-center">
-                                    <div class="card shadow mb-10 py-0 border-left-primary">
-
-                                        <div class="card-body">
-                                            <h4 class="text-primary font-weight-bold">Boolean Arithmetic [Restructure]
-                                            </h4>
-                                            <p>Inject an always true/false clause into the CFG</p>
-
-                                            <div class="custom-control custom-switch">
-
-                                                <input class="custom-control-input" type="checkbox"
-                                                    value="BooleanArithmetic" name="options" id="customSwitches4"
-                                                    checked>
-                                                <label class="custom-control-label" for="customSwitches4">
-                                                </label>
-                                            </div>
-
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div class="col-lg-4 align-items-center">
-                                    <div class="card shadow mb-10 py-0 border-left-primary">
-
-                                        <div class="card-body">
-                                            <h4 class="text-primary font-weight-bold">Goto Injector [Restructure]</h4>
-                                            <p>Modify the CFG by wrapping each method with 2 nodes</p>
-
-                                            <div class="custom-control custom-switch">
-
-                                                <input class="custom-control-input" type="checkbox" value="GotoInjector"
-                                                    name="options" id="customSwitches5" checked>
-                                                <label class="custom-control-label" for="customSwitches5">
-                                                </label>
-                                            </div>
-
-                                        </div>
+                            <!-- goto-->
+                            <div class="col-lg-4 col-md-5 mb-3 align-items-center">
+                                <div class="card h-100 shadow mb-10 py-0 border-left-primary">
+                                    <div class="card-body">
+                                        <h4 class="text-primary font-weight-bold">Goto Injector [Restructure]</h4>
+                                        <p>Modify the CFG by wrapping each method with 2 nodes</p>
+                                        <input data-size="sm" data-toggle="toggle" type="checkbox" value="GotoInjector"
+                                            name="options" checked>
                                     </div>
                                 </div>
                             </div>
 
-                            <div class="row mb-3 justify-content-center">
-                                <div class="col-lg-4 align-items-center">
-                                    <div class="card shadow mb-10 py-0 border-left-primary">
-                                        <div class="card-body">
-                                            <h4 class="text-primary font-weight-bold">Reorder Labels [Restructure]</h4>
-                                            <p>Alter the CFG by reordering & abusing goto instructions</p>
-
-                                            <div class="custom-control custom-switch">
-
-                                                <input class="custom-control-input" type="checkbox"
-                                                    value="ReorderLabels" name="options" id="customSwitches6" checked>
-                                                <label class="custom-control-label" for="customSwitches6">
-                                                </label>
+                            <!-- Purgelog-->
+                            <div class="col-lg-4 col-md-5 mb-3 align-items-center">
+                                <div class="card h-100 shadow mb-10 py-0 border-left-primary">
+                                    <div class="card-body">
+                                        <div class="row">
+                                            <div class="col mr-2">
+                                                <h4 class="card-title text-primary font-weight-bold">Purge Logs
+                                                    [Remove]</h4>
                                             </div>
+                                            <div class="col-auto">
+                                                <!-- Basic dropdown -->
+                                                <button class="btn btn-primary dropdown-toggle mr-4" type="button"
+                                                    data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                    <i class="fa fa-cog" aria-hidden="true"></i>
+                                                </button>
+                                                <div class="dropdown-menu">
+                                                    <a class="dropdown-item">
+                                                        <!-- Default unchecked -->
+                                                        <div class="custom-control custom-checkbox">
+                                                            <input type="checkbox" class="custom-control-input"
+                                                                id="checkbox1" value="a" name="purge_options" checked>
+                                                            <label class="custom-control-label"
+                                                                for="checkbox1">Assert</label>
+                                                        </div>
+                                                    </a>
+                                                    <a class="dropdown-item">
+                                                        <div class="custom-control custom-checkbox">
+                                                            <input type="checkbox" class="custom-control-input"
+                                                                id="checkbox2" value="d" name="purge_options" checked>
+                                                            <label class="custom-control-label"
+                                                                for="checkbox2">Debug</label>
+                                                        </div>
+                                                    </a>
+                                                    <a class="dropdown-item">
+                                                        <div class="custom-control custom-checkbox">
+                                                            <input type="checkbox" class="custom-control-input"
+                                                                id="checkbox3" value="e" name="purge_options" checked>
+                                                            <label class="custom-control-label"
+                                                                for="checkbox3">Error</label>
+                                                        </div>
+                                                    </a>
 
+                                                    <a class="dropdown-item">
+                                                        <div class="custom-control custom-checkbox">
+                                                            <input type="checkbox" class="custom-control-input"
+                                                                id="checkbox4" value="i" name="purge_options" checked>
+                                                            <label class="custom-control-label"
+                                                                for="checkbox4">Info</label>
+                                                        </div>
+                                                    </a>
 
+                                                    <a class="dropdown-item">
+                                                        <div class="custom-control custom-checkbox">
+                                                            <input type="checkbox" class="custom-control-input"
+                                                                id="checkbox5" value="v" name="purge_options" checked>
+                                                            <label class="custom-control-label"
+                                                                for="checkbox5">Verbose</label>
+                                                        </div>
+                                                    </a>
+
+                                                    <a class="dropdown-item">
+                                                        <div class="custom-control custom-checkbox">
+                                                            <input type="checkbox" class="custom-control-input"
+                                                                id="checkbox6" value="w" name="purge_options" checked>
+                                                            <label class="custom-control-label"
+                                                                for="checkbox6">Warn</label>
+                                                        </div>
+                                                    </a>
+
+                                                    <a class="dropdown-item">
+                                                        <div class="custom-control custom-checkbox">
+                                                            <input type="checkbox" class="custom-control-input"
+                                                                id="checkbox7" value="wtf" name="purge_options" checked>
+                                                            <label class="custom-control-label" for="checkbox7">What
+                                                                A Terrible Failure</label>
+                                                        </div>
+                                                    </a>
+                                                </div>
+                                                <!-- Basic dropdown -->
+                                            </div>
                                         </div>
+
+                                        <p class="card-text">Remove logs that may contain sensitive information</p>
+
+                                        <input data-size="sm" data-toggle="toggle" type="checkbox" value="PurgeLogs"
+                                            name="options" checked>
+
+
                                     </div>
                                 </div>
+                            </div>
 
+                            <!-- rename class-->
+                            <div class="col-lg-4 col-md-5 mb-3 align-items-center">
+                                <div class="card h-100 shadow mb-10 py-0 border-left-primary">
+                                    <div class="card-body">
+                                        <h4 class="text-primary font-weight-bold">Rename Class [Rename]</h4>
+                                        <p>Rename classes and their packages</p>
+                                        <input data-size="sm" data-toggle="toggle" type="checkbox" value="RenameClass"
+                                            name="options" checked>
+                                    </div>
+                                </div>
+                            </div>
 
+                            <!-- rename method-->
+                            <div class="col-lg-4 col-md-5 mb-3 align-items-center">
+                                <div class="card h-100 shadow mb-10 py-0 border-left-primary">
+                                    <div class="card-body">
+                                        <h4 class="text-primary font-weight-bold">Rename Methods [Rename]</h4>
+                                        <p>Rename method declarations and invocations</p>
+                                        <input data-size="sm" data-toggle="toggle" type="checkbox" value="RenameMethod"
+                                            name="options" checked>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- reorder-->
+                            <div class="col-lg-4 col-md-5 mb-3 align-items-center">
+                                <div class="card h-100 shadow mb-10 py-0 border-left-primary">
+                                    <div class="card-body">
+                                        <h4 class="text-primary font-weight-bold">Reorder Labels [Restructure]
+                                        </h4>
+                                        <p>Alter the CFG by reordering & abusing goto instructions</p>
+                                        <input data-size="sm" data-toggle="toggle" type="checkbox" value="ReorderLabels"
+                                            name="options" checked>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- str encrypt-->
+                            <div class="col-lg-4 col-md-5 mb-3 align-items-center">
+                                <div class="card h-100 shadow mb-10 py-0 border-left-primary">
+                                    <div class="card-body">
+                                        <h4 class="text-primary font-weight-bold">String Encryption [Replace]</h4>
+                                        <p>Encrypt strings with AES</p>
+                                        <input data-size="sm" data-toggle="toggle" type="checkbox"
+                                            value="StringEncryption" name="options" checked>
+                                    </div>
+                                </div>
                             </div>
 
                         </div>
-                        </br>
 
                         <input type="hidden" value="{{apk_name}}" name="apk_name"></br></br>
 
-                        </br>
-
                         <div class="row justify-content-center">
                             <div class="col-lg-4 align-items-center">
                                 <div class="card shadow mb-10 py-0 border-left-primary">
                                     <div class="card-body">
-                                        <h4 class="text-primary">Enter KS-Pass</h4>
+                                        <h4 class="text-primary font-weight-bold ">KS-Pass</h4>
 
                                         <div class="form-group">
-                                            <input type="password" class="form-control" placeholder="ks-pass"
+                                            <input type="password" class="form-control" placeholder="Enter ks-pass"
                                                 name="ks-pass">
                                         </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
 
-                        <div class="row justify-content-center">
-                            <div class="col-lg-4 align-items-center">
-                                <div class="card shadow mb-10 py-0 border-left-primary">
-
-                                    <div class="card-body">
-                                        <h4 class="text-primary">Enter Key-Pass</h4>
+                                        <h4 class="text-primary font-weight-bold">Key-Pass</h4>
 
                                         <div class="form-group">
-                                            <p class="font-weight-bold">Enter Key-Pass</p>
-                                            <input type="password" class="form-control" placeholder="key-pass"
+
+                                            <input type="password" class="form-control" placeholder="Enter key-pass"
                                                 name="key-pass">
                                         </div>
 
+                                        <button type="submit" id="submitBtn" class="btn btn-primary" value="Submit"
+                                            form="form1">Submit</button>
+
                                     </div>
                                 </div>
                             </div>
-
-
                         </div>
 
-                        <button type="submit" id="submitBtn" class="btn btn-primary" value="Submit"
-                            form="form1">Submit</button>
 
                     </form>
+                </div>
 
-                    <div class="modal js-loading-bar">
-                        <div class="modal-dialog">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <p class="modal-title" id="status">Initialising</h4>
-                                </div>
-                                <div class="modal-body">
-                                    <div class="progress">
-                                        <div class="progress-bar progress-bar-striped progress-bar-animated"
-                                            role="progressbar" aria-valuenow="2" aria-valuemin="0" aria-valuemax="100"
-                                            style="width: 0%"></div>
-                                    </div>
+
+
+                <div class="modal js-loading-bar">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <p class="modal-title" id="status">Initialising</h4>
+                            </div>
+                            <div class="modal-body">
+                                <div class="progress">
+                                    <div class="progress-bar progress-bar-striped progress-bar-animated"
+                                        role="progressbar" aria-valuenow="2" aria-valuemin="0" aria-valuemax="100"
+                                        style="width: 0%"></div>
                                 </div>
                             </div>
                         </div>
@@ -326,6 +254,9 @@
         </div>
     </div>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.12.1/jquery.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/gh/gitbrent/bootstrap4-toggle@3.6.1/css/bootstrap4-toggle.min.css"
+        rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/gh/gitbrent/bootstrap4-toggle@3.6.1/js/bootstrap4-toggle.min.js"></script>
     <script>
         $(document).ready(function () {
             $('.dropdown-menu').click(function (e) {

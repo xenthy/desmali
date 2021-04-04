@@ -16,11 +16,11 @@ import time
 app = Flask(__name__)
 
 OBFUSCATION_METHODS = [PurgeLogs,
-                       RenameMethod,
-                       RenameClass,
-                       StringEncryption,
                        GotoInjector,
                        ReorderLabels,
+                       StringEncryption,
+                       RenameMethod,
+                       RenameClass,
                        BooleanArithmetic
                        ]
 

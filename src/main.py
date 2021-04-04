@@ -19,7 +19,8 @@ def pre_obfuscate(apk_path: str):
     copy_tree("./.tmp/original", "./.tmp/obfuscated")
 
     ###### start obfuscate stuff ######
-    dissect: Dissect = Dissect(original_dir_path="./.tmp/original",
+    dissect: Dissect = Dissect(apk_path=apk_path,
+                               original_dir_path="./.tmp/original",
                                decoded_dir_path="./.tmp/obfuscated")
 
     return dissect, apktool
@@ -68,33 +69,33 @@ def main():
                                original_dir_path="./.tmp/original",
                                decoded_dir_path="./.tmp/obfuscated")
 
-    """ PURGE LOGS """
-    purge_logs: PurgeLogs = PurgeLogs(dissect)
-    purge_logs.run(a=True, d=True, e=True, i=True, v=True, w=True, wtf=True)
+    # """ PURGE LOGS """
+    # purge_logs: PurgeLogs = PurgeLogs(dissect)
+    # purge_logs.run(a=True, d=True, e=True, i=True, v=True, w=True, wtf=True)
 
-    """ INJECT GOTOS IN METHODS """
-    goto_inject: GotoInjector = GotoInjector(dissect)
-    goto_inject.run()
+    # """ INJECT GOTOS IN METHODS """
+    # goto_inject: GotoInjector = GotoInjector(dissect)
+    # goto_inject.run()
 
-    """ REORDER LABELS """
-    reorder_labels: ReorderLabels = ReorderLabels(dissect)
-    reorder_labels.run()
+    # """ REORDER LABELS """
+    # reorder_labels: ReorderLabels = ReorderLabels(dissect)
+    # reorder_labels.run()
 
-    """ ENCRYPT STRING """
-    string_encryption: StringEncryption = StringEncryption(dissect)
-    string_encryption.run()
+    # """ ENCRYPT STRING """
+    # string_encryption: StringEncryption = StringEncryption(dissect)
+    # string_encryption.run()
 
-    """ RENAME METHODS"""
-    rename_method: RenameMethod = RenameMethod(dissect)
-    rename_method.run()
+    # """ RENAME METHODS"""
+    # rename_method: RenameMethod = RenameMethod(dissect)
+    # rename_method.run()
 
     """ RENAME CLASS """
     rename_class: RenameClass = RenameClass(dissect)
     rename_class.run()
 
-    """ BOOLEAN ARITHMETIC """
-    boolean_arithmetic: BooleanArithmetic = BooleanArithmetic(dissect)
-    boolean_arithmetic.run()
+    # """ BOOLEAN ARITHMETIC """
+    # boolean_arithmetic: BooleanArithmetic = BooleanArithmetic(dissect)
+    # boolean_arithmetic.run()
 
     ###### end obfuscate stuff ######
 
@@ -118,7 +119,8 @@ def main():
     #                output_jar_path="./.tmp/signed.jar")
 
     # get apk file size before and after obfuscation
-    initial_size, current_size = dissect.file_size_difference("./.tmp/signed.apk")
+    initial_size, current_size = dissect.file_size_difference(
+        "./.tmp/signed.apk")
     logger.info(f"File size -> Initial: {initial_size:,} bytes - " +
                 f"Current: {current_size:,} bytes - " +
                 "Increase: {:.2f}x".format(current_size / initial_size))

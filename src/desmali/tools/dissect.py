@@ -173,7 +173,7 @@ class Dissect:
         ignore_list = ignore_list + apk.get_activities() + apk.get_services() + \
             apk.get_receivers()
         ignore_list = [Util.smali_format(classname)
-                       for classname in ignore_list]
+                       for classname in ignore_list if classname]
 
         # iterate through all the smali files
         for filename in Util.progress_bar(self.__smali_files,
@@ -199,7 +199,7 @@ class Dissect:
                                         or "/widget/" in class_name
                                         or "/models/" in class_name):
 
-                                    ignore=True
+                                    ignore = True
                                     break
                             if not ignore:
                                 self._class_names.add(class_name)
@@ -209,9 +209,9 @@ class Dissect:
 
                     else:
                         if match := regex.CLASSES.search(line):
-                            class_name=match.group()[:-1]
+                            class_name = match.group()[:-1]
                             self._class_names.add(class_name)
 
         # convert set to tuple to prevent modification
-        self._class_names=tuple(self._class_names)
+        self._class_names = tuple(self._class_names)
         return self._class_names
