@@ -79,6 +79,5 @@ class RenameClass:
             if os.path.isfile(old_path):
                 os.rename(old_path, new_path)
                 self._dissect.update_mapping(old_path, new_path)
-                break
 
         self._dissect.smali_files(force=True)
