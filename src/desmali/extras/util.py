@@ -44,6 +44,9 @@ class Util:
 
     def random_string(length: int) -> str:
         return "".join(random.choices(string.ascii_letters, k=length))
+        
+    def smali_format(classname: str):
+        return "L" + classname.replace(".", "/") + ";"
 
 
 if __name__ == "__main__":

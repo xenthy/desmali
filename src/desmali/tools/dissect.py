@@ -3,21 +3,22 @@ from typing import List, Set, Tuple, Dict
 
 from desmali.extras import logger, Util, regex
 
-from pyaxmlparser import APK
-
+from androguard.core.bytecodes.apk import APK
 
 class Dissect:
     def __init__(self, apk_path: str, original_dir_path: str, decoded_dir_path: str):
         # check if input directory exists
         if not os.path.isdir(original_dir_path):
             logger.error(f"directory does not exist \"{original_dir_path}\"")
-            raise NotADirectoryError(f"directory does not exist \"{original_dir_path}\"")
+            raise NotADirectoryError(
+                f"directory does not exist \"{original_dir_path}\"")
         else:
             self.original_dir_path: str = original_dir_path
 
         if not os.path.isdir(decoded_dir_path):
             logger.error(f"directory does not exist \"{decoded_dir_path}\"")
-            raise NotADirectoryError(f"directory does not exist \"{decoded_dir_path}\"")
+            raise NotADirectoryError(
+                f"directory does not exist \"{decoded_dir_path}\"")
         else:
             self.decoded_dir_path: str = decoded_dir_path
 
@@ -160,10 +161,18 @@ class Dissect:
         # store all class names into a list
         self._class_names: Set[str] = set()
 
-        # get all activities in xml file (cannot be renamed)
-        apk = APK("./original.apk")
-        activities = apk.get_activities()
-        activities = [a.split(".")[-1] for a in activities]
+        # create ignore list (cannot be renamed)
+        
+        apk = APK("./" + self._apk_path)
+        package_name = "L" + "/".join(apk.package.split(".")) + "/"
+
+        manifest = apk.get_android_manifest_axml().get_xml_obj()
+        apps = manifest.findall("application")
+        ignore_list = [apk.get_value_from_tag(app, "name") for app in apps]
+        ignore_list = ignore_list + apk.get_activities() + apk.get_services() + \
+            apk.get_receivers()
+        ignore_list = [Util.smali_format(classname)
+                       for classname in ignore_list]
 
         # iterate through all the smali files
         for filename in Util.progress_bar(self.__smali_files,
@@ -178,19 +187,18 @@ class Dissect:
                         if class_match is not None:
                             class_name = class_match.group()
 
-                            if (class_name.startswith("Landroid")
-                                    or class_name.startswith("Ljava")
-                                    or class_name.startswith("Lkotlin")
-                                    or class_name.startswith("Lcom/google")
-                                    or class_name.startswith("Lorg")):
-
+                            # skip entire file
+                            if not class_name.startswith(package_name):
                                 break
 
-                            for index, a in enumerate(activities):
-                                if a in class_name[1:-1]:
+                            ignore = False
+                            for ignore_class in ignore_list:
+                                if (class_name.startswith(ignore_class[:-1])
+                                        or "/ui/" in class_name):
+                                    ignore = True
                                     break
-                                if index == len(activities)-1:
-                                    self._class_names.add(class_name)
+                            if not ignore:
+                                self._class_names.add(class_name)
 
                         if "# virtual methods" in line:
                             break
