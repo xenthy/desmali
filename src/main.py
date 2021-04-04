@@ -70,27 +70,27 @@ def main():
 
     """ PURGE LOGS """
     purge_logs: PurgeLogs = PurgeLogs(dissect)
-    # purge_logs.run(a=True, d=True, e=True, i=True, v=True, w=True, wtf=True)
+    purge_logs.run(a=True, d=True, e=True, i=True, v=True, w=True, wtf=True)
 
     """ INJECT GOTOS IN METHODS """
     goto_inject: GotoInjector = GotoInjector(dissect)
-    # goto_inject.run()
+    goto_inject.run()
 
     """ REORDER LABELS """
     reorder_labels: ReorderLabels = ReorderLabels(dissect)
-    # reorder_labels.run()
+    reorder_labels.run()
 
     """ ENCRYPT STRING """
     string_encryption: StringEncryption = StringEncryption(dissect)
-    # string_encryption.run()
+    string_encryption.run()
 
     """ RENAME METHODS"""
     rename_method: RenameMethod = RenameMethod(dissect)
-    # rename_method.run()
+    rename_method.run()
 
     """ RENAME CLASS """
     rename_class: RenameClass = RenameClass(dissect)
-    # rename_class.run()
+    rename_class.run()
 
     """ BOOLEAN ARITHMETIC """
     boolean_arithmetic: BooleanArithmetic = BooleanArithmetic(dissect)

@@ -5,6 +5,7 @@ from desmali.extras import logger, Util, regex
 
 from androguard.core.bytecodes.apk import APK
 
+
 class Dissect:
     def __init__(self, apk_path: str, original_dir_path: str, decoded_dir_path: str):
         # check if input directory exists
@@ -162,8 +163,8 @@ class Dissect:
         self._class_names: Set[str] = set()
 
         # create ignore list (cannot be renamed)
-        
-        apk = APK("./" + self._apk_path)
+
+        apk = APK("./" + self.apk_path)
         package_name = "L" + "/".join(apk.package.split(".")) + "/"
 
         manifest = apk.get_android_manifest_axml().get_xml_obj()

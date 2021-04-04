@@ -69,19 +69,16 @@ class RenameClass:
                     file.write(line)
 
         # rename smali files
-        smali_paths = ["./.tmp/obfuscated/smali/",
-                       "./.tmp/obfuscated/smali_classes2/", "./.tmp/obfuscated/smali_classes3/"]
+        smali_path = "./.tmp/obfuscated/smali/"
         for old_name, new_name in self._class_name_mapping.items():
-            new_file = old_name[1:-1].split("/")
-            new_file.pop()
+            new_file = old_name[1:-1].split("/")[:-1]
             new_file.append(new_name)
 
-            for smali_path in smali_paths:
-                old_path = smali_path + old_name[1:-1] + ".smali"
-                if os.path.isfile(old_path):
-                    new_path = smali_path + "/".join(new_file) + ".smali"
-                    os.rename(old_path, new_path)
-                    self._dissect.update_mapping(old_path, new_path)
-                    break
+            old_path = smali_path + old_name[1:-1] + ".smali"
+            new_path = smali_path + "/".join(new_file) + ".smali"
+            if os.path.isfile(old_path):
+                os.rename(old_path, new_path)
+                self._dissect.update_mapping(old_path, new_path)
+                break
 
         self._dissect.smali_files(force=True)
