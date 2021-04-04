@@ -44,9 +44,6 @@ class StringEncryption:
 
         try:
             dest_dir, com_path = self.findComPath()
-            # if not dest_dir and not com_path:
-                # logger.error("Unable to find package's main directory")
-                # return
         except Exception as e:
             logger.error(f"{e}")
             exit()
@@ -221,17 +218,25 @@ class StringEncryption:
                 package_dir = element.replace(".MainActivity","").replace(".","/")
                 break
 
+
+        # Workaround for APKs with no "MainActivity" activity
+        if not package_dir:
+            package_dir = "/".join(apk.get_activities()[0].split(".")[:-1])
+
         self.package_dir_regex = re.compile(f"{package_dir}")
 
         com_path = None
         dest_dir = None
         for filename in self._dissect.smali_files():
             path_search = self.package_dir_regex.search(os.path.dirname(filename))
-            if path_search and ("MainActivity.smali" in filename) :
+            if path_search and ("MainActivity.smali" or "Activity.smali" in filename):
                 logger.info(f"{os.path.dirname(filename)}")
                 dest_dir = os.path.dirname(filename)
                 com_path = path_search[0]
 
+                # TODO: Remove debugging logs
+                # logger.info(f"{dest_dir}")
+                # logger.info(f"{com_path}")
 
                 return dest_dir, com_path
 
