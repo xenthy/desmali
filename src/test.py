@@ -21,7 +21,8 @@ def main():
     copy_tree("./.tmp/obfuscated", "./.tmp/original")
 
     ###### start obfuscate stuff ######
-    dissect: Dissect = Dissect(original_dir_path="./.tmp/original",
+    dissect: Dissect = Dissect(apk_path=APK_PATH,
+                               original_dir_path="./.tmp/original",
                                decoded_dir_path="./.tmp/obfuscated")
 
     """ PURGE LOGS """
