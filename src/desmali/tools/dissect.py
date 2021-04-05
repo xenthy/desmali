@@ -123,7 +123,8 @@ class Dissect:
         # iterate through all the smali files
         for filename in Util.progress_bar(self.__smali_files,
                                           description="Retrieving methods from all smali files"):
-
+            if len(filename.split("/")[-1:]) < 3:
+                continue
             with open(filename, "r") as file:
                 # identify lines which contains methods
                 for line in file:

@@ -100,7 +100,7 @@ def config():
 @app.route('/download', methods=['GET'])
 def download():
     d = os.path.join(os.getcwd(), ".tmp")
-    return send_from_directory(directory=d, filename="signed.apk", as_attachment=True)
+    return send_from_directory(directory=d, filename="signed.apk", as_attachment=True, attachment_filename=request.args['q'])
 
 
 @app.route('/result', methods=['GET', 'POST'])
