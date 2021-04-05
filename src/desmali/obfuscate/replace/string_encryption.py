@@ -204,13 +204,12 @@ class StringEncryption(Desmali):
                 f.write(get_smali_decryptor(self.key, com_path))
 
             self.decryptor_added = True
-            logger.verbose("String Decryptor added successfully")
+            logger.verbose("DecryptString.smali added")
             self._dissect.add_smali_file(dest_file)
         else:
-            logger.info("String Decryptor not added, no issue if there are no encryption done. Check number of skipped files.")
+            logger.warning("DecryptString.smali not added, no issue if there are no encryption done. Check number of skipped files.")
 
-        logger.verbose(f"Encryption Strings files skipped: {skipped_files}")
-        logger.verbose(f"Encryption Strings files processed: {files_processed}")
+        logger.verbose(f"{self.__class__.__name__} -> skipped: {skipped_files} | processed: {files_processed}")
 
     # To find the directory that contains main application's logic
     # Required before encrypting strings and adding smali code

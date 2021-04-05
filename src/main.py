@@ -12,7 +12,7 @@ def pre_obfuscate(apk_path: str):
     apktool.decode(apk_path=apk_path,
                    output_dir_path="./.tmp/original",
                    force=True)
-                   
+
     # clone decoded directory
     if os.path.isdir("./.tmp/obfuscated"):
         shutil.rmtree("./.tmp/obfuscated")
@@ -41,12 +41,11 @@ def post_obfuscate(apktool: Apktool, keystore_path: str, ks_pass: str, key_pass:
                    ks_pass=ks_pass,
                    key_pass=key_pass)
 
-    # for debugging
-    dex2jar = Dex2jar()
-    dex2jar.to_jar(input_apk_path="./.tmp/signed.apk",
-                   output_jar_path="./.tmp/signed.jar")
+    # # for debugging
+    # dex2jar = Dex2jar()
+    # dex2jar.to_jar(input_apk_path="./.tmp/signed.apk",
+    #                output_jar_path="./.tmp/signed.jar")
 
-    
     # decompile signed apk to obfuscated folder for updated smali file name
     apktool.decode(apk_path="./.tmp/signed.apk",
                    output_dir_path="./.tmp/obfuscated",
@@ -59,7 +58,7 @@ def main():
     # APK_PATH = "Memento-1.1.1.apk"
     # APK_PATH = "wsy.apk"
     # APK_PATH = "original.apk"
-    
+
     apktool: Apktool = Apktool()
     apktool.decode(apk_path=APK_PATH,
                    output_dir_path="./.tmp/obfuscated",
@@ -142,7 +141,6 @@ def main():
     logger.info(f"Line count -> Initial: {initial_num:,} - " +
                 f"Current: {current_num:,} - " +
                 "Increase: {:.2f}x".format(current_num / initial_num))
-   
 
 
 if __name__ == "__main__":

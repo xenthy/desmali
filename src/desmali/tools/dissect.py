@@ -1,11 +1,14 @@
 import os
 import re
-from typing import List, Set, Tuple, Dict
+import logging
+from typing import List, Set, Tuple, Dict, Match
 
 from desmali.extras import logger, Util, regex
 
 from androguard.core.bytecodes.apk import APK
 from androguard.core.bytecodes.axml import AXMLPrinter
+
+logging.getLogger("androguard").setLevel(logging.WARNING)
 
 
 class Dissect:
@@ -205,29 +208,27 @@ class Dissect:
 
         # add manifest to ignore_list
         manifest = apk.get_android_manifest_axml().get_xml_obj()
+
         for app in manifest.findall("application"):
             name = apk.get_value_from_tag(app, "name")
             ignore_list.add(name)
-        for activity in apk.get_activities():
-            ignore_list.add(activity)
-        for service in apk.get_services():
-            ignore_list.add(service)
-        for receiver in apk.get_receivers():
-            ignore_list.add(receiver)
-        for provider in apk.get_providers():
-            ignore_list.add(provider)
+
+        ignore_list.update(apk.get_activities())
+        ignore_list.update(apk.get_services())
+        ignore_list.update(apk.get_receivers())
+        ignore_list.update(apk.get_providers())
 
         # add xml files to ignore_list
         # iterate through all the xml files
+        PACKAGE: Match = re.compile(apk.package + r"\S+[^ \"]")
+
         for filename in Util.progress_bar(self._xml_files,
                                           description="Retrieving classes from all xml files"):
-            with open(filename, "rb") as fp:
-                axml = AXMLPrinter(fp.read())
-            xml = axml.get_xml().decode('utf-8')      
-            regx = re.compile(apk.package + r"\S+[^ \"]")
-            matches = regx.findall(xml)
-            for match in matches:
-                ignore_list.add(match)
+            with open(filename, "rb") as file:
+                axml = AXMLPrinter(file.read())
+            xml = axml.get_xml().decode('utf-8')
+            matches = PACKAGE.findall(xml)
+            ignore_list.update(matches)  # add list to set
 
         # convert ignore list to smali format
         ignore_list = [Util.to_smali(classname) for classname in ignore_list if classname]
@@ -235,7 +236,6 @@ class Dissect:
         # iterate through all the smali files
         for filename in Util.progress_bar(self.__smali_files,
                                           description="Retrieving classes from all smali files"):
-
 
             with open(filename, "r") as file:
                 # identify lines which contains classes
@@ -252,21 +252,22 @@ class Dissect:
 
                             ignore = False
                             for ignore_class in ignore_list:
-                                #skip classes in ignore_class
+                                # skip classes in ignore_class
                                 if (class_name.startswith(ignore_class[:-1])
                                         or "/ui/" in class_name
                                         or "/widget/" in class_name
                                         or "/models/" in class_name):
                                     ignore = True
                                     break
-                                
-                                #skip R classes
-                                class_token = regex.SPLIT_CLASS.split(class_name)
-                                for token in class_token:
-                                    if token == "R":
-                                        ignore = True
-                                        break
-                                    
+
+                                # skip R classes
+                                # class_token = regex.SPLIT_CLASS.split(class_name)
+                                class_tokens = class_name.split("/")
+                                class_tokens = [token.replace(";", "") for token in class_tokens]
+                                if "R" in class_tokens:
+                                    ignore = True
+                                    break
+
                             if not ignore:
                                 self._class_names.add(class_name)
 

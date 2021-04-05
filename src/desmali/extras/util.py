@@ -56,8 +56,9 @@ class Util:
     def generate_mapping(lst: List[str]) -> Dict[str, str]:
         # [.., Y, Z, aa, ab, ac, ..]
         method_name_mapping: Dict[str: str] = dict()
+        taboo = ["r", "R"]
         letters: List[str] = [
-            letter for letter in ascii_letters if letter != 'r' and letter != 'R']  # [a-zA-Z]
+            letter for letter in ascii_letters if letter not in taboo]  # [a-zA-Z]
 
         for index, name in enumerate(lst):
             new_name: str = ""

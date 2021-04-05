@@ -14,12 +14,10 @@ class RenameClass(Desmali):
 
     def run(self):
         # get all class names
-        self._class_names: List[str] = self._dissect.class_names(
-            renamable=True)
+        self._class_names: List[str] = self._dissect.class_names(renamable=True)
 
         # generate a mapping of method names
-        self._class_name_mapping: Dict[str: str] = Util.generate_mapping(
-            self._class_names)
+        self._class_name_mapping: Dict[str: str] = Util.generate_mapping(self._class_names)
 
         # rename classes in smali files
         for filename in Util.progress_bar(self._dissect.smali_files(),
