@@ -39,7 +39,7 @@
                 <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
                     <h6 class="m-0 font-weight-bold text-primary">File Tree</h6>
                 </div>
-                <div class="card-body" style="height:928px; overflow:scroll;">
+                <div class="card-body" style="height:800px; overflow:scroll;">
                     <div id="filetree" class="transparent-effect"></div>
                 </div>
             </div>
@@ -69,22 +69,9 @@
                             url: '/viewlines',
                             contentType: "application/json",
                             data: JSON.stringify(d),
-                            success: function (data) {
-                                document.getElementById("file_output").innerHTML = data;
-                            },
-                            error: function (XMLHttpRequest, textStatus, errorThrown) {
-                                alert("Status: " + textStatus); alert("Error: " + errorThrown);
-                            }
-
-                        });
-                        //get html
-                        $.ajax({
-                            type: 'post',
-                            url: '/comparelines',
-                            contentType: "application/json",
-                            data: JSON.stringify(d),
-                            success: function (data) {
-                                document.getElementById("compare").innerHTML = data;
+                            success: function (rsp) {
+                                document.getElementById("file_output").innerHTML = rsp;
+                                document.getElementById("filename").value = data.selected[0];
                             },
                             error: function (XMLHttpRequest, textStatus, errorThrown) {
                                 alert("Status: " + textStatus); alert("Error: " + errorThrown);
@@ -101,6 +88,30 @@
                     $('#filetree').jstree('select_node', 'child_node_1');
                     $.jstree.reference('#filetree').select_node('child_node_1');
                 });
+
+                $('#compareBtn').click(function () {
+                    var d = { "data": document.getElementById("filename").value };
+                    if (d !== null) {
+
+                        //get html
+                        $.ajax({
+                            type: 'post',
+                            url: '/comparelines',
+                            contentType: "application/json",
+                            data: JSON.stringify(d),
+                            success: function (data) {
+                                var w = window.open();
+                                w.document.open();
+                                w.document.write(data);
+                                w.document.close();
+
+                            },
+                            error: function (XMLHttpRequest, textStatus, errorThrown) {
+                                alert("Status: " + textStatus); alert("Error: " + errorThrown);
+                            }
+                        });
+                    }
+                });
             });
 
         </script>
@@ -108,13 +119,15 @@
         <div class="col-xl-9 col-lg-9">
             <div class="card shadow mb-4">
                 <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-                    <h6 class="m-0 font-weight-bold text-primary">Original File</h6>
+                    <h6 class="m-0 font-weight-bold text-primary">View File Content</h6>
+                    <button id="compareBtn" class="btn btn-primary">Compare changes</button>
                 </div>
-                <div class="card-body " style="height:350px; overflow:scroll;">
+                <div class="card-body " style="height:782px; overflow:scroll;">
                     <pre id="file_output"></pre>
                 </div>
+                <input type="hidden" id="filename" value="">
             </div>
-
+            <!-- 
             <div class="card shadow mb-4">
                 <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
                     <h6 class="m-0 font-weight-bold text-primary">Comparison</h6>
@@ -122,7 +135,7 @@
                 <div class="card-body " style="height:500px; overflow:scroll;">
                     <embed id="compare" type="text/html">
                 </div>
-            </div>
+            </div> -->
 
         </div>
 
