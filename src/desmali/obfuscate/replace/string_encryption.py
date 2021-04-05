@@ -129,11 +129,11 @@ class StringEncryption(Desmali):
                 # Encrypt Constant Strings
                 for list_num, const_line in enumerate(const_index):
                     lines[const_line] = (
-                        '\tconst-string/jumbo {register}, "{ciphertext}"\n'
-                        "\n\tinvoke-static {{{register}}}, "
+                        '    const-string/jumbo {register}, "{ciphertext}"\n'
+                        "\n    invoke-static {{{register}}}, "
                         "L{com_path}/DecryptString"
                         ";->decryptString(Ljava/lang/String;)Ljava/lang/String;\n"
-                        "\n\tmove-result-object {register}\n".format(
+                        "\n    move-result-object {register}\n".format(
                             register=const_register[list_num],
                             ciphertext=self.encrypt_string(const_val[list_num]),
                             com_path=com_path,
@@ -148,12 +148,12 @@ class StringEncryption(Desmali):
                     lines[static_line] = f"{lines[static_line].split(' = ')[0]}\n"
 
                     static_enc_code += (
-                        '\tconst-string/jumbo v0, "{ciphertext}"\n'
-                        "\n\tinvoke-static {{v0}}, "
+                        '    const-string/jumbo v0, "{ciphertext}"\n'
+                        "\n    invoke-static {{v0}}, "
                         "L{com_path}/DecryptString"
                         ";->decryptString(Ljava/lang/String;)Ljava/lang/String;\n"
-                        "\n\tmove-result-object v0\n"
-                        "\n\tsput-object v0, {class_name}->"
+                        "\n    move-result-object v0\n"
+                        "\n    sput-object v0, {class_name}->"
                         "{string_name}:Ljava/lang/String;\n\n".format(
                             ciphertext=self.encrypt_string(static_val[list_num]),
                             com_path=com_path,
@@ -169,7 +169,7 @@ class StringEncryption(Desmali):
                     if locals_match:
                         locals_count = int(locals_match.group("local_count"))
                         if locals_count == 0:
-                            lines[static_constructor_line + 1] = "\t.locals 1\n"
+                            lines[static_constructor_line + 1] = "    .locals 1\n"
 
                         lines[static_constructor_line + 2] = "\n{0}".format(static_enc_code)
                 else:
@@ -181,9 +181,9 @@ class StringEncryption(Desmali):
                     lines[new_constructor_line] = (
                         "{original}"
                         ".method static constructor <clinit>()V\n"
-                        "\t.locals 1\n\n"
+                        "    .locals 1\n\n"
                         "{enc_code}"
-                        "\treturn-void\n"
+                        "    return-void\n"
                         ".end method\n\n".format(
                             original=lines[new_constructor_line],
                             enc_code=static_enc_code,
