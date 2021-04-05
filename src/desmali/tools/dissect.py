@@ -69,6 +69,11 @@ class Dissect:
         return dir_mapping
 
     def update_mapping(self, old_path, new_path) -> None:
+        # skip files which were explicitly added after apk decoding
+        # they would not have a mapping
+        if old_path not in self.dir_mapping:
+            return False
+
         self.dir_mapping[new_path] = self.dir_mapping[old_path]
         del self.dir_mapping[old_path]
 
