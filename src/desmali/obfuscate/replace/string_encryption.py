@@ -205,6 +205,7 @@ class StringEncryption(Desmali):
 
             self.decryptor_added = True
             logger.verbose("String Decryptor added successfully")
+            self._dissect.add_smali_file(dest_file)
         else:
             logger.info("String Decryptor not added, no issue if there are no encryption done. Check number of skipped files.")
 
