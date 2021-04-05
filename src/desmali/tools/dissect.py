@@ -91,9 +91,12 @@ class Dissect:
         ]
 
         # convert list to tuple to prevent modification
-        self._smali_files: Tuple[str, str] = tuple(self._smali_files)
+        self._smali_files: Tuple[str] = tuple(self._smali_files)
 
         return self._smali_files
+
+    def add_smali_file(self, filepath: str) -> None:
+        self._smali_files = tuple(list(self._smali_files) + [filepath])
 
     def line_count_info(self) -> Tuple[int, int]:
         """
