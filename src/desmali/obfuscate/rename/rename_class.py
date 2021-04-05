@@ -14,10 +14,12 @@ class RenameClass(Desmali):
 
     def run(self):
         # get all class names
-        self._class_names: List[str] = self._dissect.class_names(renamable=True)
+        self._class_names: List[str] = self._dissect.class_names(
+            renamable=True)
 
         # generate a mapping of method names
-        self._class_name_mapping: Dict[str: str] = Util.generate_mapping(self._class_names)
+        self._class_name_mapping: Dict[str: str] = Util.generate_mapping(
+            self._class_names)
 
         # rename classes in smali files
         for filename in Util.progress_bar(self._dissect.smali_files(),
@@ -50,7 +52,6 @@ class RenameClass(Desmali):
 
                     file.write(line)
 
-        # rename smali files
         smali_path = "./.tmp/obfuscated/smali/"
         for old_name, new_name in self._class_name_mapping.items():
             new_file = old_name[1:-1].split("/")[:-1]
@@ -59,7 +60,4 @@ class RenameClass(Desmali):
             old_path = smali_path + old_name[1:-1] + ".smali"
             new_path = smali_path + "/".join(new_file) + ".smali"
             if os.path.isfile(old_path):
-                os.rename(old_path, new_path)
                 self._dissect.update_mapping(old_path, new_path)
-
-        self._dissect.smali_files(force=True)

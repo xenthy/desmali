@@ -1,9 +1,11 @@
 import os
+import re
 from typing import List, Set, Tuple, Dict
 
 from desmali.extras import logger, Util, regex
 
 from androguard.core.bytecodes.apk import APK
+from androguard.core.bytecodes.axml import AXMLPrinter
 
 
 class Dissect:
@@ -29,6 +31,9 @@ class Dissect:
 
         # locate all smali files
         self.smali_files()
+
+        # locate all smali files
+        self.xml_files()
 
         # map original path and decoded path
         self.dir_mapping: Dict[str, str] = self._set_mapping()
@@ -99,6 +104,29 @@ class Dissect:
         self._smali_files: Tuple[str] = tuple(self._smali_files)
 
         return self._smali_files
+
+    def xml_files(self, force=False) -> Tuple[str]:
+        """
+        Get all xml file paths recursively from the specified directory
+        """
+        # check if function has already been executed
+        if hasattr(self, "_xml_files") and not force:
+            return self._xml_files
+
+        logger.verbose("getting all .xml files from decoded directory")
+
+        # identify all xml files recursuvely in the decoded_dir_path
+        self._xml_files: List[str] = [
+            os.path.join(path, filename)
+            for path, _, files in os.walk(self.decoded_dir_path)
+            for filename in files
+            if filename.endswith(".xml")
+        ]
+
+        # convert list to tuple to prevent modification
+        self._xml_files: Tuple[str] = tuple(self._xml_files)
+
+        return self._xml_files
 
     def add_smali_file(self, filepath: str) -> None:
         self._smali_files = tuple(list(self._smali_files) + [filepath])
@@ -171,24 +199,43 @@ class Dissect:
         self._class_names: Set[str] = set()
 
         # create ignore list (cannot be renamed)
-
+        ignore_list: Set[str] = set()
         apk = APK("./" + self.apk_path)
         package_name = "L" + "/".join(apk.package.split(".")) + "/"
 
+        # add manifest to ignore_list
         manifest = apk.get_android_manifest_axml().get_xml_obj()
-        apps = manifest.findall("application")
-        ignore_list = [apk.get_value_from_tag(app, "name") for app in apps]
-        ignore_list = ignore_list + apk.get_activities() + apk.get_services() + \
-            apk.get_receivers()
-        ignore_list = [Util.smali_format(classname)
-                       for classname in ignore_list if classname]
+        for app in manifest.findall("application"):
+            name = apk.get_value_from_tag(app, "name")
+            ignore_list.add(name)
+        for activity in apk.get_activities():
+            ignore_list.add(activity)
+        for service in apk.get_services():
+            ignore_list.add(service)
+        for receiver in apk.get_receivers():
+            ignore_list.add(receiver)
+        for provider in apk.get_providers():
+            ignore_list.add(provider)
+
+        # add xml files to ignore_list
+        # iterate through all the xml files
+        for filename in Util.progress_bar(self._xml_files,
+                                          description="Retrieving classes from all xml files"):
+            with open(filename, "rb") as fp:
+                axml = AXMLPrinter(fp.read())
+            xml = axml.get_xml().decode('utf-8')      
+            regx = re.compile(apk.package + r"\S+[^ \"]")
+            matches = regx.findall(xml)
+            for match in matches:
+                ignore_list.add(match)
+
+        # convert ignore list to smali format
+        ignore_list = [Util.to_smali(classname) for classname in ignore_list if classname]
 
         # iterate through all the smali files
         for filename in Util.progress_bar(self.__smali_files,
                                           description="Retrieving classes from all smali files"):
 
-            if len(filename.split("/")[-1:]) < 3:
-                continue
 
             with open(filename, "r") as file:
                 # identify lines which contains classes
@@ -205,13 +252,21 @@ class Dissect:
 
                             ignore = False
                             for ignore_class in ignore_list:
+                                #skip classes in ignore_class
                                 if (class_name.startswith(ignore_class[:-1])
                                         or "/ui/" in class_name
                                         or "/widget/" in class_name
                                         or "/models/" in class_name):
-
                                     ignore = True
                                     break
+                                
+                                #skip R classes
+                                class_token = regex.SPLIT_CLASS.split(class_name)
+                                for token in class_token:
+                                    if token == "R":
+                                        ignore = True
+                                        break
+                                    
                             if not ignore:
                                 self._class_names.add(class_name)
 

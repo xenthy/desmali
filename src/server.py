@@ -143,6 +143,9 @@ def result():
                    "nim4m4h4om4?", "nim4m4h4om4?")
     PROGRESS["completion"] = PROGRESS["completion"] + increment
 
+    #update smali file after decompiling new apk
+    dissect.smali_files(force=True)
+
     # get number of smali lines before and after obfuscation
     initial_num, current_num = dissect.line_count_info()
     logger.info(f"Line count: Initial: {initial_num} - " +

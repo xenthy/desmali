@@ -12,7 +12,7 @@ def pre_obfuscate(apk_path: str):
     apktool.decode(apk_path=apk_path,
                    output_dir_path="./.tmp/original",
                    force=True)
-
+                   
     # clone decoded directory
     if os.path.isdir("./.tmp/obfuscated"):
         shutil.rmtree("./.tmp/obfuscated")
@@ -46,14 +46,20 @@ def post_obfuscate(apktool: Apktool, keystore_path: str, ks_pass: str, key_pass:
     dex2jar.to_jar(input_apk_path="./.tmp/signed.apk",
                    output_jar_path="./.tmp/signed.jar")
 
+    
+    # decompile signed apk to obfuscated folder for updated smali file name
+    apktool.decode(apk_path="./.tmp/signed.apk",
+                   output_dir_path="./.tmp/obfuscated",
+                   force=True)
+
 
 def main():
     # APK_PATH = "AdAway-5.5.1-210402.apk"
-    # APK_PATH = "Boost-1.10.2.apk"
+    APK_PATH = "Boost-1.10.2.apk"
     # APK_PATH = "Memento-1.1.1.apk"
     # APK_PATH = "wsy.apk"
-    APK_PATH = "original.apk"
-
+    # APK_PATH = "original.apk"
+    
     apktool: Apktool = Apktool()
     apktool.decode(apk_path=APK_PATH,
                    output_dir_path="./.tmp/obfuscated",
@@ -118,6 +124,12 @@ def main():
     # dex2jar.to_jar(input_apk_path="./.tmp/signed.apk",
     #                output_jar_path="./.tmp/signed.jar")
 
+    # decompile obfuscated app to get new smali
+    apktool.decode(apk_path="./.tmp/signed.apk",
+                   output_dir_path="./.tmp/obfuscated",
+                   force=True)
+    dissect.smali_files(force=True)
+
     # get apk file size before and after obfuscation
     initial_size, current_size = dissect.file_size_difference(
         "./.tmp/signed.apk")
@@ -130,6 +142,7 @@ def main():
     logger.info(f"Line count -> Initial: {initial_num:,} - " +
                 f"Current: {current_num:,} - " +
                 "Increase: {:.2f}x".format(current_num / initial_num))
+   
 
 
 if __name__ == "__main__":

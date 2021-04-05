@@ -47,12 +47,17 @@ class Util:
     def random_string(length: int) -> str:
         return "".join(random.choices(string.ascii_letters, k=length))
 
-    def smali_format(classname: str):
+    def to_smali(classname: str):
         return "L" + classname.replace(".", "/") + ";"
 
+    def to_dot_class(classname: str):
+        return classname[1:-1].replace("/", ".")
+
     def generate_mapping(lst: List[str]) -> Dict[str, str]:
-        method_name_mapping: Dict[str: str] = dict()  # [.., Y, Z, aa, ab, ac, ..]
-        letters: List[str] = [letter for letter in ascii_letters]  # [a-zA-Z]
+        # [.., Y, Z, aa, ab, ac, ..]
+        method_name_mapping: Dict[str: str] = dict()
+        letters: List[str] = [
+            letter for letter in ascii_letters if letter != 'r' and letter != 'R']  # [a-zA-Z]
 
         for index, name in enumerate(lst):
             new_name: str = ""
