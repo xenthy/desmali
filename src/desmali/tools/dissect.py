@@ -261,9 +261,9 @@ class Dissect:
                                     break
 
                                 # skip R classes
-                                # class_token = regex.SPLIT_CLASS.split(class_name)
-                                class_tokens = class_name.split("/")
+                                class_tokens = regex.SPLIT_CLASS.split(class_name)
                                 class_tokens = [token.replace(";", "") for token in class_tokens]
+                                
                                 if "R" in class_tokens:
                                     ignore = True
                                     break

@@ -2,16 +2,15 @@
 
 import os
 import json
+import math
+import time
 
 from flask import Flask, request, render_template, jsonify, send_from_directory, Response
-
 from waitress import serve
 
 from desmali.extras import logger
 from desmali.all import *
 from main import pre_obfuscate, post_obfuscate
-import time
-
 
 app = Flask(__name__)
 
@@ -143,7 +142,7 @@ def result():
                    "nim4m4h4om4?", "nim4m4h4om4?")
     PROGRESS["completion"] = PROGRESS["completion"] + increment
 
-    #update smali file after decompiling new apk
+    # update smali file after decompiling new apk
     dissect.smali_files(force=True)
 
     # get number of smali lines before and after obfuscation
@@ -155,9 +154,28 @@ def result():
     # do all the stuff
     stats = {}
     stats["name"] = apk_name
-    stats["size_overhead"] = "10mb"
-    stats["time_overhead"] = "10sec"
-    stats["instructions"] = "20"
+
+    original_size, current_size = dissect.file_size_difference("./.tmp/signed.apk")
+    stats["original_size"] = f"{original_size:,}"
+    stats["current_size"] = f"{current_size:,}"
+    stats["increase_size"] = original_size - current_size
+    stats["factor_size"] = "{:.2f}x".format(current_size / original_size)
+    if (current_size / original_size) < 1:
+        stats["increase_size"] = 0
+    else:
+        stats["increase_size"] = int(math.ceil(((current_size / original_size) - 1) * 100))
+    print(stats["increase_size"])
+
+    original_lines, current_lines = dissect.line_count_info()
+    stats["original_lines"] = f"{original_lines:,}"
+    stats["current_lines"] = f"{current_lines:,}"
+    if (current_lines / original_lines) < 1:
+        stats["increase_lines"] = 0
+    else:
+        stats["increase_lines"] = int(math.ceil(((current_lines / original_lines - 1 )) * 100))
+    print(stats["increase_lines"])
+
+    stats["factor_lines"] = "{:.2f}x".format(current_lines / original_lines)
 
     global DIR_MAPPING
     DIR_MAPPING = dissect.dir_mapping
@@ -171,7 +189,7 @@ def result():
                            data=data)
 
 
-@app.route('/viewlines', methods=['POST'])
+@ app.route('/viewlines', methods=['POST'])
 def viewlines():
     try:
         file_path = request.json["data"].strip()
@@ -182,7 +200,7 @@ def viewlines():
         return "Non readable ascii"
 
 
-@app.route('/comparelines', methods=['POST'])
+@ app.route('/comparelines', methods=['POST'])
 def comaprelines():
     try:
         global DIR_MAPPING
@@ -198,6 +216,5 @@ def comaprelines():
 
 if __name__ == "__main__":
     logger.info("server running at http://localhost:6969")
-    # socketio.run(app)
-    app.run(host="0.0.0.0", port=6969)
-    # serve(app, host="0.0.0.0", port=6969)
+    # app.run(host="0.0.0.0", port=6969)
+    serve(app, host="0.0.0.0", port=6969)

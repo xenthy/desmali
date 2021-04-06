@@ -6,7 +6,7 @@ class Diff:
 
     def __init__(self):
         if self.__instance is None:
-            self._htmldiff = HtmlDiff(wrapcolumn=80)
+            self._htmldiff = HtmlDiff(wrapcolumn=72)
             self.__instance = self.__dict__
         else:
             self.__dict__ = self.__instance

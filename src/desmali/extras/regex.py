@@ -10,6 +10,8 @@ CLASSES: Match = re.compile(r"L[^():\s]+?;", re.UNICODE)
 # .source "MainActivity.kt"
 SOURCES: Match = re.compile(r"\.source.+?(?P<name>\w+)")
 
+SPLIT_CLASS: Match = re.compile(r"[/$]")
+
 # regex pattern to identify lines that contains a method
 # read more about Named Capturing Groups: https://www.regular-expressions.info/refext.html
 METHOD: Match = re.compile(r"\.method.+?(?P<method>\S+?)" +

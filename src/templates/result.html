@@ -1,32 +1,129 @@
 <!doctype html>
-{% extends "base.html"%}
+
 <html>
 
 <head>
     <title>{% block title %}{% endblock %}</title>
-    {% block script %}
-    {% endblock%}
 </head>
 
 <body>
+
+    {% extends "base.html"%}
     {%block content%}
+
     <div class="d-sm-flex align-items-center justify-content-between mb-4">
-        <h1 class="h3 mb-0 text-gray-800">Results</h1>
+        <h1 class="h3 mb-0 text-gray-800">Dashboard</h1>
+        <div class="align-items-right">
+            <a href="/download?q={{stats['name']}}" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm">
+                <span class="text">Download APK</span>
+            </a>
+        </div>
     </div>
+
+    <!-- Content Row -->
     <div class="row">
-        <div class="col-xl-6 col-lg-6">
-            <div class="card shadow mb-4">
-                <div class="card-header py-3">
-                    <h6 class="m-0 font-weight-bold text-primary">APK Information</h6>
-                </div>
+
+        <!-- Earnings (Monthly) Card Example -->
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-primary shadow h-100 py-2">
                 <div class="card-body">
-                    {%for k in stats %}
-                    {{k}}: {{stats[k]}}</br>
-                    {% endfor %}
-                    <!-- <button type="submit" class="btn btn-primary" value="Submit">Download APK</button> -->
-                    <a href="/download?q={{stats['name']}}" class="btn btn-primary ">
-                        <span class="text">Download APK</span>
-                    </a>
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                Original APK Size</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{stats["original_size"]}} bytes</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-calendar fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Earnings (Monthly) Card Example -->
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-success shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-success text-uppercase mb-1">Obfuscated APK Size |
+                                {{stats["factor_size"]}}
+                            </div>
+                            <div class="row no-gutters align-items-center">
+                                <div class="col-mr2">
+                                    <div class="h5 mb-0 mr-3 font-weight-bold text-gray-800">
+                                        {{stats["current_size"]}} bytes</div>
+                                </div>
+                                <div class="col">
+                                    <div class="progress progress-sm mr-2">
+                                        <div class="progress-bar bg-success" role="progressbar"
+                                            style="width:{{stats['increase_size']}}%;"
+                                            aria-valuenow="{{stats['current_size']}}" aria-valuemin="0"
+                                            aria-valuemax="{{stats['original_size']}}"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-clipboard-list fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Earnings (Monthly) Card Example -->
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-info shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-info text-uppercase mb-1">Original Line Count
+                            </div>
+                            <div class="row no-gutters align-items-center">
+                                <div class="col-mr2">
+                                    <div class="h5 mb-0 mr-3 font-weight-bold text-gray-800">
+                                        {{stats["original_lines"]}}</div>
+                                </div>
+
+                            </div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-clipboard-list fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Pending Requests Card Example -->
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-warning shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">Obfuscated Line Count
+                                | {{stats["factor_lines"]}}
+                            </div>
+                            <div class="row no-gutters align-items-center">
+                                <div class="col-mr2">
+                                    <div class="h5 mb-0 mr-3 font-weight-bold text-gray-800">
+                                        {{stats["current_lines"]}} </div>
+                                </div>
+                                <div class="col">
+                                    <div class="progress progress-sm mr-2">
+                                        <div class="progress-bar bg-warning" role="progressbar"
+                                            style="width: {{stats['increase_lines']}}%" aria-valuenow="50"
+                                            aria-valuemin="0" aria-valuemax="100"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-clipboard-list fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -44,108 +141,111 @@
                 </div>
             </div>
         </div>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.12.1/jquery.min.js"></script>
-        <script src="/static/jsTree/jstree.min.js"></script>
-        <script>
-            $(function () {
-
-                // 6 create an instance when the DOM is ready
-                var d = JSON.parse('{{ data | tojson | safe}}');
-
-                $('#filetree').jstree({
-                    'core': {
-                        'data': d
-                    }
-                });
-
-                // 7 bind to events triggered on the tree
-                $('#filetree').on("changed.jstree", function (e, data) {
-                    //if file , then get text
-                    if (data.node.icon == "/static/jsTree/themes/default/file.png") {
-                        var d = { 'data': data.selected[0] };
-                        //get lines from file
-                        $.ajax({
-                            type: 'post',
-                            url: '/viewlines',
-                            contentType: "application/json",
-                            data: JSON.stringify(d),
-                            success: function (rsp) {
-                                document.getElementById("file_output").innerHTML = rsp;
-                                document.getElementById("filename").value = data.selected[0];
-                            },
-                            error: function (XMLHttpRequest, textStatus, errorThrown) {
-                                alert("Status: " + textStatus); alert("Error: " + errorThrown);
-                            }
-
-                        });
-
-                    }
-
-                });
-                // 8 interact with the tree - either way is OK
-                $('button').on('click', function () {
-                    $('#filetree').jstree(true).select_node('child_node_1');
-                    $('#filetree').jstree('select_node', 'child_node_1');
-                    $.jstree.reference('#filetree').select_node('child_node_1');
-                });
-
-                $('#compareBtn').click(function () {
-                    var d = { "data": document.getElementById("filename").value };
-                    if (d !== null) {
-
-                        //get html
-                        $.ajax({
-                            type: 'post',
-                            url: '/comparelines',
-                            contentType: "application/json",
-                            data: JSON.stringify(d),
-                            success: function (data) {
-                                var w = window.open();
-                                w.document.open();
-                                w.document.write(data);
-                                w.document.close();
-
-                            },
-                            error: function (XMLHttpRequest, textStatus, errorThrown) {
-                                alert("Status: " + textStatus); alert("Error: " + errorThrown);
-                            }
-                        });
-                    }
-                });
-            });
-
-        </script>
 
         <div class="col-xl-9 col-lg-9">
             <div class="card shadow mb-4">
                 <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
                     <h6 class="m-0 font-weight-bold text-primary">View File Content</h6>
-                    <button id="compareBtn" class="btn btn-primary">Compare changes</button>
+                    <button type="button" id="compareBtn" class="btn btn-primary">Compare changes</button>
                 </div>
                 <div class="card-body " style="height:782px; overflow:scroll;">
-                    <pre id="file_output"></pre>
+                    <pre><code class="language-smali" id="input"></code></pre>
                 </div>
                 <input type="hidden" id="filename" value="">
             </div>
-            <!-- 
-            <div class="card shadow mb-4">
-                <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-                    <h6 class="m-0 font-weight-bold text-primary">Comparison</h6>
-                </div>
-                <div class="card-body " style="height:500px; overflow:scroll;">
-                    <embed id="compare" type="text/html">
-                </div>
-            </div> -->
-
         </div>
 
     </div>
 
+    <!-- The Modal -->
+    <div class="modal fade " id="myModal">
+        <div class="modal-dialog modal-xl" style="width:90%;">
+            <div class="modal-content">
+                <!-- Modal body -->
+                <div id="compareOutput" class="modal-body">
+                    Modal body..
+                </div>
+            </div>
+        </div>
+    </div>
     {% endblock %}
 
+    {% block script %}
+    <script src="/static/jsTree/jstree.min.js"></script>
+    <link rel="stylesheet" href="/static/css/arduino-light.min.css">
+    <script src="/static/js/highlight.pack.js"></script>
     <script>
+        $(function () {
+            
+            // 6 create an instance when the DOM is ready
+            var d = JSON.parse('{{ data | tojson | safe}}');
+
+            $('#filetree').jstree({
+                'core': {
+                    'data': d
+                }
+            });
+
+            // 7 bind to events triggered on the tree
+            $('#filetree').on("changed.jstree", function (e, data) {
+                //if file , then get text
+                if (data.node.icon == "/static/jsTree/themes/default/file.png") {
+                    var d = { 'data': data.selected[0] };
+                    //get lines from file
+                    $.ajax({
+                        type: 'post',
+                        url: '/viewlines',
+                        contentType: "application/json",
+                        data: JSON.stringify(d),
+                        success: function (rsp) {
+                            document.getElementById("input").innerHTML = rsp;
+                            document.getElementById("filename").value = data.selected[0];
+                            hljs.highlightAll();
+                        },
+                        error: function (XMLHttpRequest, textStatus, errorThrown) {
+                            alert("Status: " + textStatus); alert("Error: " + errorThrown);
+                        }
+
+                    });
+
+                }
+
+            });
+            // 8 interact with the tree - either way is OK
+            $('button').on('click', function () {
+                $('#filetree').jstree(true).select_node('child_node_1');
+                $('#filetree').jstree('select_node', 'child_node_1');
+                $.jstree.reference('#filetree').select_node('child_node_1');
+            });
+
+
+
+            $('#compareBtn').click(function () {
+                $("#myModal").modal();
+                var d = { "data": document.getElementById("filename").value };
+
+                if (d !== null) {
+
+                    //get html
+                    $.ajax({
+                        type: 'post',
+                        url: '/comparelines',
+                        contentType: "application/json",
+                        data: JSON.stringify(d),
+                        success: function (data) {
+                            document.getElementById("compareOutput").innerHTML = data
+                            
+                        },
+                        error: function (XMLHttpRequest, textStatus, errorThrown) {
+                            alert("Status: " + textStatus); alert("Error: " + errorThrown);
+                        }
+                    });
+                }
+            });
+        });
 
     </script>
+    {% endblock %}
 </body>
 
 </html>
