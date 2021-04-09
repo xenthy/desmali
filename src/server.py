@@ -213,6 +213,6 @@ def comaprelines():
 
 
 if __name__ == "__main__":
-    logger.info("server running at http://localhost:6969")
+    # logger.info("server running at http://localhost:6969")
     # app.run(host="0.0.0.0", port=6969)
     serve(app, host="0.0.0.0", port=6969)
