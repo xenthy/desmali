@@ -164,7 +164,6 @@ def result():
         stats["increase_size"] = 0
     else:
         stats["increase_size"] = int(math.ceil(((current_size / original_size) - 1) * 100))
-    print(stats["increase_size"])
 
     original_lines, current_lines = dissect.line_count_info()
     stats["original_lines"] = f"{original_lines:,}"
@@ -172,8 +171,7 @@ def result():
     if (current_lines / original_lines) < 1:
         stats["increase_lines"] = 0
     else:
-        stats["increase_lines"] = int(math.ceil(((current_lines / original_lines - 1 )) * 100))
-    print(stats["increase_lines"])
+        stats["increase_lines"] = int(math.ceil(((current_lines / original_lines - 1)) * 100))
 
     stats["factor_lines"] = "{:.2f}x".format(current_lines / original_lines)
 
