@@ -4,6 +4,7 @@ Logs on stdout will be coloured.
 """
 
 import logging
+
 import coloredlogs
 
 LOG_FILE = "./logs/program.log"

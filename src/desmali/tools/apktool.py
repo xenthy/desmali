@@ -8,32 +8,44 @@ from desmali.extras import logger
 
 
 class Apktool():
-    def __init__(self):
-        if "APKTOOL_PATH" in os.environ:
-            self.apktool_path: str = os.environ["APKTOOL_PATH"]
-        else:
-            self.apktool_path: str = "apktool"
+    """
+    A python wrapper to use the "apktool" tool with
+    parameters.
 
+    [IMPORTANT] apktool has to be installed
+    """
+
+    def __init__(self):
+        self.apktool_path: str = "apktool"
         full_apktool_path = shutil.which(self.apktool_path)
 
         if full_apktool_path is None:
-            logger.error(f"apktool not found \"{self.apktool_path}\"")
+            logger.error(f"apktool not found {self.apktool_path!r}")
             exit()
         else:
             self.apktool_path = full_apktool_path
 
     def decode(self, apk_path: str, output_dir_path: str, force: bool = False) -> None:
+        """
+        Decode an APK file
+
+            Parameters:
+                apk_path (str): Path to an APK file
+                output_dir_path (str): Directory to store the decoded APK
+                force (bool): Overwrites a directory if it exists
+
+            Returns:
+                None
+        """
 
         # check if file exists
         if not os.path.isfile(apk_path):
-            logger.error(f"Unable to find file {apk_path}")
-            raise FileNotFoundError(f"Unable to find file {apk_path}")
+            logger.error(f"Unable to find file {apk_path!r}")
+            raise FileNotFoundError(f"Unable to find file {apk_path!r}")
 
         # check if directory exists, else create it
         if not os.path.isdir(output_dir_path):
-            # logger.error(f"unable to find directory {output_dir_path}")
-            # raise NotADirectoryError(f"unable to find directory {output_dir_path}")
-            logger.info(f"creating new directory at [{output_dir_path}]")
+            logger.info(f"creating new directory at {output_dir_path!r}")
             os.mkdir(output_dir_path)
 
         decode: List[str] = [
@@ -50,15 +62,15 @@ class Apktool():
 
         # force delete destination directory
         if force:
-            logger.verbose(f"force flag set, [{output_dir_path}] directory will be overwritten")
+            logger.verbose(f"force flag set, {output_dir_path!r} directory will be overwritten")
             decode.insert(2, "--force")
 
         try:
-            decode_command = " ".join(decode)
-            logger.info(f"decoding apk: \"{apk_path}\" -> \"{output_dir_path}\"")
+            decode_command: str = " ".join(decode)
+            logger.info(f"decoding apk: {apk_path!r} -> {output_dir_path!r}")
             logger.verbose(f"{decode_command}")
 
-            output = subprocess.check_output(decode, stderr=subprocess.STDOUT, input=b"\n").strip()
+            output: str = subprocess.check_output(decode, stderr=subprocess.STDOUT, input=b"\n").strip()
 
             if b"Exception in thread" in output:
                 # if apktool reports an exception
@@ -72,6 +84,17 @@ class Apktool():
             raise
 
     def build(self, source_dir_path: str, output_apk_path: str) -> None:
+        """
+        Build an APK file
+
+            Parameters:
+                source_dir_path (str): Path to an decoded APK directory
+                output_apk_path (str): Path to store the built APK
+
+            Returns:
+                None
+        """
+
         build: List[str] = [
             self.apktool_path,
             "b",
@@ -86,12 +109,11 @@ class Apktool():
 
         try:
             build_command = " ".join(build)
-            logger.info(f"building apk: \"{source_dir_path}\" -> \"{output_apk_path}\"")
+            logger.info(f"building apk: {source_dir_path!r} -> {output_apk_path!r}")
             logger.verbose(f"{build_command}")
 
             output = subprocess.check_output(build, stderr=subprocess.STDOUT, input=b"\n").strip()
             if (b"brut.directory.PathNotExist: " in output or b"Exception in thread " in output):
-                # Report exception raised in Apktool.
                 raise subprocess.CalledProcessError(1, build, output)
 
             return output.decode(errors="replace")
@@ -103,5 +125,5 @@ class Apktool():
             )
             raise
         except Exception as e:
-            logger.error("Error during building: {0}".format(e))
+            logger.error(f"Error during building: {e}")
             raise

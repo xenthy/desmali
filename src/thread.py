@@ -2,6 +2,9 @@ import threading
 
 
 class Thread:
+    """
+    A class to handle treading
+    """
     __interrupt = False
     __event = None
 
@@ -20,7 +23,8 @@ class Thread:
 
 def thread(name=None, daemon=False):
     """
-    Creates a thread for a given function
+    Creates a thread for a given function. This wrapper method should
+    be called using python annotations
     """
     def wrapper(function):
         def decorator_thread(*args):

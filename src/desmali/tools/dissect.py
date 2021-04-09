@@ -8,23 +8,27 @@ from desmali.extras import logger, Util, regex
 from androguard.core.bytecodes.apk import APK
 from androguard.core.bytecodes.axml import AXMLPrinter
 
+# limit the logging of androguard
 logging.getLogger("androguard").setLevel(logging.WARNING)
 
 
 class Dissect:
+    """
+    A class to hold all the information about a decoded APK file.
+    To be used by desmali plugins for obfuscation
+    """
+
     def __init__(self, apk_path: str, original_dir_path: str, decoded_dir_path: str):
         # check if input directory exists
         if not os.path.isdir(original_dir_path):
-            logger.error(f"directory does not exist \"{original_dir_path}\"")
-            raise NotADirectoryError(
-                f"directory does not exist \"{original_dir_path}\"")
+            logger.error(f"directory does not exist {original_dir_path!r}")
+            raise NotADirectoryError(f"directory does not exist {original_dir_path!r}")
         else:
             self.original_dir_path: str = original_dir_path
 
         if not os.path.isdir(decoded_dir_path):
-            logger.error(f"directory does not exist \"{decoded_dir_path}\"")
-            raise NotADirectoryError(
-                f"directory does not exist \"{decoded_dir_path}\"")
+            logger.error(f"directory does not exist {decoded_dir_path!r}")
+            raise NotADirectoryError(f"directory does not exist {decoded_dir_path!r}")
         else:
             self.decoded_dir_path: str = decoded_dir_path
 
@@ -59,13 +63,22 @@ class Dissect:
 
         return num_of_lines
 
-    def _file_size(self, apk_path: str) -> int:
-        return os.path.getsize(apk_path)
+    def _file_size(self, file: str) -> int:
+        """
+        Gets the file size of a provided file in bytes
+        """
+        return os.path.getsize(file)
 
-    def file_size_difference(self, apk_path: str) -> Tuple[int, int]:
+    def file_size_difference(self, apk_path: str) -> Tuple[int]:
+        """
+        Gets the file size difference between the original and obfuscated APK 
+        """
         return self._original_file_size, self._file_size(apk_path)
 
     def _set_mapping(self) -> Dict[str, str]:
+        """
+        Sets a mapping between the original smali files and the obfuscated ones
+        """
         # dir_mapping dictionary - {decoded_path: original_path}
         dir_mapping: Dict[str, str] = dict()
 
@@ -77,6 +90,10 @@ class Dissect:
         return dir_mapping
 
     def update_mapping(self, old_path, new_path) -> None:
+        """
+        Updates the mapping of smali files for files which has been
+        explicitly renamed
+        """
         # skip files which were explicitly added after apk decoding
         # they would not have a mapping
         if old_path not in self.dir_mapping:
@@ -132,9 +149,12 @@ class Dissect:
         return self._xml_files
 
     def add_smali_file(self, filepath: str) -> None:
+        """
+        Adds an explicitly added smali file to the list of smali files
+        """
         self._smali_files = tuple(list(self._smali_files) + [filepath])
 
-    def line_count_info(self) -> Tuple[int, int]:
+    def line_count_info(self) -> Tuple[int]:
         """
         Returns the initial number of lines when this object was created and
         the current number of lines.
@@ -142,7 +162,10 @@ class Dissect:
         return self._initial_num_lines, len(self)
 
     def method_names(self, renamable: bool = False) -> Tuple[str]:
-        # check if smali_files() has already been executed
+        """
+        Get all method names from all the smali files
+        """
+        # check if self.smali_files() has already been executed
         if not hasattr(self, "__smali_files"):
             self.__smali_files: List[str] = self.smali_files()
 
@@ -179,6 +202,7 @@ class Dissect:
                         if "# virtual methods" in line:
                             break
 
+                    # add the method name to the set of methods
                     if ((match := regex.METHOD.match(line))
                         and "<init>" not in line
                         and "abstract" not in line
@@ -192,6 +216,9 @@ class Dissect:
         return self._method_names
 
     def class_names(self, renamable: bool = False) -> Tuple[str]:
+        """
+        Get all class names from all the smali files
+        """
         # check if smali_files() has already been executed
         if not hasattr(self, "__smali_files"):
             self.__smali_files: List[str] = self.smali_files()
@@ -220,6 +247,7 @@ class Dissect:
 
         # add xml files to ignore_list
         # iterate through all the xml files
+        # TODO: move to regex.py
         PACKAGE: Match = re.compile(apk.package + r"\S+[^ \"]")
 
         for filename in Util.progress_bar(self._xml_files,
@@ -263,7 +291,7 @@ class Dissect:
                                 # skip R classes
                                 class_tokens = regex.SPLIT_CLASS.split(class_name)
                                 class_tokens = [token.replace(";", "") for token in class_tokens]
-                                
+
                                 if "R" in class_tokens:
                                     ignore = True
                                     break

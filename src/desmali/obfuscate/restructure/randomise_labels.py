@@ -7,11 +7,25 @@ from desmali.extras import logger, Util, regex
 
 
 class RandomiseLabels(Desmali):
+    """
+    This plugin randomises labels in each method in all the smali files
+    by abusing goto instructions, while also keeping the integrity of 
+    try-catch blocks 
+    """
+
     def __init__(self, dissect: Dissect):
         super().__init__(self)
-        self._dissect = dissect
+        self._dissect: Dissect = dissect
 
-    def run(self):
+    def run(self) -> None:
+        """
+            Parameters:
+                None
+
+            Returns:
+                None
+        """
+
         # variable declarations
         in_method: bool = False
         reached_first_label: bool = False
@@ -70,11 +84,15 @@ class RandomiseLabels(Desmali):
                     # add line into labels if it is within a label
                     labels[-1].append(line)
 
-    def _write_labels(self, file, labels: List[List[str]], last_is_goto: bool):
+    def _write_labels(self, file, labels: List[List[str]], last_is_goto: bool) -> None:
+        """
+        This method calls self._shuffle and writes the shuffled labels to the file 
+        """
+
         # remove empty lines from labels
         labels = [list(filter(self._is_new_line, label)) for label in labels]
 
-        # write first goto
+        # write initial goto before the first label
         if not last_is_goto:
             file.write(f"    goto {labels[0][0].strip()}\n\n")
 
@@ -100,10 +118,13 @@ class RandomiseLabels(Desmali):
                 if regex.LABEL.match(line):
                     is_space = False
 
-    def _is_new_line(self, x):
+    def _is_new_line(self, x) -> bool:
+        """
+        An ad-hoc function to identify empty lines
+        """
         return not x == '\n' or x is None
 
-    def _shuffle(self, labels: List[List[str]]):
+    def _shuffle(self, labels: List[List[str]]) -> List[str]:
         """
         A custom list shuffler for the label blocks to maintain the structure of
         try-catch range.
@@ -123,6 +144,7 @@ class RandomiseLabels(Desmali):
                 if match := regex.TRY_CATCH.match(line):
                     try_catch_ranges[match.group("try_start")] = match.group("try_end")
 
+        # extract try-catch blocks from the list of labels
         try_catch_blocks: List[List[str]] = list()
         for try_start, try_end in try_catch_ranges.items():
             try_start_index = label_names.index(try_start)
@@ -142,7 +164,7 @@ class RandomiseLabels(Desmali):
         # reset label list
         labels = list()
 
-        # unpack 3d array
+        # unpack 3d array based on their types
         for block in try_catch_blocks:
             if isinstance(block[0], str):
                 labels.append(block)

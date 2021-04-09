@@ -6,11 +6,16 @@ from desmali.extras import logger, Util, regex
 
 
 class RenameMethod(Desmali):
+    """
+    This plugin renames method names and their invocations from all
+    the smali files
+    """
+
     def __init__(self, dissect: Dissect):
         super().__init__(self)
         self._dissect: Dissect = dissect
 
-    def run(self):
+    def run(self) -> None:
         # get all method names
         self._method_names: List[str] = self._dissect.method_names(renamable=True)
 

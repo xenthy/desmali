@@ -7,16 +7,19 @@ from desmali.extras import logger
 
 
 class Apksigner:
-    def __init__(self):
-        if "APKSIGNER_PATH" in os.environ:
-            self.apksigner_path: str = os.environ["APKSIGNER_PATH"]
-        else:
-            self.apksigner_path: str = "apksigner"
+    """
+    A python wrapper to use the "apksigner" tool with
+    parameters. 
 
+    [IMPORTANT] apksigner has to be installed
+    """
+
+    def __init__(self):
+        self.apksigner_path: str = "apksigner"
         full_apksigner_path: str = shutil.which(self.apksigner_path)
 
         if full_apksigner_path is None:
-            logger.error(f"apksigner not found \"{self.apksigner_path}\"")
+            logger.error(f"apksigner not found {self.apksigner_path!r}")
             exit()
         else:
             self.apksigner_path = full_apksigner_path
@@ -26,16 +29,31 @@ class Apksigner:
              output_apk_path: str,
              keystore_path: str,
              ks_pass: str,
-             key_pass: str):
+             key_pass: str) -> None:
+        """
+        Signs a given APK with a .jks file and their corresponding
+        ks/key pass
+
+            Parameters:
+             input_apk_path (str): Path to the unsigned APK file
+             output_apk_path (str): Path to the signed APK file upon completion
+             keystore_path (str): Path to the .jks keystore file
+             ks_pass (str): KS password
+             key_pass (str): Key password
+
+            Returns:
+                None
+        """
+
         # check if apk file exists
         if not os.path.isfile(input_apk_path):
-            logger.error(f"Unable to find file {input_apk_path}")
-            raise FileNotFoundError(f"Unable to find file {input_apk_path}")
+            logger.error(f"Unable to find file {input_apk_path!r}")
+            raise FileNotFoundError(f"Unable to find file {input_apk_path!r}")
 
         # check if key store file exists
         if not os.path.isfile(keystore_path):
-            logger.error(f"Unable to find file {keystore_path}")
-            raise FileNotFoundError(f"Unable to find file {keystore_path}")
+            logger.error(f"Unable to find file {keystore_path!r}")
+            raise FileNotFoundError(f"Unable to find file {keystore_path!r}")
 
         sign: List[str] = [
             "jarwrapper",
@@ -53,35 +71,21 @@ class Apksigner:
         ]
 
         try:
-            sign_command = " ".join(sign)
-            logger.info(f"signing apk: \"{input_apk_path}\" -> \"{output_apk_path}\"")
+            sign_command: str = " ".join(sign)
+            logger.info(f"signing apk: {input_apk_path!r} -> {output_apk_path!r}")
             logger.verbose(f"{sign_command}")
 
-            output = subprocess.check_output(sign, stderr=subprocess.STDOUT, input=b"\n").strip()
+            output: str = subprocess.check_output(sign, stderr=subprocess.STDOUT, input=b"\n").strip()
 
             if (b"unable to find an interpreter" in output or b"Exception in thread " in output):
-                # peport exception raised in apksigner
                 raise subprocess.CalledProcessError(1, sign, output)
 
             return output.decode(errors="replace")
         except subprocess.CalledProcessError as e:
             error_output = e.output.decode(errors="replace") if e.output else e
 
-            # workaround for some binfmt-support issues
-            # if "unable to find an interpreter" in error_output:
-            #     logger.info("java interpreter not configured correctly")
-            #     sign.insert(0, "jarwrapper")
-            #     sign_command = " ".join(sign)
-
-            #     logger.info(f"signing apk using fallback method: \"{input_apk_path}\" -> \"{output_apk_path}\"")
-            #     logger.verbose(f"{sign_command}")
-            #     output = subprocess.check_output(sign, stderr=subprocess.STDOUT, input=b"\n").strip()
-            # else:
             logger.error(f"Error during build command: {error_output}")
             raise
         except Exception as e:
-            logger.error("Error during apk signing: {0}".format(e))
+            logger.error(f"Error during apk signing: {e}")
             raise
-
-    def verify(self):
-        pass

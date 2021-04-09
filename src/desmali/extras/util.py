@@ -10,6 +10,10 @@ from in_place import InPlace
 
 
 class Util:
+    """
+    A utilities class which functions are repeatedly called
+    """
+
     @staticmethod
     def progress_bar(
         list: list,
@@ -56,7 +60,7 @@ class Util:
     def generate_mapping(lst: List[str]) -> Dict[str, str]:
         # [.., Y, Z, aa, ab, ac, ..]
         method_name_mapping: Dict[str: str] = dict()
-        taboo = ["r", "R"]
+        taboo: List[str] = ["r", "R"]
         letters: List[str] = [
             letter for letter in ascii_letters if letter not in taboo]  # [a-zA-Z]
 
