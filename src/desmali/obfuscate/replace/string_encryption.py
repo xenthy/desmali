@@ -1,6 +1,5 @@
 import os
 import re
-import sys
 import string
 import random
 from binascii import hexlify
@@ -57,15 +56,16 @@ class StringEncryption(Desmali):
 
         try:
             dest_dir, com_path = self.find_com_path()
-        except Exception as android_path_exception:
-            logger.error(f"{android_path_exception}")
-            sys.exit()
+        except TypeError:
+            logger.error("Invalid destination directory and/or Android Path found")
+            logger.warning("Skipping String Encryption as it might break the Android application")
+            return
 
         for filename in Util.progress_bar(self._dissect.smali_files(), description="Encrypting strings"):
 
             skip_file_search = regex.SKIP_FILE.search(os.path.dirname(filename))
 
-            # Debugging/Info purposes, tracks number of files skipped/obfuscated (processed)
+            # Track the number of files skipped/obfuscated (processed)
             if skip_file_search:
                 skipped_files += 1
                 continue
@@ -244,9 +244,6 @@ class StringEncryption(Desmali):
                 com_path = path_search[0]
 
                 return dest_dir, com_path
-
-        logger.error("Invalid/No destination directory and/or android path found")
-        return dest_dir, com_path
 
 
 def get_smali_decryptor(key, com_path):
