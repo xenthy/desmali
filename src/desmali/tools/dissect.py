@@ -228,12 +228,12 @@ class Dissect:
         # store all class names into a list
         self._class_names: Set[str] = set()
 
-        # create ignore list (cannot be renamed)
+        # create a list of classnames to ignore (cannot be renamed)
         ignore_list: Set[str] = set()
         apk = APK("./" + self.apk_path)
         package_name = "L" + "/".join(apk.package.split(".")) + "/"
 
-        # add manifest to ignore_list
+        # add classnames in manifest to ignore_list
         manifest = apk.get_android_manifest_axml().get_xml_obj()
 
         for app in manifest.findall("application"):
@@ -245,9 +245,7 @@ class Dissect:
         ignore_list.update(apk.get_receivers())
         ignore_list.update(apk.get_providers())
 
-        # add xml files to ignore_list
-        # iterate through all the xml files
-        # TODO: move to regex.py
+        # add classnames in xml files to ignore_list
         PACKAGE: Match = re.compile(apk.package + r"\S+[^ \"]")
 
         for filename in Util.progress_bar(self._xml_files,
@@ -266,36 +264,35 @@ class Dissect:
                                           description="Retrieving classes from all smali files"):
 
             with open(filename, "r") as file:
-                # identify lines which contains classes
                 for line in file:
-
                     if renamable:
+                        #check for .class pattern in line 
                         class_match = regex.CLASSES.search(line)
                         if class_match is not None:
                             class_name = class_match.group()
 
-                            # skip entire file
+                            # skip smali file if classname is not within package name 
                             if not class_name.startswith(package_name):
                                 break
 
+                            # if classname is within package name
                             ignore = False
                             for ignore_class in ignore_list:
-                                # skip classes in ignore_class
-                                if (class_name.startswith(ignore_class[:-1])
+                                # skip the classname if classname in ignore list                                if (class_name.startswith(ignore_class[:-1])
                                         or "/ui/" in class_name
                                         or "/widget/" in class_name
                                         or "/models/" in class_name):
                                     ignore = True
                                     break
 
-                                # skip R classes
+                                # skip the class name if its R classes
                                 class_tokens = regex.SPLIT_CLASS.split(class_name)
                                 class_tokens = [token.replace(";", "") for token in class_tokens]
-
                                 if "R" in class_tokens:
                                     ignore = True
                                     break
-
+                            
+                            #add renamable classname to list
                             if not ignore:
                                 self._class_names.add(class_name)
 
@@ -303,6 +300,7 @@ class Dissect:
                             break
 
                     else:
+                        #adds all class name to list
                         if match := regex.CLASSES.search(line):
                             class_name = match.group()[:-1]
                             self._class_names.add(class_name)
