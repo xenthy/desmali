@@ -38,7 +38,7 @@ class RenameClass(Desmali):
                     if match is not None:
                         for class_name in match:
 
-                            #rename all classes eligible for renaming
+                            # rename all classes eligible for renaming
                             if class_name in self._class_name_mapping:
                                 tmp = class_name[1:].split("/")
                                 tmp.pop()

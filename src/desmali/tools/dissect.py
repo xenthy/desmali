@@ -266,19 +266,20 @@ class Dissect:
             with open(filename, "r") as file:
                 for line in file:
                     if renamable:
-                        #check for .class pattern in line 
+                        # check for .class pattern in line
                         class_match = regex.CLASSES.search(line)
                         if class_match is not None:
                             class_name = class_match.group()
 
-                            # skip smali file if classname is not within package name 
+                            # skip smali file if classname is not within package name
                             if not class_name.startswith(package_name):
                                 break
 
                             # if classname is within package name
                             ignore = False
                             for ignore_class in ignore_list:
-                                # skip the classname if classname in ignore list                                if (class_name.startswith(ignore_class[:-1])
+                                # skip the classname if classname in ignore list
+                                if (class_name.startswith(ignore_class[:-1])
                                         or "/ui/" in class_name
                                         or "/widget/" in class_name
                                         or "/models/" in class_name):
@@ -291,8 +292,8 @@ class Dissect:
                                 if "R" in class_tokens:
                                     ignore = True
                                     break
-                            
-                            #add renamable classname to list
+
+                            # add renamable classname to list
                             if not ignore:
                                 self._class_names.add(class_name)
 
@@ -300,7 +301,7 @@ class Dissect:
                             break
 
                     else:
-                        #adds all class name to list
+                        # adds all class name to list
                         if match := regex.CLASSES.search(line):
                             class_name = match.group()[:-1]
                             self._class_names.add(class_name)
