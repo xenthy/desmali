@@ -54,10 +54,10 @@ def post_obfuscate(apktool: Apktool, keystore_path: str, ks_pass: str, key_pass:
 
 def main():
     # APK_PATH = "AdAway-5.5.1-210402.apk"
-    APK_PATH = "Boost-1.10.2.apk"
+    # APK_PATH = "Boost-1.10.2.apk"
     # APK_PATH = "Memento-1.1.1.apk"
     # APK_PATH = "wsy.apk"
-    # APK_PATH = "original.apk"
+    APK_PATH = "original.apk"
 
     apktool: Apktool = Apktool()
     apktool.decode(apk_path=APK_PATH,

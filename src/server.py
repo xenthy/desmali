@@ -1,15 +1,14 @@
 #!/usr/bin/env python3
 
 import os
-import json
 import math
-import time
+from typing import List
 
-from flask import Flask, request, render_template, jsonify, send_from_directory, Response
+from flask import Flask, request, render_template, jsonify, send_from_directory
 from waitress import serve
 
-from desmali.extras import logger
 from desmali.all import *
+from desmali.extras import logger
 from main import pre_obfuscate, post_obfuscate
 
 app = Flask(__name__)
@@ -128,13 +127,12 @@ def result():
         purge_options_dict[option] = True
 
     for method in OBFUSCATION_METHODS:
-        if method.__name__ in options:
-            PROGRESS["status"] = "Performing " + method.__name__
-            obf_method = method(dissect)
-            if method.__name__ == "PurgeLogs":
-                obf_method.run(**purge_options_dict)
+        if method_name := method.__name__ in options:
+            PROGRESS["status"] = f"Performing {method_name}"
+            if method_name == "PurgeLogs":
+                method(dissect).run(**purge_options_dict)
             else:
-                obf_method.run()
+                method(dissect).run()
             PROGRESS["completion"] = PROGRESS["completion"] + increment
 
     PROGRESS["status"] = "Rebuilding, Zipaligning & Signing APK"
@@ -152,7 +150,7 @@ def result():
                 "Added: {:.2f}".format(current_num / initial_num))
 
     # do all the stuff
-    stats = {}
+    stats: Dict[str] = dict()
     stats["name"] = apk_name
 
     original_size, current_size = dissect.file_size_difference("./.tmp/signed.apk")
@@ -182,9 +180,8 @@ def result():
     PROGRESS["status"] = "Getting Filetree data"
     data = get_filetree()
     PROGRESS["completion"] = 100
-    return render_template("result.html",
-                           stats=stats,
-                           data=data)
+
+    return render_template("result.html", stats=stats, data=data)
 
 
 @ app.route('/viewlines', methods=['POST'])

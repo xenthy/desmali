@@ -22,11 +22,15 @@ RUN \
 # Directory for the program
 WORKDIR /ict2207
 
-# Copy source code
-COPY / /ict2207
+# Copy requirements.txt
+COPY /requirements.txt /ict2207
 
 # Install python dependacies
 RUN pip3 install --quiet --no-cache-dir -r requirements.txt
+
+# Copy source code
+COPY / /ict2207
+
 
 # For flask
 EXPOSE 6969
