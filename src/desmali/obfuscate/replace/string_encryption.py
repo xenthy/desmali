@@ -15,17 +15,24 @@ from desmali.extras import Util, logger, regex
 
 
 class StringEncryption(Desmali):
+    """Perform encryption of strings in critical activities/codes used in the application 
+    
+    Args:
+        Dissect (obj): Dissect object
+    """
     def __init__(self, dissect: Dissect):
         super().__init__(self)
         self._dissect = dissect
-        self.key = ''.join(random.choice(string.ascii_letters + string.digits + "';|!()~*%<>") for _ in range(32))
         self.decryptor_added = False
         self.package_dir_regex = None
 
+        # Generate a random AES key
+        self.key = ''.join(random.choice(string.ascii_letters + string.digits + "';|!()~*%<>") for _ in range(32))
+
     def encrypt_string(self, plaintext):
-        """
+        """Return an AES encrypted string
+
         Encrypt a plaintext string using AES-ECB
-        Returns ciphertext
         """
         plaintext = plaintext.encode(errors="replace").decode("unicode_escape")
         key = PBKDF2(
@@ -49,15 +56,16 @@ class StringEncryption(Desmali):
 
         try:
             dest_dir, com_path = self.find_com_path()
-        except Exception as e:
-            logger.error(f"{e}")
-            exit()
+        except TypeError:
+            logger.error("Invalid destination directory and/or Android Path found")
+            logger.warning("Skipping String Encryption as it might break the Android application")
+            return
 
         for filename in Util.progress_bar(self._dissect.smali_files(), description="Encrypting strings"):
 
             skip_file_search = regex.SKIP_FILE.search(os.path.dirname(filename))
 
-            # Debugging/Info purposes, tracks number of files skipped/obfuscated (processed)
+            # Track the number of files skipped/obfuscated (processed)
             if skip_file_search:
                 skipped_files += 1
                 continue
@@ -71,8 +79,8 @@ class StringEncryption(Desmali):
                 continue
 
             try:
-                with open(filename, 'r', encoding='utf-8') as f:
-                    lines = f.readlines()
+                with open(filename, 'r', encoding='utf-8') as target_file:
+                    lines = target_file.readlines()
 
                 static_index = []  # Line number of Static String found
                 static_name = []  # Variable Name of Static String found
@@ -191,17 +199,17 @@ class StringEncryption(Desmali):
                     )
 
                 # Overwrite smali file with obfuscated lines
-                with open(filename, 'w', encoding='utf-8') as f:
-                    f.writelines(lines)
+                with open(filename, 'w', encoding='utf-8') as target_file:
+                    target_file.writelines(lines)
 
-            except Exception as e:
-                logger.error(f"[{filename}] String Encryption Error {e}")
+            except Exception as main_encryption_exception:
+                logger.error(f"[{filename}] String Encryption Error {main_encryption_exception}")
 
         # Write decryptor file (resources/DecryptString.smali) into "com" path directory identified earlier
         if strings_encrypted and not self.decryptor_added and com_path and dest_dir:
             dest_file = os.path.join(dest_dir, "DecryptString.smali")
-            with open(dest_file, 'w', encoding='utf-8') as f:
-                f.write(get_smali_decryptor(self.key, com_path))
+            with open(dest_file, 'w', encoding='utf-8') as decryptor_file:
+                decryptor_file.write(get_smali_decryptor(self.key, com_path))
 
             self.decryptor_added = True
             logger.verbose("DecryptString.smali added")
@@ -222,7 +230,6 @@ class StringEncryption(Desmali):
                 package_dir = element.replace(".MainActivity", "").replace(".", "/")
                 break
 
-        # Workaround for APKs with no "MainActivity" activity
         if not package_dir:
             package_dir = "/".join(apk.get_activities()[0].split(".")[:-1])
 
@@ -236,17 +243,18 @@ class StringEncryption(Desmali):
                 dest_dir = os.path.dirname(filename)
                 com_path = path_search[0]
 
-                # TODO: Remove debugging logs
-                # logger.info(f"{dest_dir}")
-                # logger.info(f"{com_path}")
-
                 return dest_dir, com_path
 
 
-# Retrieve the smali decryptor file
 def get_smali_decryptor(key, com_path):
-    with open(os.path.join(os.path.dirname(__file__), "resources", "DecryptString.smali"), 'r') as f:
-        cont = f.read()
+    """Return contents of modified smali decryptor
+
+    Retrieve the smali decryptor file and replace placeholder values
+    - AES key
+    - Android Library Paths
+    """
+    with open(os.path.join(os.path.dirname(__file__), "resources", "DecryptString.smali"), 'r') as decryptor_resource:
+        cont = decryptor_resource.read()
 
         # Replace the placeholder AES-ECB key with the key that was used to encrypt strings
         return (cont.replace("This-key-need-to-be-32-character", key)).replace("com/decryptstringmanager", com_path)
