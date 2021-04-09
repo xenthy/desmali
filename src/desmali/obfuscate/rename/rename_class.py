@@ -7,6 +7,9 @@ from desmali.tools.dissect import Dissect
 
 
 class RenameClass(Desmali):
+    """
+    This plugin renames class names from smali files within the apk package
+    """
 
     def __init__(self, dissect: Dissect):
         super().__init__(self)
@@ -30,9 +33,12 @@ class RenameClass(Desmali):
             with Util.inplace_file(filename) as file:
                 for line in file:
 
+                    # get class names in line
                     match = regex.CLASSES.findall(line)
                     if match is not None:
                         for class_name in match:
+
+                            #rename all classes eligible for renaming
                             if class_name in self._class_name_mapping:
                                 tmp = class_name[1:].split("/")
                                 tmp.pop()
@@ -41,8 +47,11 @@ class RenameClass(Desmali):
                                 line = line.replace(
                                     class_name, "L" + "/".join(tmp) + ";")
 
+                    # get source file names
                     source_match = regex.SOURCES.match(line)
                     if source_match is not None:
+
+                        # rename source file name eligible for renaming
                         source_name = source_match.group("name")
                         for k, v in self._class_name_mapping.items():
                             if k.split("/")[-1][:-1] == source_name:
@@ -50,6 +59,7 @@ class RenameClass(Desmali):
 
                     file.write(line)
 
+        # Update directory mapping of new path and old path
         smali_path = "./.tmp/obfuscated/smali/"
         for old_name, new_name in self._class_name_mapping.items():
             new_file = old_name[1:-1].split("/")[:-1]

@@ -17,7 +17,7 @@ CLASSES: Match = re.compile(r"L[^():\s]+?;",
 # .source "MainActivity.kt"
 SOURCES: Match = re.compile(r"\.source.+?(?P<name>\w+)",
                             re.UNICODE)
-
+# regex to split by '/' and '$'
 SPLIT_CLASS: Match = re.compile(r"[/$]",
                                 re.UNICODE)
 
