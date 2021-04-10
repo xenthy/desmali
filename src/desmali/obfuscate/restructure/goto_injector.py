@@ -10,11 +10,27 @@ END_GOTO = "\n    :desmaili_back\n    goto :desmaili_front\n\n"
 
 
 class GotoInjector(Desmali):
+    """
+    This plugin injects simple goto instructions that directs the flow
+    to the end of the method and then to the start again.
+    """
+    
     def __init__(self, dissect: Dissect):
         super().__init__(self)
         self._dissect = dissect
 
     def run(self):
+        """
+        No parameters needed as the same statements will be injected
+        into eligible methods.
+
+            Parameters:
+                none
+
+            Returns:
+                None
+        """
+
         for filename in Util.progress_bar(self._dissect.smali_files(),
                                           description=f"Injecting goto(s): "):
             logger.debug(f"modifying \"{filename}\"")
