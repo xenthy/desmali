@@ -85,9 +85,12 @@ class BooleanArithmetic(Desmali):
                         if match and int(match.group("local_count")) >= 2:
 
                             pass_local = True
+                            
+                            v0 = v1 = 0x0
 
-                            v0 = hex(Util.random_int(1, 32))
-                            v1 = hex(Util.random_int(1, 32))
+                            while v0 == v1:
+                                v0 = hex(Util.random_int(5, 32))
+                                v1 = hex(Util.random_int(7, 32))
 
                             start_str = Util.random_string(16)
                             end_str = Util.random_string(16)
