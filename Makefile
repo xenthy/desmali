@@ -9,7 +9,6 @@ PFLAGS=-3.8-64
 TARGET?=src/main
 SERVER?=src/server
 CHECK?=src/test
-# SOURCES:=$(wildcard src/*.py)
 SOURCES = $(shell find src/ -type f -name '*.py')
 
 .PHONY: all check docker dockerclean clean server
@@ -36,7 +35,7 @@ ifeq ($(OS),Windows_NT)
 	@powershell "(Get-ChildItem * -Include *.pyc -Recurse | Remove-Item)"
 	@echo Cleaned up .pyc, .cap files and .cache files
 else
-	@echo "Cleaning up [.pyc, __pycache__, apktool/, junk apk] files..."
+	@echo "Cleaning up [.pyc, __pycache__, .tmp/, junk apk] files..."
 	@find . -type d -name "__pycache__" -exec rm -rf {} +
 	@find . -type f -name "*.pyc" -delete
 	@find ./.tmp/* -type f,d -not -name 'placeholder' -delete

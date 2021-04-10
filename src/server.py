@@ -127,7 +127,7 @@ def result():
         purge_options_dict[option] = True
 
     for method in OBFUSCATION_METHODS:
-        if method_name := method.__name__ in options:
+        if (method_name := method.__name__) in options:
             PROGRESS["status"] = f"Performing {method_name}"
             if method_name == "PurgeLogs":
                 method(dissect).run(**purge_options_dict)
