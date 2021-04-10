@@ -41,11 +41,6 @@ def post_obfuscate(apktool: Apktool, keystore_path: str, ks_pass: str, key_pass:
                    ks_pass=ks_pass,
                    key_pass=key_pass)
 
-    # # for debugging
-    # dex2jar = Dex2jar()
-    # dex2jar.to_jar(input_apk_path="./.tmp/signed.apk",
-    #                output_jar_path="./.tmp/signed.jar")
-
     # decompile signed apk to obfuscated folder for updated smali file name
     apktool.decode(apk_path="./.tmp/signed.apk",
                    output_dir_path="./.tmp/obfuscated",
