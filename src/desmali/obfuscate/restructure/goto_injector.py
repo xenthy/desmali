@@ -14,7 +14,7 @@ class GotoInjector(Desmali):
     This plugin injects simple goto instructions that directs the flow
     to the end of the method and then to the start again.
     """
-    
+
     def __init__(self, dissect: Dissect):
         super().__init__(self)
         self._dissect = dissect

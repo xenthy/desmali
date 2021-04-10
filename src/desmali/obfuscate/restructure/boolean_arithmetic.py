@@ -12,6 +12,7 @@ class BooleanArithmetic(Desmali):
     In the True branch of the predicate lies the dummy code that will never be executed,
     since its purpose is to confuse reverse engineers.
     """
+
     def __init__(self, dissect: Dissect):
         super().__init__(self)
         self._dissect = dissect
@@ -102,7 +103,7 @@ class BooleanArithmetic(Desmali):
                         if match and int(match.group("local_count")) >= 2:
 
                             pass_local = True
-                            
+
                             v0 = v1 = 0x0
 
                             # to make sure predicates are really opaque all the time
