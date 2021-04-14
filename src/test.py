@@ -8,7 +8,8 @@ from desmali.extras import logger
 
 
 def main():
-    APK_PATH = "Memento-1.1.1.apk"
+    APK_PATH = "original.apk"
+    KEYSTORE_PATH = "keystore.jks"
 
     apktool: Apktool = Apktool()
     apktool.decode(apk_path=APK_PATH,
@@ -47,7 +48,7 @@ def main():
 
     """ RENAME CLASS """
     rename_class: RenameClass = RenameClass(dissect)
-    # rename_class.run()
+    rename_class.run()
 
     """ BOOLEAN ARITHMETIC """
     boolean_arithmetic: BooleanArithmetic = BooleanArithmetic(dissect)
@@ -65,19 +66,33 @@ def main():
     apksigner: Apksigner = Apksigner()
     apksigner.sign(input_apk_path="./.tmp/modified-aligned.apk",
                    output_apk_path="./.tmp/signed.apk",
-                   keystore_path="./ict2207-test-key.jks",
+                   keystore_path=KEYSTORE_PATH,
                    ks_pass="nim4m4h4om4?",
                    key_pass="nim4m4h4om4?")
 
-    dex2jar = Dex2jar()
-    dex2jar.to_jar(input_apk_path="./.tmp/signed.apk",
-                   output_jar_path="./.tmp/signed.jar")
+    # for debugging
+    # dex2jar = Dex2jar()
+    # dex2jar.to_jar(input_apk_path="./.tmp/signed.apk",
+    #                output_jar_path="./.tmp/signed.jar")
+
+    # decompile obfuscated app to get new smali
+    apktool.decode(apk_path="./.tmp/signed.apk",
+                   output_dir_path="./.tmp/obfuscated",
+                   force=True)
+    dissect.smali_files(force=True)
+
+    # get apk file size before and after obfuscation
+    initial_size, current_size = dissect.file_size_difference(
+        "./.tmp/signed.apk")
+    logger.info(f"File size -> Initial: {initial_size:,} bytes - " +
+                f"Current: {current_size:,} bytes - " +
+                "Increase: {:.2f}x".format(current_size / initial_size))
 
     # get number of smali lines before and after obfuscation
     initial_num, current_num = dissect.line_count_info()
-    logger.info(f"Line count: Initial: {initial_num} - " +
-                f"Current: {current_num} - " +
-                "Added: {:.2f}".format(current_num / initial_num))
+    logger.info(f"Line count -> Initial: {initial_num:,} - " +
+                f"Current: {current_num:,} - " +
+                "Increase: {:.2f}x".format(current_num / initial_num))
 
 
 if __name__ == "__main__":

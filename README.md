@@ -1,4 +1,4 @@
-# ict2207-assignment-2 <!-- omit in toc -->
+# desmali <!-- omit in toc -->
 
 ## Table of Contents <!-- omit in toc -->
 - [Setting Up](#setting-up)
@@ -15,7 +15,7 @@
 ## Running Project using Make
 1. To run the program
 ```console
-➜ cd ict2207-assignment-2
+➜ cd desmali
 ➜ make server
 ```
 2. To clean compiled files (.pyc, \_\_pycache\_\_/, .tmp/)
@@ -25,7 +25,7 @@
 
 ## Running Project using Docker
 ```console
-➜ cd ict2207-assignment-2
+➜ cd desmali
 ➜ make docker
 ```
 

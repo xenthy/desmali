@@ -24,8 +24,8 @@ check:
 	python $(CHECK).py
 
 docker:
-	docker build -t obfuscator:latest .
-	docker run -ti -p 6969:6969/tcp obfuscator
+	docker build -t desmali:latest .
+	docker run -ti -p 6969:6969/tcp desmali
 
 dockerclean:
 	docker system prune -a

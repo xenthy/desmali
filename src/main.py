@@ -48,11 +48,8 @@ def post_obfuscate(apktool: Apktool, keystore_path: str, ks_pass: str, key_pass:
 
 
 def main():
-    # APK_PATH = "AdAway-5.5.1-210402.apk"
-    # APK_PATH = "Boost-1.10.2.apk"
-    # APK_PATH = "Memento-1.1.1.apk"
-    # APK_PATH = "wsy.apk"
     APK_PATH = "original.apk"
+    KEYSTORE_PATH = "keystore.jks"
 
     apktool: Apktool = Apktool()
     apktool.decode(apk_path=APK_PATH,
@@ -109,7 +106,7 @@ def main():
     apksigner: Apksigner = Apksigner()
     apksigner.sign(input_apk_path="./.tmp/modified-aligned.apk",
                    output_apk_path="./.tmp/signed.apk",
-                   keystore_path="./ict2207-test-key.jks",
+                   keystore_path=KEYSTORE_PATH,
                    ks_pass="nim4m4h4om4?",
                    key_pass="nim4m4h4om4?")
 

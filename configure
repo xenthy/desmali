@@ -5,9 +5,9 @@ END='\033[0m'
 
 # install python 3.8 + pip3
 echo "\n${PURPLE}[+] Installing Python 3.8 + pip3\n${END}" 
-sudo apt update
-sudo apt install software-properties-common -y
-sudo apt install python3-pip
+sudo apt-get update && \
+sudo apt-get install -y software-properties-common \
+                        python3-pip
 
 # install GNU Make
 echo "\n${PURPLE}[+] Installing build essential\n${END}"
@@ -19,9 +19,9 @@ pip3 install -r requirements.txt
 
 # install addtional dependencies
 echo "\n${PURPLE}[+] Installing addational dependencies\n${END}"
-sudo apt install apktool \
-                 zipalign \
-                 apksigner -y
+sudo apt-get install -y apktool \
+                        zipalign \
+                        apksigner
 
 echo "\n${PURPLE}[!] Successfully configured!\n${END}"
 
