@@ -5,17 +5,13 @@
 - [Running Project using Make](#running-project-using-make)
 - [Running Project using Docker](#running-project-using-docker)
 - [Obfuscation Methods](#obfuscation-methods)
-  - [Remove](#remove)
-    - [Purge Logs](#purge-logs)
-  - [Replace](#replace)
-    - [String Encryption](#string-encryption)
-  - [Rename](#rename)
-    - [Rename Methods](#rename-methods)
-    - [Rename Class](#rename-class)
-  - [Restructure](#restructure)
-    - [Goto Injector](#goto-injector)
-    - [Boolean Arithmetic](#boolean-arithmetic)
-    - [Randomise Labels](#randomise-labels)
+  - [Purge Logs [Remove]](#purge-logs-remove)
+  - [String Encryption [Replace]](#string-encryption-replace)
+  - [Rename Methods [Rename]](#rename-methods-rename)
+  - [Rename Class [Rename]](#rename-class-rename)
+  - [Goto Injector [Restructure]](#goto-injector-restructure)
+  - [Boolean Arithmetic [Restructure]](#boolean-arithmetic-restructure)
+  - [Randomise Labels [Restructure]](#randomise-labels-restructure)
 - [Viewing Debug Logs](#viewing-debug-logs)
 
 ## Setting Up
@@ -42,29 +38,25 @@
 ```
 
 ## Obfuscation Methods
-### Remove
-#### Purge Logs
+### Purge Logs [Remove]
 > Remove logs that may contain sensitive information
 
-### Replace
-#### String Encryption
+### String Encryption [Replace]
 > Encrypt strings with AES
 
-### Rename
-#### Rename Methods
+### Rename Methods [Rename]
 > Rename method declarations and invocations
 
-#### Rename Class
+### Rename Class [Rename]
 > Rename classes and their packages
 
-### Restructure
-#### Goto Injector
+### Goto Injector [Restructure]
 > Modify the CFG by wrapping each method with 2 nodes
 
-#### Boolean Arithmetic
+### Boolean Arithmetic [Restructure]
 > Inject an always true/false clause into the CFG
 
-#### Randomise Labels
+### Randomise Labels [Restructure]
 > Alter the CFG by randomly reordering & abusing goto instructions
 
 ## Viewing Debug Logs
